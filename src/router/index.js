@@ -1,17 +1,25 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import LoginPage from '../vues/Login/Login.vue';
 
 // 配置路由
 const routes = [
   {
     path: '/',
+    redirect: '/api_dev' // 设置默认重定向路径
+  },
+  {
+    path: '/Login',
     name: 'Login',
-    component: LoginPage,
+    component: () => import('../views/login/login.vue'),
   },
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: () => import('../vues/hall/hall.vue'),  // 假设登录成功后跳转到 Dashboard 页面
+    component: () => import('../views/home/home.vue'),  // 假设登录成功后跳转到 Dashboard 页面
+  },
+  {
+    path: '/api_dev',
+    name: 'Api_Dev',
+    component: () => import('../views/Dev/api_dev.vue'),  // 假设登录成功后跳转到 Dashboard 页面
   }
 ];
 
