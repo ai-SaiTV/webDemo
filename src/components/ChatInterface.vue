@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useChat } from '../composables/useChat';
-import { useChatPolling } from '../composables/useChatPolling';
+import { useChat } from '@/composables/useChat';
+import { useChatPolling } from '@/composables/useChatPolling';
 import InputField from './InputField.vue';
 import MessageInput from './MessageInput.vue';
 import ResponseDisplay from './ResponseDisplay.vue';
@@ -11,8 +11,9 @@ const apiKey = ref('');
 const botId = ref('');
 const message = ref('');
 
-const { error: chatError, sendMessage } = useChat();
-const {
+// 导出工具方法
+const { error: chatError, sendMessage } = useChat();  // 从 useChat composable 中导入 error 和 sendMessage方法
+const {      // 从 useChatPolling composable 中导入以下属性和方法
   currentResponse: response,
   chatMessages,
   isPolling,
