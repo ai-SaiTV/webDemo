@@ -6,7 +6,7 @@ const BASE_URL = 'https://api.coze.cn/v3';
 export const sendChatMessage = async (apiKey: string, botId: string, message: string): Promise<ChatResponse> => {
   const payload: ChatRequest = {
     bot_id: botId,
-    user_id: "11",
+    user_id: "0",
     stream: false,
     auto_save_history: true,
     additional_messages: [
