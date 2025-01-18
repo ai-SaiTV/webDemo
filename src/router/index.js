@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 const routes = [
   {
     path: '/',
-    redirect: '/dashboard' // 设置默认重定向路径
+    redirect: '/api_dev' // 设置默认重定向路径
   },
   {
     path: '/Login',

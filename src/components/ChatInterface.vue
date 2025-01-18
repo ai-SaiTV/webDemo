@@ -23,6 +23,7 @@ const {      // 从 useChatPolling composable 中导入以下属性和方法
 
 const handleSubmit = async () => {
   if (!apiKey.value || !botId.value || !message.value) {
+    console.log('Please fill in all fields');
     return;
   }
 
