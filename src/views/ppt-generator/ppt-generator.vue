@@ -55,10 +55,12 @@ export default {
       const content = this.editor.root.innerHTML;
       console.log('Saved content:', content);
       // 这里可以添加保存内容的逻辑，例如发送到服务器或下载为文件
+      window.location.href = 'https://web.ysisl.tech/web/pdf/markdown.pdf?access_token=sk_api123';
     },
     addTemplate() {
       // 添加更多幻灯片模板的逻辑
       console.log('添加更多幻灯片模板');
+      
     },
     addAnimation() {
       // 添加动画效果的逻辑
@@ -89,6 +91,14 @@ export default {
 }
 
 .btn {
-  @apply px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300;
+  padding: 0.5rem 1rem; 
+  background-color: #3b82f6; 
+  color: white; 
+  border-radius: 0.375rem; 
+  transition: background-color 0.3s, transform 0.3s; 
+}
+.btn:hover {
+  background-color: #1d4ed8; 
+  transform: scale(1.05); 
 }
 </style>

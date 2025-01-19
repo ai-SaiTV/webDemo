@@ -91,14 +91,24 @@ export default {
 <style scoped>
 /* 输入框样式 */
 .input-field {
-  @apply w-full p-2 border border-gray-300 rounded-md;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
 }
 
 /* 按钮样式 */
 .btn {
-  @apply px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300;
+  padding: 0.5rem 1rem; 
+  background-color: #3b82f6; 
+  color: white; 
+  border-radius: 0.375rem; 
+  transition: background-color 0.3s, transform 0.3s; 
 }
-
+.btn:hover {
+  background-color: #1d4ed8; 
+  transform: scale(1.05); 
+}
 /* 树状图样式 */
 .link {
   fill: none;
