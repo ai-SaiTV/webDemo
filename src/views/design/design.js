@@ -23,6 +23,12 @@ export default {
         alert("请填写所有信息！");
       }
     },
+    //前往上一步
+    previousStep() {
+      if (this.step > 1) {
+        this.step--;
+      }
+    },
     // 前往下一步
     nextStep() {
       if (this.step < 4) {
@@ -35,7 +41,8 @@ export default {
     },
     // 重置步骤
     resetSteps() {
-      this.step = 1;
+      window.location.href = 'http://127.0.0.1:5177/';
+      // this.step = 1;
       this.courseName = '';
       this.chapter = '';
       this.content = '';

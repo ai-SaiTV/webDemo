@@ -95,9 +95,21 @@
     color: white;
   }
   .resource-card {
-    @apply p-4 bg-white rounded-lg shadow-md cursor-pointer hover:bg-gray-100;
-  }
-  .chart {
-    @apply bg-gray-100 rounded-lg shadow-inner;
-  }
+  padding: 1rem; 
+  background-color: white; 
+  border-radius: 0.5rem; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  cursor: pointer; 
+  transition: background-color 0.3s ease; 
+}
+
+.resource-card:hover {
+  background-color: #f3f4f6; 
+}
+
+.chart {
+  background-color: #f3f4f6; 
+  border-radius: 0.5rem; 
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1); 
+}
   </style>

@@ -50,7 +50,7 @@
         <!-- D3 渲染树状图的容器 -->
         <div ref="mindmapContainer" class="relative w-full h-96"></div>
       </div>
-
+      <button @click="previousStep" class="btn">上一步</button>
       <button @click="nextStep" class="btn">下一步</button>
       <button @click="addRootNode" class="btn">添加根节点</button>
       <button @click="addChildNode" class="btn">添加子节点</button>
@@ -62,6 +62,7 @@
       <h2 class="text-2xl font-bold mb-4">步骤 3: 生成PPT</h2>
       <p class="mb-4">在这里，您可以生成PPT。</p>
       <div class="output mb-4 p-4 bg-gray-50 rounded-lg shadow-inner h-32"></div>
+      <button @click="previousStep" class="btn">上一步</button>
       <button @click="nextStep" class="btn">下一步</button>
       <button @click="goToPPTGenerator" class="btn mt-4">生成PPT</button>
     </div>
@@ -70,6 +71,7 @@
       <h2 class="text-2xl font-bold mb-4">步骤 4: 生成练习题</h2>
       <p class="mb-4">在这里，您可以生成练习题。</p>
       <div class="output mb-4 p-4 bg-gray-50 rounded-lg shadow-inner h-32"></div>
+      <button @click="previousStep" class="btn">上一步</button>
       <button @click="resetSteps" class="btn">完成</button>
     </div>
   </div>

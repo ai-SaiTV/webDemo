@@ -55,7 +55,7 @@ export default {
       const content = this.editor.root.innerHTML;
       console.log('Saved content:', content);
       // 这里可以添加保存内容的逻辑，例如发送到服务器或下载为文件
-      window.location.href = 'https://web.ysisl.tech/web/pdf/markdown.pdf?access_token=sk_api123';
+      
     },
     addTemplate() {
       // 添加更多幻灯片模板的逻辑
