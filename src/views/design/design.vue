@@ -58,12 +58,16 @@
     </div>
 
     <!-- 后续步骤 -->
-    <div v-if="step === 3" class="step p-6 bg-white rounded-lg shadow-md w-3/4">
+    <div v-if="step === 3" class="step p-6 bg-white rounded-lg shadow-md h-full w-5/6">
       <h2 class="text-2xl font-bold mb-4">步骤 3: 生成PPT</h2>
       <p class="mb-4">在这里，您可以生成PPT。</p>
-      <div class="output mb-4 p-4 bg-gray-50 rounded-lg shadow-inner h-32"></div>
+      <div v-if="pdfData" class="output mb-2 p-2 bg-gray-50 rounded-lg shadow-inner h-3/4 w-4/5 mx-auto">
+      <iframe :src="pdfData" width="100%" height="100%" frameborder="0"></iframe>
+    </div>
       <button @click="previousStep" class="btn">上一步</button>
       <button @click="nextStep" class="btn">下一步</button>
+      <!-- 先放着吧，以后会有用 -->
+      <button @click="addpdf" class="btn">上传PDF</button>
       <button @click="goToPPTGenerator" class="btn mt-4">生成PPT</button>
     </div>
 
@@ -104,6 +108,7 @@ export default {
   padding: 0.5rem 1rem; 
   background-color: #3b82f6; 
   color: white; 
+  margin-right: 5px; 
   border-radius: 0.375rem; 
   transition: background-color 0.3s, transform 0.3s; 
 }

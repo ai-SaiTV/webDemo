@@ -27,6 +27,9 @@
         <div v-if="activeTab === 'questionBank'" class="p-6 bg-white rounded-lg shadow-md">
           <h2 class="text-2xl font-bold mb-4">练习题库</h2>
           <!-- 练习题库内容 -->
+          <div class="grid grid-cols-3 gap-4">
+            <div class="resource-card" @click="navigateTo('practice')">添加练习题</div>
+          </div>
         </div>
         <div v-if="activeTab === 'analysis'" class="p-6 bg-white rounded-lg shadow-md">
           <h2 class="text-2xl font-bold mb-4">学情分析</h2>
