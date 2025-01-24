@@ -13,7 +13,7 @@ const message = ref('');
 
 // 导出工具方法
 const { error: chatError, sendMessage } = useChat();  // 从 useChat composable 中导入 error 和 sendMessage方法
-const {      // 从 useChatPolling composable 中导入以下属性和方法
+const {                                               // 从 useChatPolling composable 中导入以下属性和方法
   currentResponse: response,
   chatMessages,
   isPolling,
@@ -21,17 +21,18 @@ const {      // 从 useChatPolling composable 中导入以下属性和方法
   startPolling
 } = useChatPolling();
 
-const handleSubmit = async () => {
+const handleSubmit = async () => {    // 按钮槽函数
   if (!apiKey.value || !botId.value || !message.value) {
     console.log('Please fill in all fields');
     return;
   }
 
   try {
-    const initialResponse = await sendMessage(apiKey.value, botId.value, message.value);
-    await startPolling(apiKey.value, initialResponse);
+    const initialResponse = await sendMessage(apiKey.value, botId.value, message.value);   //对api发送请求
+    await startPolling(apiKey.value, initialResponse);    //开始异步轮询
   } catch (err) {
     // Error handling is already done in useChat composable
+    console.error(err);
   }
 };
 </script>
