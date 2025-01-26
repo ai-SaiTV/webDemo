@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 export default {
   data() {
     return {
-      step: 1,
+      step: 0,
       courseName: '',
       chapter: '',
       content: '',
@@ -11,9 +11,13 @@ export default {
       treeData: null,
       svg: null,
       selectedNode: null, // 记录当前选中的节点
+      uploadedFiles: [], // 存储上传的PDF文件
     };
   },
   methods: {
+    setStep(stepIndex){
+      this.step = stepIndex;
+    },
     // 生成教学大纲
     generateOutline() {
       if (this.courseName && this.chapter && this.content) {
@@ -40,33 +44,42 @@ export default {
       const fileInput = document.createElement('input');
       fileInput.type = 'file';
       fileInput.accept = '.pdf';
-
       fileInput.addEventListener('change', this.handleFileChange);
-
       fileInput.click();
     },
     // 判断文件是否是pdf类型
     handleFileChange(event) {
       const file = event.target.files[0];
       if (file && file.type === 'application/pdf') {
+        // alert(`文件加载成功:${file.name}`)
+        this.uploadedFiles.push(file); 
         this.selectedFile = file;
         this.readPDF(file);
       } else {
         alert('请选择一个有效的PDF文件！');
       }
     },
-    // 使用 FileReader 读取 PDF 文件并显示
+    // 使用 FileReader 读取 PDF 文件
     readPDF(file) {
       const reader = new FileReader();
       reader.onload = () => {
         this.pdfData = reader.result;
         console.log('文件加载成功:', file.name);
+        this.savePDF(file);
       };
-
       reader.onerror = (error) => {
         console.error('文件读取错误:', error);
       };
       reader.readAsDataURL(file);
+    },
+    // ----->下载文件至本地(请在此基础上进行修改)
+    savePDF(file) {
+      const blob = new Blob([file], { type: 'application/pdf' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `${file.name}`;
+      link.click();
+      alert('文件加载成功');
     },
     // 跳转到PPT生成页面
     goToPPTGenerator() {
@@ -290,6 +303,9 @@ export default {
         .attr('x', d => (d.children ? -15 : 15))
         .style('text-anchor', d => (d.children ? 'middle' : 'start'))
         .text(d => d.data.name);
+    },
+    produceExercises(){
+      //在这里实现生成练习题的api调用
     },
   },
 };
