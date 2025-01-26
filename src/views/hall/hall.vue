@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import ResponseDisplay from '@/components/home_comp/ResponseDisplay.vue';
 import { useChat } from '@/composables/useChat';
 import { useChatPolling } from '@/composables/useChatPolling';
 
 const apiKey = ref('pat_DdQD93S1Vy2WBf0KZdOJ1ob5U9GzeR2Yjmkzaj5xVBq7EAAwd6OmSLKRmMnI4WYw');
 const botId = ref('7449786123129847845');
-const message = ref('帮我生成你好');
+const message = ref('你好嘛？？');
 
 const { error: chatError, sendMessage } = useChat();  // 从 useChat composable 中导入 error 和 sendMessage方法
 const {                                               // 从 useChatPolling composable 中导入以下属性和方法
@@ -62,14 +63,27 @@ const viewDashboard = () => {
         <p class="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
           让教学设计更智能，课堂管理更高效。基于 AI 技术，为教师提供全方位的智能教学解决方案。
         </p>
+
+
+        <!-- Chat  -->
         <div class="flex gap-4 justify-center">
-          <button
+          <div class="w-full">
+            <button
               @click="handleSubmit"
               :disabled="isPolling || !apiKey || !botId || !message"
               class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-4 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {{ isPolling ? 'Generating Response...' : 'Send Message' }}
+              
             </button>
+
+            <ResponseDisplay 
+            :response="response"
+            :messages="chatMessages"
+          />
+       
+          </div>
+        <!-- chat -->
           <button
             @click="startDesign"
             class="px-6 py-3 bg-[#3451b2] text-white rounded-lg hover:bg-[#2d469d] transition-colors"
