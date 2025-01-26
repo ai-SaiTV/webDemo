@@ -1,3 +1,5 @@
+
+
 <template>
   <div class="flex flex-col items-center justify-center h-screen text-center bg-gray-100">
     <!-- 步骤 1: 填写课程信息 -->
@@ -52,8 +54,6 @@
       </div>
 
       <button @click="nextStep" class="btn">下一步</button>
-      <button @click="addRootNode" class="btn">添加根节点</button>
-      <button @click="addChildNode" class="btn">添加子节点</button>
       <div ref="mindmapContainer" ></div>
     </div>
 
@@ -72,10 +72,14 @@
       <div class="output mb-4 p-4 bg-gray-50 rounded-lg shadow-inner h-32"></div>
       <button @click="resetSteps" class="btn">完成</button>
     </div>
+    
+ 
+
   </div>
 </template>
 
-<script>
+<script >
+
 // 引入外部的 design.js 文件
 import DesignMethods from '@/views/design/design.js';
 

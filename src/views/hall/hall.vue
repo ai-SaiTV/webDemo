@@ -1,4 +1,35 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { useChat } from '@/composables/useChat';
+import { useChatPolling } from '@/composables/useChatPolling';
+
+const apiKey = ref('pat_DdQD93S1Vy2WBf0KZdOJ1ob5U9GzeR2Yjmkzaj5xVBq7EAAwd6OmSLKRmMnI4WYw');
+const botId = ref('7449786123129847845');
+const message = ref('帮我生成你好');
+
+const { error: chatError, sendMessage } = useChat();  // 从 useChat composable 中导入 error 和 sendMessage方法
+const {                                               // 从 useChatPolling composable 中导入以下属性和方法
+  currentResponse: response,
+  chatMessages,
+  isPolling,
+  error: pollingError,
+  startPolling
+} = useChatPolling();
+
+const handleSubmit = async () => {    // 按钮槽函数
+  if (!apiKey.value || !botId.value || !message.value) {
+    console.log('Please fill in all fields');
+    return;
+  }
+
+  try {
+    const initialResponse = await sendMessage(apiKey.value, botId.value, message.value);   //对api发送请求
+    await startPolling(apiKey.value, initialResponse);    //开始异步轮询
+  } catch (err) {
+    // Error handling is already done in useChat composable
+    console.error(err);
+  }
+};
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -33,6 +64,13 @@ const viewDashboard = () => {
         </p>
         <div class="flex gap-4 justify-center">
           <button
+              @click="handleSubmit"
+              :disabled="isPolling || !apiKey || !botId || !message"
+              class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-4 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+            >
+              {{ isPolling ? 'Generating Response...' : 'Send Message' }}
+            </button>
+          <button
             @click="startDesign"
             class="px-6 py-3 bg-[#3451b2] text-white rounded-lg hover:bg-[#2d469d] transition-colors"
           >
@@ -44,6 +82,7 @@ const viewDashboard = () => {
           >
             后端管理系统
           </button>
+          
         </div>
       </div>
 
@@ -69,3 +108,4 @@ const viewDashboard = () => {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 </style>
+
