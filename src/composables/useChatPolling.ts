@@ -38,7 +38,6 @@ export function useChatPolling() {
 
     isPolling.value = true;
     error.value = '';
-    stopPolling();
 
     pollingInterval.value = setInterval(async () => {
       try {
