@@ -10,7 +10,22 @@ const routes = [
   {
     path: '/design',
     name: 'design',
-    component: () => import('../views/design/design.vue'),
+    component: () => import('../views/design.vue'),
+  },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: () => import('../views/design/Dashboard.vue'),
+  },
+  {
+    path: '/analysis',
+    name: 'Analysis',
+    component: () => import('../views/design/Analysis.vue'),
+  },
+  {
+    path: '/course',
+    name: 'CourseManagement',
+    component: () => import('../views/design/CourseManagement.vue'),
   },
   {
     path: '/backend',
