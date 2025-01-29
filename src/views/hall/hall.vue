@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 const startDesign = () => {
-  router.push('/design');
+  router.push('/dashboard');
 };
 
 const viewDashboard = () => {
