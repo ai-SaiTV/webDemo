@@ -4,7 +4,7 @@ import { Menu as IconMenu, Document, Collection, TrendCharts, Calendar } from '@
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const isCollapse = ref(false)
+const isCollapse = ref(true)
 
 const handleMenuSelect = (index: string) => {
   switch (index) {
@@ -26,7 +26,7 @@ const handleMenuSelect = (index: string) => {
 
 <template>
   <el-container class="layout-container">
-    <el-aside :width="isCollapse ? '64px' : '200px'" class="aside">
+    <el-aside :width="isCollapse ? '64px' : '200px'" class="aside" >
       <div class="logo">
         <img src="/vite.svg" alt="Logo" class="logo-img" />
         <span v-show="!isCollapse">智慧备课平台</span>
