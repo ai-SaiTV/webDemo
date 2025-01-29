@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-
+import design from '../design.vue';
 const router = useRouter();
 
 const startDesign = () => {
+  const event = new CustomEvent('toggleSidebar', { detail: false });
+  window.dispatchEvent(event);
   router.push('/dashboard');
 };
 
@@ -34,6 +36,7 @@ const viewDashboard = () => {
         <div class="flex gap-4 justify-center">
           <button
             @click="startDesign"
+
             class="px-6 py-3 bg-[#3451b2] text-white rounded-lg hover:bg-[#2d469d] transition-colors"
           >
             教学设计

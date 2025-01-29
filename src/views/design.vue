@@ -1,10 +1,24 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { Menu as IconMenu, Document, Collection, TrendCharts, Calendar } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const isCollapse = ref(false)
+const isCollapse = ref(true)
+
+
+const handleSidebarToggle = (event: Event) => {
+  const { detail } = event as CustomEvent;
+  isCollapse.value = detail; // 更新侧边栏状态
+};
+
+onMounted(() => {
+  window.addEventListener('toggleSidebar', handleSidebarToggle);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('toggleSidebar', handleSidebarToggle);
+});
 
 const handleMenuSelect = (index: string) => {
   switch (index) {
