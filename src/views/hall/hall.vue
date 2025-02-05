@@ -1,4 +1,36 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import ResponseDisplay from '@/components/home_comp/ResponseDisplay.vue';
+import { useChat } from '@/composables/useChat';
+import { useChatPolling } from '@/composables/useChatPolling';
+
+const apiKey = ref('pat_DdQD93S1Vy2WBf0KZdOJ1ob5U9GzeR2Yjmkzaj5xVBq7EAAwd6OmSLKRmMnI4WYw');
+const botId = ref('7449786123129847845');
+const message = ref('你好嘛？？');
+
+const { error: chatError, sendMessage } = useChat();  // 从 useChat composable 中导入 error 和 sendMessage方法
+const {                                               // 从 useChatPolling composable 中导入以下属性和方法
+  currentResponse: response,
+  chatMessages,
+  isPolling,
+  error: pollingError,
+  startPolling
+} = useChatPolling();
+
+const handleSubmit = async () => {    // 按钮槽函数
+  if (!apiKey.value || !botId.value || !message.value) {
+    console.log('Please fill in all fields');
+    return;
+  }
+
+  try {
+    const initialResponse = await sendMessage(apiKey.value, botId.value, message.value);   //对api发送请求
+    await startPolling(apiKey.value, initialResponse);    //开始异步轮询
+  } catch (err) {
+    // Error handling is already done in useChat composable
+    console.error(err);
+  }
+};
 import { useRouter } from 'vue-router';
 import design from '../design.vue';
 const router = useRouter();
@@ -33,7 +65,27 @@ const viewDashboard = () => {
         <p class="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
           让教学设计更智能，课堂管理更高效。基于 AI 技术，为教师提供全方位的智能教学解决方案。
         </p>
+
+
+        <!-- Chat  -->
         <div class="flex gap-4 justify-center">
+          <div class="w-full">
+            <button
+              @click="handleSubmit"
+              :disabled="isPolling || !apiKey || !botId || !message"
+              class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-4 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+            >
+              {{ isPolling ? 'Generating Response...' : 'Send Message' }}
+              
+            </button>
+
+            <ResponseDisplay 
+            :response="response"
+            :messages="chatMessages"
+          />
+       
+          </div>
+        <!-- chat -->
           <button
             @click="startDesign"
 
@@ -47,6 +99,7 @@ const viewDashboard = () => {
           >
             后端管理系统
           </button>
+          
         </div>
       </div>
 
@@ -72,3 +125,4 @@ const viewDashboard = () => {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 </style>
+
