@@ -1,18 +1,37 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import LoginPage from '../vues/Login/Login.vue';
 
 // 配置路由
 const routes = [
   {
     path: '/',
-    name: 'Login',
-    component: LoginPage,
+    name: 'hall',
+    component: () => import('../views/hall/hall.vue'),
   },
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: () => import('../vues/hall/hall.vue'),  // 假设登录成功后跳转到 Dashboard 页面
-  }
+    component: () => import('../views/design/Dashboard.vue'),
+  },
+  {
+    path: '/analysis',
+    name: 'Analysis',
+    component: () => import('../views/design/Analysis.vue'),
+  },
+  {
+    path: '/course',
+    name: 'CourseManagement',
+    component: () => import('../views/design/CourseManagement.vue'),
+  },
+  {
+    path: '/backend',
+    name: 'backend',
+    component: () => import('../views/backend/backend.vue'),
+  },
+  {
+    path: '/ppt-generator',
+    name: 'ppt-generator',
+    component: () => import('../views/ppt-generator/ppt-generator.vue'),
+  },
 ];
 
 const router = createRouter({
