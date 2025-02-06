@@ -1,17 +1,11 @@
+<script setup lang="ts">
+</script>
+
 <template>
-  <div id="app">
-    <design></design>
-  </div>
+  <router-view></router-view>
 </template>
 
-<script>
-import design from '@/views/design.vue'
-export default {
-  name: 'App',
-  components:{
-    design
-  },
-};
-</script>
+<style>
+</style>
 
 

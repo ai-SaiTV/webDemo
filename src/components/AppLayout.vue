@@ -1,24 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref } from 'vue'
 import { Menu as IconMenu, Document, Collection, TrendCharts, Calendar } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const isCollapse = ref(true)
-
-
-const handleSidebarToggle = (event: Event) => {
-  const { detail } = event as CustomEvent;
-  isCollapse.value = detail; // 更新侧边栏状态
-};
-
-onMounted(() => {
-  window.addEventListener('toggleSidebar', handleSidebarToggle);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener('toggleSidebar', handleSidebarToggle);
-});
+const isCollapse = ref(false)
 
 const handleMenuSelect = (index: string) => {
   switch (index) {
@@ -40,7 +26,7 @@ const handleMenuSelect = (index: string) => {
 
 <template>
   <el-container class="layout-container">
-    <el-aside :width="isCollapse ? '64px' : '200px'" class="aside" >
+    <el-aside :width="isCollapse ? '64px' : '200px'" class="aside">
       <div class="logo">
         <img src="/vite.svg" alt="Logo" class="logo-img" />
         <span v-show="!isCollapse">智慧备课平台</span>
