@@ -14,13 +14,13 @@ const router = createRouter({
       component: Home
     },
     {
+      path: '/portal',
+      component: Portal
+    },
+    {
       path: '/',
       component: AppLayout,
       children: [
-        {
-          path: 'portal',
-          component: Portal
-        },
         {
           path: 'dashboard',
           component: Dashboard
