@@ -218,7 +218,6 @@ const form1 = ref({
                     <el-col :span="12">
                       <el-form-item label="思维导图（单击放大）">
                         <img 
-                        loading="lazy" 
                         :src="imageSrc" 
                         alt="思维导图" 
                         :style="imageStyle"
