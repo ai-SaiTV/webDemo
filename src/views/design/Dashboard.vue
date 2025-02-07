@@ -622,6 +622,9 @@ const form1 = ref({
 }
 
 .custom-textarea {
+  padding: 2%;
+  background-color: #4b5563;
+  border-radius: 15px;
   width: 100vh;
   max-width: 800px;
   background-color: white;
