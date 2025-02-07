@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed} from 'vue'
+import { ref, computed } from 'vue'
 
 const activeStep = ref(0)
 const isGenerating = ref(false)
@@ -7,6 +7,8 @@ const showResult = ref(false)
 
 const imageSrc = 'https://img1.baidu.com/it/u=4289792486,3256351331&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=1133'//图片路径（该处需要修改）
 const isZoomed = ref(false) // 用于判断图片是否放大
+const isHovering = ref(false) // 控制鼠标是否悬停在图片上
+const translateY = ref(0) // 控制图片的上下滑动
 
 const form = ref({
   grade: '',
@@ -126,14 +128,30 @@ const previewMindMap = () => {
 // 控制图片放大和缩小
 const toggleImageSize = () => {
   isZoomed.value = !isZoomed.value
+  translateY.value = 0 // 重置缩放级别
 }
+
+// 鼠标滚轮事件，控制图片的上下滑动
+const onWheel = (event: WheelEvent) => {
+  if (event.deltaY > 0) {
+    // 向下滚动，图片向上滑动
+    translateY.value = Math.min(translateY.value - 40, 0) // 设置最大滑动范围
+  } else {
+    // 向上滚动，图片向下滑动
+    translateY.value = Math.max(translateY.value + 40, -500) // 设置最小滑动范围
+  }
+}
+
+// 放大后的图片样式
+const zoomedImageStyle = computed(() => ({
+  transform: `translateY(${translateY.value}px)`, // 控制图片的缩放
+  transition: 'transform 0.3s ease-in-out', // 平滑过渡
+}))
 
 const imageStyle = computed(() => ({
   width: '100%',
   height: 'auto',
-  cursor: 'pointer',
-  transform: isZoomed.value ? 'scale(1.3)' : 'scale(1)', // 放大或恢复原始大小
-  transition: 'transform 0.3s ease-in-out' // 过渡效果
+  cursor: isHovering.value ? 'zoom-in' : 'default', // 鼠标悬停时显示放大镜
 }))
 
 const form1 = ref({
@@ -199,9 +217,29 @@ const form1 = ref({
                     </el-col>
                     <el-col :span="12">
                       <el-form-item label="思维导图（单击放大）">
-                        <img :src="imageSrc" alt="思维导图" :style="imageStyle" @click="toggleImageSize" />
+                        <img 
+                        loading="lazy" 
+                        :src="imageSrc" 
+                        alt="思维导图" 
+                        :style="imageStyle"
+                        @click="toggleImageSize"
+                        @mouseenter="isHovering = true" 
+                        @mouseleave="isHovering = false" 
+                        />
                       </el-form-item>
                     </el-col>
+                    <!-- 放大的图片和背景遮罩 -->
+                    <div v-if="isZoomed" class="overlay" @click="toggleImageSize">
+                      <div class="zoomed-image-container" @click.stop @wheel="onWheel">
+                        <img 
+                        :src="imageSrc" 
+                        alt="放大的思维导图" 
+                        class="zoomed-image"
+                        :style="zoomedImageStyle" 
+                        />
+                        <button class="close-btn" @click="toggleImageSize">X</button>
+                      </div>
+                    </div>
                   </el-row>
                 </el-form>
               </div>
@@ -626,5 +664,63 @@ const form1 = ref({
   max-width: 800px;
   background-color: white;
   color: black;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  /* 背景暗化 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.zoomed-image-container {
+  position: relative;
+  max-width: 90%;
+  max-height: 110%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.zoomed-image {
+  width: auto;
+  height: auto;
+  transform-origin: center center;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: white;
+  color: black;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 50%;
+}
+
+.close-btn:hover {
+  background-color: #ff4d4f;
+  color: white;
+}
+
+img {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+img:hover {
+  transform: scale(1.05);
+  /* 放大一点用于提示 */
 }
 </style>
