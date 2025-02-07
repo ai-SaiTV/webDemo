@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed} from 'vue'
 
 const activeStep = ref(0)
 const isGenerating = ref(false)
 const showResult = ref(false)
+
+const imageSrc = 'https://img1.baidu.com/it/u=4289792486,3256351331&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=1133'//图片路径（该处需要修改）
+const isZoomed = ref(false) // 用于判断图片是否放大
 
 const form = ref({
   grade: '',
@@ -17,24 +20,13 @@ const form = ref({
 })
 
 const steps = [
-  { title: '基本信息', description: '选择年级、学科等基本信息' },
-  { title: '教学目标', description: '设置本节课的教学重点和难点' },
-  { title: '教学要求', description: '补充具体教学要求和注意事项' },
-  { title: '智能生成', description: '基于输入自动生成教案' }
+  { title: '大纲生成', description: '一句话生成大纲' },
+  { title: '大纲修改', description: '提供修改以保证贴合教学安排' },
+  { title: '导图生成', description: '根据教学大纲生成思维导图' },
+  { title: '智能生成', description: '总结教学大纲与思维导图' }
 ]
 
-const difficultyOptions = [
-  { label: '容易', value: 'easy' },
-  { label: '中等', value: 'medium' },
-  { label: '较难', value: 'hard' }
-]
 
-const focusOptions = [
-  { label: '知识理解', value: 'knowledge' },
-  { label: '技能培养', value: 'skills' },
-  { label: '思维发展', value: 'thinking' },
-  { label: '实践应用', value: 'practice' }
-]
 
 // 模拟生成的教案数据
 const generatedContent = ref({
@@ -130,6 +122,25 @@ const previewMindMap = () => {
     `)
   }
 }
+
+// 控制图片放大和缩小
+const toggleImageSize = () => {
+  isZoomed.value = !isZoomed.value
+}
+
+const imageStyle = computed(() => ({
+  width: '100%',
+  height: 'auto',
+  cursor: 'pointer',
+  transform: isZoomed.value ? 'scale(1.3)' : 'scale(1)', // 放大或恢复原始大小
+  transition: 'transform 0.3s ease-in-out' // 过渡效果
+}))
+
+const form1 = ref({
+  requirements: `《算法与数据结构：二叉树》教学大纲...`
+});
+
+
 </script>
 
 <template>
@@ -142,102 +153,63 @@ const previewMindMap = () => {
               <h2>教案生成</h2>
               <p class="subtitle">智能分析教学需求，快速生成专业教案</p>
             </div>
-            
+
             <el-steps :active="activeStep" finish-status="success" process-status="process" class="custom-steps">
-              <el-step v-for="(step, index) in steps" :key="index" :title="step.title" :description="step.description" />
+              <el-step v-for="(step, index) in steps" :key="index" :title="step.title"
+                :description="step.description" />
             </el-steps>
 
             <div class="step-content">
-              <!-- 步骤1：基本信息 -->
+              <!-- 步骤1：大纲生成 -->
               <div v-if="activeStep === 0" class="step-form">
                 <el-form :model="form" label-position="top">
-                  <el-row :gutter="20">
-                    <el-col :span="12">
-                      <el-form-item label="年级">
-                        <el-select v-model="form.grade" placeholder="选择年级">
-                          <el-option label="一年级" value="grade1" />
-                          <el-option label="二年级" value="grade2" />
-                          <el-option label="三年级" value="grade3" />
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="学科">
-                        <el-select v-model="form.subject" placeholder="选择学科">
-                          <el-option label="语文" value="chinese" />
-                          <el-option label="数学" value="math" />
-                          <el-option label="英语" value="english" />
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                  </el-row>
-                  <el-row :gutter="20">
-                    <el-col :span="12">
-                      <el-form-item label="单元">
-                        <el-input v-model="form.unit" placeholder="请输入单元名称" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="课题">
-                        <el-input v-model="form.topic" placeholder="请输入课题名称" />
+                  <el-row :gutter="20" justify="center">
+                    <el-col :span="20">
+                      <el-form-item label="输入课程名称">
+                        <span>&nbsp;</span>
+                        <el-input v-model="form.unit" placeholder="如：算法与数据结构的二叉树课">
+                          <template #prepend>我想生成一节</template>
+                          <template #append>的教案</template>
+                        </el-input>
                       </el-form-item>
                     </el-col>
                   </el-row>
                 </el-form>
               </div>
-
-              <!-- 步骤2：教学目标 -->
+              <!-- 步骤2：大纲修改 -->
               <div v-if="activeStep === 1" class="step-form">
                 <el-form :model="form" label-position="top">
-                  <el-form-item label="课程时长">
-                    <el-input-number v-model="form.duration" :min="30" :max="90" :step="5" />
-                    <span class="unit-label">分钟</span>
-                  </el-form-item>
-                  <el-form-item label="难度等级">
-                    <el-radio-group v-model="form.difficulty">
-                      <el-radio-button v-for="option in difficultyOptions" :key="option.value" :label="option.value">
-                        {{ option.label }}
-                      </el-radio-button>
-                    </el-radio-group>
-                  </el-form-item>
-                  <el-form-item label="教学重点">
-                    <el-checkbox-group v-model="form.focus">
-                      <el-checkbox v-for="option in focusOptions" :key="option.value" :label="option.value">
-                        {{ option.label }}
-                      </el-checkbox>
-                    </el-checkbox-group>
-                  </el-form-item>
+                  <el-row :gutter="24" justify="center">
+                    <el-form-item label="大纲内容">
+                      <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
+                        class="custom-textarea"></textarea>
+                    </el-form-item>
+                  </el-row>
                 </el-form>
               </div>
-
               <!-- 步骤3：教学要求 -->
               <div v-if="activeStep === 2" class="step-form">
-                <el-form :model="form" label-position="top">
-                  <el-form-item label="具体要求">
-                    <el-input
-                      v-model="form.requirements"
-                      type="textarea"
-                      :rows="4"
-                      placeholder="请输入具体的教学要求和注意事项..."
-                    />
-                  </el-form-item>
+                <el-form :model="form1" label-position="top">
+                  <el-row :gutter="24" justify="center">
+                    <el-col :span="12">
+                      <el-form-item label="大纲内容">
+                        <textarea v-model="form1.requirements" rows="35" placeholder="请输入具体的教学要求和注意事项..."
+                          class="custom-textarea"></textarea>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item label="思维导图（单击放大）">
+                        <img :src="imageSrc" alt="思维导图" :style="imageStyle" @click="toggleImageSize" />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
                 </el-form>
               </div>
-
               <!-- 步骤4：生成结果 -->
               <div v-if="activeStep === 3" class="generation-step">
-                <el-result
-                  icon="success"
-                  title="准备就绪"
-                  sub-title="已收集所有必要信息，点击下方按钮开始生成教案"
-                >
+                <el-result icon="success" title="准备就绪" sub-title="已收集所有必要信息，点击下方按钮开始生成教案">
                   <template #extra>
-                    <el-button
-                      type="primary"
-                      size="large"
-                      :loading="isGenerating"
-                      @click="generatePlan"
-                    >
+                    <el-button type="primary" size="large" :loading="isGenerating" @click="generatePlan">
                       {{ isGenerating ? '正在生成...' : '开始生成' }}
                     </el-button>
                   </template>
@@ -247,11 +219,7 @@ const previewMindMap = () => {
 
             <div class="step-actions">
               <el-button v-if="activeStep > 0" @click="prevStep">上一步</el-button>
-              <el-button
-                v-if="activeStep < steps.length - 1"
-                type="primary"
-                @click="nextStep"
-              >
+              <el-button v-if="activeStep < steps.length - 1" type="primary" @click="nextStep">
                 下一步
               </el-button>
             </div>
@@ -302,12 +270,8 @@ const previewMindMap = () => {
                       </div>
                     </template>
                     <div class="mind-map">
-                      <img
-                        :src="generatedContent.mindMap.preview"
-                        alt="思维导图"
-                        style="width: 100%; cursor: pointer"
-                        @click="previewMindMap"
-                      >
+                      <img :src="generatedContent.mindMap.preview" alt="思维导图" style="width: 100%; cursor: pointer"
+                        @click="previewMindMap">
                     </div>
                   </el-card>
                 </el-col>
@@ -325,11 +289,7 @@ const previewMindMap = () => {
                     </template>
                     <div class="resources">
                       <el-row :gutter="20">
-                        <el-col
-                          v-for="(resource, index) in generatedContent.resources"
-                          :key="index"
-                          :span="12"
-                        >
+                        <el-col v-for="(resource, index) in generatedContent.resources" :key="index" :span="12">
                           <div class="resource-card">
                             <img :src="resource.preview" :alt="resource.title">
                             <div class="resource-info">
@@ -353,11 +313,7 @@ const previewMindMap = () => {
                       </div>
                     </template>
                     <div class="exercises">
-                      <div
-                        v-for="(exercise, index) in generatedContent.exercises"
-                        :key="index"
-                        class="exercise-item"
-                      >
+                      <div v-for="(exercise, index) in generatedContent.exercises" :key="index" class="exercise-item">
                         <div class="exercise-header">
                           <h4>{{ exercise.title }}</h4>
                           <el-tag size="small" :type="exercise.difficulty === '简单' ? 'success' : 'warning'">
@@ -413,12 +369,8 @@ const previewMindMap = () => {
             </div>
           </template>
           <el-timeline>
-            <el-timeline-item
-              v-for="(activity, index) in 4"
-              :key="index"
-              :timestamp="'2024-03-0' + (index + 1)"
-              placement="top"
-            >
+            <el-timeline-item v-for="(activity, index) in 4" :key="index"
+              :timestamp="'2024-0' + (activity + 1) + '-0' + (index + 1)" placement="top">
               <div class="timeline-content">
                 <h4>{{ ['语文', '数学', '英语', '科学'][index] }}教案</h4>
                 <p>{{ ['阅读理解', '分数运算', '语法练习', '植物生长'][index] }}</p>
@@ -491,7 +443,8 @@ const previewMindMap = () => {
         color: #1f2937;
       }
 
-      ul, ol {
+      ul,
+      ol {
         margin: 0;
         padding-left: 1.5rem;
         color: #4b5563;
@@ -569,9 +522,11 @@ const previewMindMap = () => {
 
   .custom-steps {
     padding: 2rem 2rem 0;
+
     :deep(.el-step__title) {
       font-size: 0.9rem;
     }
+
     :deep(.el-step__description) {
       font-size: 0.8rem;
     }
@@ -600,10 +555,12 @@ const previewMindMap = () => {
     gap: 1rem;
   }
 
-  .stat-card, .recent-card {
+  .stat-card,
+  .recent-card {
     margin-bottom: 1.5rem;
-    
-    .stat-header, .recent-header {
+
+    .stat-header,
+    .recent-header {
       h3 {
         margin: 0;
         font-size: 1.1rem;
@@ -662,5 +619,12 @@ const previewMindMap = () => {
   .mt-20 {
     margin-top: 20px;
   }
+}
+
+.custom-textarea {
+  width: 100vh;
+  max-width: 800px;
+  background-color: white;
+  color: black;
 }
 </style>
