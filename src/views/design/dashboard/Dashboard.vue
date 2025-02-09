@@ -96,6 +96,7 @@ import {
 
             <div class="step-actions">
               <el-button v-if="activeStep > 0" @click="prevStep">上一步</el-button>
+              <!-- "点击下一步"事件 -->
               <el-button v-if="activeStep < steps.length - 1" type="primary" @click="nextStep" :loading="isProcessing"
                 :disabled="isProcessing">
                 {{ isProcessing ? '正在处理中...' : '下一步' }}
