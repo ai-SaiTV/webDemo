@@ -3,12 +3,33 @@ import { ref, computed } from 'vue';
 export const activeStep = ref(0);
 export const isGenerating = ref(false);
 export const showResult = ref(false);
-
-export const Mindimgsrc = ref('https://img1.baidu.com/it/u=4289792486,3256351331&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=1133'); // 这里需要提供实际的图片路径
+export const isProcessing = ref(false);
 export const isZoomed = ref(false);
 export const isHovering = ref(false);
-export const translateY = ref(0);
 
+export const progressStatus = ref("active");
+export const Mindimgsrc = ref(
+    'https://img1.baidu.com/it/u=4289792486,3256351331&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=1133'
+); // 这里需要提供实际的图片路径
+
+export const translateY = ref(0);
+export const progress = ref(0);
+export const waitingTime = ref(5000);//请在这里修改按下‘下一步’按钮后的等待时间
+
+// export const gradientColor = ref(`rgb(24, 144, 255)`)
+export const gradientColor = computed(() => {
+    const percentage = progress.value;
+
+    const startColor = { r: 24, g: 144, b: 255 }; // 蓝色 rgb(24, 144, 255)
+    const endColor = { r: 54, g: 207, b: 201 }; // 青色 rgb(54, 207, 201)
+
+    //线性插值公式
+    const r = Math.round(startColor.r + (endColor.r - startColor.r) * (percentage / 100));
+    const g = Math.round(startColor.g + (endColor.g - startColor.g) * (percentage / 100));
+    const b = Math.round(startColor.b + (endColor.b - startColor.b) * (percentage / 100));
+
+    return `rgb(${r}, ${g}, ${b})`;
+});
 export const form = ref({
     grade: '',
     subject: '',
@@ -82,8 +103,33 @@ export const generatedContent = ref({
 
 export const nextStep = () => {
     if (activeStep.value < steps.length - 1) {
-        activeStep.value++;
+        isProcessing.value = true;
+        progress.value = 0;
+        progressStatus.value = "active";
+
+        const interval = 50;
+        const stepsCount = waitingTime.value / interval;
+        let currentStep = 0;
+
+        const timer = setInterval(() => {
+            currentStep++;
+            progress.value = Math.min((currentStep / stepsCount) * 100, 100);
+
+            if (progress.value >= 100) {
+                clearInterval(timer);
+                progressStatus.value = "success";
+
+                setTimeout(() => {
+                    isProcessing.value = false;
+                    progress.value = 0;
+                    progressStatus.value = "active";
+                    activeStep.value++;
+                }, 500);
+            }
+        }, interval);
     }
+
+
 };
 
 export const prevStep = () => {
@@ -94,7 +140,7 @@ export const prevStep = () => {
 
 export const generatePlan = async () => {
     isGenerating.value = true;
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, waitingTime.value));
     isGenerating.value = false;
     showResult.value = true;
 };
@@ -146,3 +192,5 @@ export const imageStyle = computed(() => ({
 export const form1 = ref({
     requirements: `《算法与数据结构：二叉树》教学大纲...`
 });
+
+

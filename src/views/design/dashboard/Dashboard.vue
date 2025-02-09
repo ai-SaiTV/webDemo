@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { activeStep, nextStep, prevStep, 
-         generatePlan, previewMindMap,showResult,steps,
-         form,form1,Mindimgsrc,imageStyle,toggleImageSize,isHovering,
-         isZoomed,onWheel,zoomedImageStyle,
-         isGenerating,generatedContent } from './Dashboard';
+import {
+  activeStep, nextStep, prevStep,
+  generatePlan, previewMindMap, showResult, steps,
+  form, form1, Mindimgsrc, progressStatus, imageStyle, toggleImageSize,
+  isHovering, isProcessing, isZoomed,
+  onWheel, zoomedImageStyle, progress,
+  isGenerating, generatedContent, gradientColor,
+} from './Dashboard';
 
 </script>
 
@@ -17,6 +20,8 @@ import { activeStep, nextStep, prevStep,
               <h2>教案生成</h2>
               <p class="subtitle">智能分析教学需求，快速生成专业教案</p>
             </div>
+            <el-progress v-if="isProcessing" :percentage="progress" :stroke-width="8" :color="gradientColor"
+              :status="progressStatus" />
 
             <el-steps :active="activeStep" finish-status="success" process-status="process" class="custom-steps">
               <el-step v-for="(step, index) in steps" :key="index" :title="step.title"
@@ -63,25 +68,14 @@ import { activeStep, nextStep, prevStep,
                     </el-col>
                     <el-col :span="12">
                       <el-form-item label="思维导图（单击放大）">
-                        <img 
-                        :src="Mindimgsrc" 
-                        alt="思维导图" 
-                        :style="imageStyle"
-                        @click="toggleImageSize"
-                        @mouseenter="isHovering = true" 
-                        @mouseleave="isHovering = false" 
-                        />
+                        <img :src="Mindimgsrc" alt="思维导图" :style="imageStyle" @click="toggleImageSize"
+                          @mouseenter="isHovering = true" @mouseleave="isHovering = false" />
                       </el-form-item>
                     </el-col>
                     <!-- 放大的图片和背景遮罩 -->
                     <div v-if="isZoomed" class="overlay" @click="toggleImageSize">
                       <div class="zoomed-image-container" @click.stop @wheel="onWheel">
-                        <img 
-                        :src="Mindimgsrc" 
-                        alt="放大的思维导图" 
-                        class="zoomed-image"
-                        :style="zoomedImageStyle" 
-                        />
+                        <img :src="Mindimgsrc" alt="放大的思维导图" class="zoomed-image" :style="zoomedImageStyle" />
                         <button class="close-btn" @click="toggleImageSize">X</button>
                       </div>
                     </div>
@@ -102,8 +96,9 @@ import { activeStep, nextStep, prevStep,
 
             <div class="step-actions">
               <el-button v-if="activeStep > 0" @click="prevStep">上一步</el-button>
-              <el-button v-if="activeStep < steps.length - 1" type="primary" @click="nextStep">
-                下一步
+              <el-button v-if="activeStep < steps.length - 1" type="primary" @click="nextStep" :loading="isProcessing"
+                :disabled="isProcessing">
+                {{ isProcessing ? '正在处理中...' : '下一步' }}
               </el-button>
             </div>
           </template>
