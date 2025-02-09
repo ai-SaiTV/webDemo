@@ -12,6 +12,11 @@ See [Vite Configuration Reference](https://vite.dev/config/).
 
 ## Project Setup
 
+> [!note]
+>
+> if message is displayed: errno EPERM
+> please run with administrator rights
+
 ```sh
 npm install
 ```
