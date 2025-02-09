@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ResponseDisplay from '@/components/api_compoents/ResponseDisplay.vue';
 import {
   activeStep, nextStep, prevStep,
   generatePlan, previewMindMap, showResult, steps,
@@ -6,7 +7,11 @@ import {
   isHovering, isProcessing, isZoomed,
   onWheel, zoomedImageStyle, progress,
   isGenerating, generatedContent, gradientColor,
+
+
+  response, chatMessages,handleSubmit, isPolling, chatConfig
 } from './Dashboard';
+
 
 </script>
 
@@ -42,6 +47,26 @@ import {
                         </el-input>
                       </el-form-item>
                     </el-col>
+
+                            <!-- 测试接口 -->
+                           <!-- Chat  -->
+                           <div class="w-full">
+                              <button
+                                @click="handleSubmit"
+                                :disabled="isPolling || !chatConfig.apiKey || !chatConfig.botId || !chatConfig.message"
+                                class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-4 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                              >
+                                {{ isPolling ? 'Generating Response...' : 'Send Message' }}
+                                
+                              </button>
+
+                              <ResponseDisplay 
+                              :response="response"
+                              :messages="chatMessages"
+                            />
+                          
+                            </div>
+                          <!-- chat -->
                   </el-row>
                 </el-form>
               </div>
