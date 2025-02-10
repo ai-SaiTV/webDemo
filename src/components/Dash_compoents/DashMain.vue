@@ -32,6 +32,7 @@
       @update:isZoomed="updateIsZoomed"
       @update:translateY="updateTranslateY"  />
   </div>
+     
 
   <div class="step-actions">
     <el-button v-if="activeStep > 0" @click="prevStep">上一步</el-button>
@@ -151,7 +152,6 @@
 </template>
   
 <script setup lang="ts">
-
   import PlanHeader from './PlanHeader.vue';
   import StepProgress from './StepProgress.vue';
   import StepForm from './StepForm.vue';

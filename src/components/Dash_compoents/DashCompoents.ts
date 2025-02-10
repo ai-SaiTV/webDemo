@@ -1,5 +1,14 @@
 import { ref, computed } from 'vue';
 
+// ------------------------------------------------------------>> api
+import {
+    response, chatMessages,handleSubmit, isPolling, chatConfig
+  } from '@/components/api_compoents/api_handler';
+  import ResponseDisplay from '@/components/api_compoents/ResponseDisplay.vue';
+//<<------------------------------------------------------------
+
+
+
 export const activeStep = ref(0);
 export const isGenerating = ref(false);
 export const showResult = ref(false);
@@ -101,30 +110,36 @@ export const generatedContent = ref({
 
 export const nextStep = () => {
     if (activeStep.value < steps.length - 1) {
-        isProcessing.value = true;
-        progress.value = 0;
+        isProcessing.value = true;    //note: 输入框为空也可以progcess bug，应该加入 || 判断
+        progress.value = 0;          
         progressStatus.value = "active";
 
         const interval = 50;
         const stepsCount = waitingTime.value / interval;
         let currentStep = 0;
 
-        const timer = setInterval(() => {
-            currentStep++;
-            progress.value = Math.min((currentStep / stepsCount) * 100, 100);
 
-            if (progress.value >= 100) {
-                clearInterval(timer);
-                progressStatus.value = "success";
+        handleSubmit(); // 按钮槽函数
+        
 
-                setTimeout(() => {
-                    isProcessing.value = false;
-                    progress.value = 0;
-                    progressStatus.value = "active";
-                    activeStep.value++;
-                }, 500);
-            }
-        }, interval);
+        if (!isPolling.value) {
+            const timer = setInterval(() => {
+                currentStep++;
+                progress.value = Math.min((currentStep / stepsCount) * 100, 100);
+    
+                if (progress.value >= 100) {
+                    clearInterval(timer);
+                    progressStatus.value = "success";
+    
+                    setTimeout(() => {
+                        isProcessing.value = false;
+                        progress.value = 0;
+                        progressStatus.value = "active";
+                        activeStep.value++;
+                    }, 500);
+                }
+            }, interval);
+        }
     }
 
 

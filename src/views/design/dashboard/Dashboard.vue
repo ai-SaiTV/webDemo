@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import ResponseDisplay from '@/components/api_compoents/ResponseDisplay.vue';
+
 import DashMain from '@/components/Dash_compoents/DashMain.vue';
-
-import {
-  showResult,
-
-  response, chatMessages,handleSubmit, isPolling, chatConfig
-} from './Dashboard';
+import { showResult } from './Dashboard';
 
 
 </script>
@@ -14,29 +9,14 @@ import {
 <template>
   <div class="dashboard-container">
 
-        <!-- 测试接口 -->
-        <!-- Chat  -->
-        <div class="w-full">
-          <button
-            @click="handleSubmit"
-            :disabled="isPolling || !chatConfig.apiKey || !chatConfig.botId || !chatConfig.message"
-            class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-4 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-          >
-            {{ isPolling ? 'Generating Response...' : 'Send Message' }}
-            
-          </button>
+        
 
-          <ResponseDisplay 
-          :response="response"
-          :messages="chatMessages"
-        />
-      
-        </div>
-      <!-- chat -->
     <el-row :gutter="24">
       <el-col :span="showResult ? 24 : 16">
         <el-card class="main-card" :body-style="{ padding: '0' }">
+
           <DashMain/>
+
         </el-card>
       </el-col>
 
