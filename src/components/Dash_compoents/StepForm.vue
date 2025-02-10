@@ -1,5 +1,6 @@
 <template>
-<div v-if="activeStep === 0" class="step-form">
+  <div>
+  <div v-if="activeStep === 0" class="step-form">
     <el-form :model="form" label-position="top">
       <el-row :gutter="20" justify="center">
         <el-col :span="20">
@@ -10,12 +11,10 @@
               <template #append>的教案</template>
             </el-input>
           </el-form-item>
-        </el-col>
-
-            
-      </el-row>
-    </el-form>
-  </div>
+        </el-col>  
+        </el-row>
+      </el-form>
+    </div>
   <!-- 步骤2：大纲修改 -->
   <div v-if="activeStep === 1" class="step-form">
     <el-form :model="form" label-position="top">
@@ -75,10 +74,13 @@ const props = defineProps({
   form1: Object,
   Mindimgsrc: String,
   isZoomed: Boolean,
-  imageStyle: Object
+  imageStyle: Object,
+  waitingTime: Number,
+  showResult: Boolean,
+  
 });
 
-
+const showResult = ref(false);
 const isHovering = ref(false);
 const isGenerating = ref(false);
 
@@ -100,50 +102,18 @@ const zoomedImageStyle = computed(() => ({
     transform: `translateY(${translateY.value}px)`,
     transition: 'transform 0.3s ease-in-out',
 }));
+
+
+const generatePlan = async () => {
+  isGenerating.value = true;
+  setTimeout(() => {
+      isProcessing.value = false;
+      showResult.value = true;
+      emit('update:showResult', showResult.value);
+    }, waitingTime.value);
+};
+
 </script>
-
-<style scoped>
-.step-form {
-  margin-bottom: 20px;
-}
-
-.custom-textarea {
-  width: 100%;
-  padding: 10px;
-  font-size: 14px;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.zoomed-image-container {
-  position: relative;
-  max-width: 90%;
-  max-height: 90vh;
-}
-
-.zoomed-image {
-  width: auto;
-  height: auto;
-}
-
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: white;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-}
+<style scoped lang="scss">
+@import "./Dashstyle.css";
 </style>

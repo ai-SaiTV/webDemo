@@ -8,7 +8,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 </script>
-<style scoped>
+<style scoped lang="scss">
 .plan-header {
       background: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%);
       color: white;

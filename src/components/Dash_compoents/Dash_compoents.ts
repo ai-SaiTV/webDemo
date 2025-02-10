@@ -14,7 +14,7 @@ export const Mindimgsrc = ref(
 
 export const translateY = ref(0);
 export const progress = ref(0);
-export const waitingTime = ref(5000);//请在这里修改按下‘下一步’按钮后的等待时间
+export const waitingTime = ref(1000);//请在这里修改按下‘下一步’按钮后的等待时间
 
 // export const gradientColor = ref(`rgb(24, 144, 255)`)
 export const gradientColor = computed(() => {
@@ -166,23 +166,10 @@ export const previewMindMap = () => {
     }
 };
 
-export const toggleImageSize = () => {
-    isZoomed.value = !isZoomed.value;
-    translateY.value = 0;
-};
 
-export const onWheel = (event: WheelEvent) => {
-    if (event.deltaY > 0) {
-        translateY.value = Math.min(translateY.value - 40, 0);
-    } else {
-        translateY.value = Math.max(translateY.value + 40, -500);
-    }
-};
 
-export const zoomedImageStyle = computed(() => ({
-    transform: `translateY(${translateY.value}px)`,
-    transition: 'transform 0.3s ease-in-out',
-}));
+
+
 
 export const imageStyle = computed(() => ({
     width: '100%',
@@ -193,3 +180,7 @@ export const imageStyle = computed(() => ({
 export const form1 = ref({
     requirements: `《算法与数据结构：二叉树》教学大纲...`
 });
+
+export const updateShowResult = (newValue:boolean) => {
+    showResult.value = newValue;
+  };

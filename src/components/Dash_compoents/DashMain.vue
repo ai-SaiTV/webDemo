@@ -19,71 +19,15 @@
 
 
   <div class="step-content">
-    <!-- 步骤1：大纲生成 -->
-    <div v-if="activeStep === 0" class="step-form">
-      <el-form :model="form" label-position="top">
-        <el-row :gutter="20" justify="center">
-          <el-col :span="20">
-            <el-form-item label="输入课程名称">
-              <span>&nbsp;</span>
-              <el-input v-model="form.unit" placeholder="如：算法与数据结构的二叉树课">
-                <template #prepend>我想生成一节</template>
-                <template #append>的教案</template>
-              </el-input>
-            </el-form-item>
-          </el-col>
-
-              
-        </el-row>
-      </el-form>
-    </div>
-    <!-- 步骤2：大纲修改 -->
-    <div v-if="activeStep === 1" class="step-form">
-      <el-form :model="form" label-position="top">
-        <el-row :gutter="24" justify="center">
-          <el-form-item label="大纲内容">
-            <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
-              class="custom-textarea"></textarea>
-          </el-form-item>
-        </el-row>
-      </el-form>
-    </div>
-    <!-- 步骤3：教学要求 -->
-    <div v-if="activeStep === 2" class="step-form">
-      <el-form :model="form1" label-position="top">
-        <el-row :gutter="24" justify="center">
-          <el-col :span="12">
-            <el-form-item label="大纲内容">
-              <textarea v-model="form1.requirements" rows="35" placeholder="请输入具体的教学要求和注意事项..."
-                class="custom-textarea"></textarea>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="思维导图（单击放大）">
-              <img :src="Mindimgsrc" alt="思维导图" :style="imageStyle" @click="toggleImageSize"
-                @mouseenter="isHovering = true" @mouseleave="isHovering = false" />
-            </el-form-item>
-          </el-col>
-          <!-- 放大的图片和背景遮罩 -->
-          <div v-if="isZoomed" class="overlay" @click="toggleImageSize">
-            <div class="zoomed-image-container" @click.stop @wheel="onWheel">
-              <img :src="Mindimgsrc" alt="放大的思维导图" class="zoomed-image" :style="zoomedImageStyle" />
-              <button class="close-btn" @click="toggleImageSize">X</button>
-            </div>
-          </div>
-        </el-row>
-      </el-form>
-    </div>
-    <!-- 步骤4：生成结果 -->
-    <div v-if="activeStep === 3" class="generation-step">
-      <el-result icon="success" title="准备就绪" sub-title="已收集所有必要信息，点击下方按钮开始生成教案">
-        <template #extra>
-          <el-button type="primary" size="large" :loading="isGenerating" @click="generatePlan">
-            {{ isGenerating ? '正在生成...' : '开始生成' }}
-          </el-button>
-        </template>
-      </el-result>
-    </div>
+    <StepForm 
+      :activeStep="activeStep" 
+      :form="form" 
+      :form1="form1" 
+      :Mindimgsrc="Mindimgsrc" 
+      :isZoomed="isZoomed" 
+      :imageStyle="imageStyle"
+      :waitingTime="waitingTime"
+      @update:showResult="updateShowResult"  />
   </div>
 
   <div class="step-actions">
@@ -210,20 +154,16 @@
 
   import PlanHeader from './PlanHeader.vue';
   import StepProgress from './StepProgress.vue';
-  // import StepForm from './StepForm.vue';
+  import StepForm from './StepForm.vue';
   // import ResultHeader from './ResultHeader.vue';
   // import ResultCard from './ResultCard.vue';
   // import ExerciseCard from './ExerciseCard.vue';
   import {
   activeStep, nextStep, prevStep,
-  generatePlan, previewMindMap, showResult, steps,
-  form, form1, Mindimgsrc, progressStatus, imageStyle, toggleImageSize,
-  isHovering, isProcessing, isZoomed,
-  onWheel, zoomedImageStyle, progress,
-  isGenerating, generatedContent, gradientColor,
-
-
-
+  previewMindMap, showResult, updateShowResult,steps,
+  form, form1, Mindimgsrc, progressStatus, imageStyle, 
+  isProcessing, isZoomed,progress,
+  generatedContent, gradientColor,waitingTime
 } from './Dash_compoents';
   
 </script>
