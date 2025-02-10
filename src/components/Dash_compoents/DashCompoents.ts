@@ -16,14 +16,12 @@ export const translateY = ref(0);
 export const progress = ref(0);
 export const waitingTime = ref(1000);//请在这里修改按下‘下一步’按钮后的等待时间
 
-// export const gradientColor = ref(`rgb(24, 144, 255)`)
 export const gradientColor = computed(() => {
     const percentage = progress.value;
 
     const startColor = { r: 24, g: 144, b: 255 }; // 蓝色 rgb(24, 144, 255)
     const endColor = { r: 54, g: 207, b: 201 }; // 青色 rgb(54, 207, 201)
 
-    //线性插值公式
     const r = Math.round(startColor.r + (endColor.r - startColor.r) * (percentage / 100));
     const g = Math.round(startColor.g + (endColor.g - startColor.g) * (percentage / 100));
     const b = Math.round(startColor.b + (endColor.b - startColor.b) * (percentage / 100));
@@ -182,18 +180,13 @@ export const form1 = ref({
 });
 
 export const updateShowResult = (newValue:boolean) => {
-    console.log('showResult updated:', newValue); 
     showResult.value = newValue;
   };
 
-
-
-// 更新 isZoomed
 export const updateIsZoomed = (newZoomedStatus:boolean) => {
   isZoomed.value = newZoomedStatus;
 };
 
-// 更新 translateY
 export const updateTranslateY = (newTranslateY:number) => {
   translateY.value = newTranslateY;
 };  

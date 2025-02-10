@@ -2,9 +2,6 @@ import { ref } from 'vue';
 
 export const showResult = ref(false);
 
-
-
-
 //------------------api Test------------------//    
 import { useChat } from '@/composables/useChat';
 import { useChatPolling } from '@/composables/useChatPolling';

@@ -1,5 +1,6 @@
 <template>
   <div>
+  <!-- 步骤1：大纲生成 -->
   <div v-if="activeStep === 0" class="step-form">
     <el-form :model="form" label-position="top">
       <el-row :gutter="20" justify="center">
@@ -128,7 +129,6 @@ const imageStyle = computed(() => ({
 
 const generatePlan = async () => {
   isGenerating.value = true;
-  console.log('showResult updated:', showResult.value);
   setTimeout(() => {
       isProcessing.value = false;
       showResult.value = true;

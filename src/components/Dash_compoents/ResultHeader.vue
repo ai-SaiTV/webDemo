@@ -1,16 +1,28 @@
 <template>
   <div class="result-header">
     <h2>{{ generatedContent.lessonPlan.title }} - 教案生成结果</h2>
-    <el-button @click="showResult = false">返回编辑</el-button>
+    <el-button @click="handleBackToEdit">返回编辑</el-button>
   </div>
 </template>
+
 <script setup>
+import { defineProps } from 'vue';
+
+const emit = defineEmits([
+  'update:showResult',
+]);
+
 const props = defineProps({
-  isProcessing: Boolean,
-  progress: Number,
-  progressStatus: String,
-  gradientColor: String, // 接收动态渐变颜色
+  generatedContent: {
+    type: Object,
+    required: true,
+  },
 });
+
+
+const handleBackToEdit = () => {
+  emit('update:showResult', false);
+};
 </script>
 
 <style scoped lang="scss">
