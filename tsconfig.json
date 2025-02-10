@@ -5,6 +5,13 @@
       { "path": "./tsconfig.node.json" }
     ],
     "compilerOptions": {
+      "moduleResolution": "node",
+    "allowJs": true,
+    "strict": true,
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
       "baseUrl": ".",
       "paths": {
         "@/*": [
@@ -12,5 +19,6 @@
         ]
       }
   }
+  
 }
   
