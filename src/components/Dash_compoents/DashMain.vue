@@ -2,10 +2,7 @@
 
 <template v-if="!showResult">
             
-  <div class="plan-header">
-    <h2>教案生成</h2>
-    <p class="subtitle">智能分析教学需求，快速生成专业教案</p>
-  </div>
+  <PlanHeader />
   
   <el-progress v-if="isProcessing" :percentage="progress" :stroke-width="8" :color="gradientColor"
     :status="progressStatus" />
@@ -207,7 +204,7 @@
   
 <script setup lang="ts">
 
-  // import PlanHeader from './PlanHeader.vue';
+  import PlanHeader from './PlanHeader.vue';
   // import StepProgress from './StepProgress.vue';
   // import StepForm from './StepForm.vue';
   // import ResultHeader from './ResultHeader.vue';

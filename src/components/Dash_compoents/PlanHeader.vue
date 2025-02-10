@@ -4,6 +4,7 @@
     <p class="subtitle">智能分析教学需求，快速生成专业教案</p>
   </div>
 </template>
+
 <script setup>
 import { ref, computed } from 'vue';
 </script>
