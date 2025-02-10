@@ -1,10 +1,10 @@
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 // ------------------------------------------------------------>> api
 import {
     response, chatMessages,handleSubmit, isPolling, chatConfig
   } from '@/components/api_compoents/api_handler';
-  import ResponseDisplay from '@/components/api_compoents/ResponseDisplay.vue';
+  //import ResponseDisplay from '@/components/api_compoents/ResponseDisplay.vue';
 //<<------------------------------------------------------------
 
 
@@ -108,40 +108,58 @@ export const generatedContent = ref({
     }
 });
 
-export const nextStep = () => {
+export const nextStep = async() => {
     if (activeStep.value < steps.length - 1) {
         isProcessing.value = true;    //note: 输入框为空也可以progcess bug，应该加入 || 判断
         progress.value = 0;          
         progressStatus.value = "active";
 
-        const interval = 50;
-        const stepsCount = waitingTime.value / interval;
-        let currentStep = 0;
+        // const interval = 50;
+        // const stepsCount = waitingTime.value / interval;
+        // let currentStep = 0;
 
 
-        handleSubmit(); // 按钮槽函数
+        await handleSubmit(); // api调用服务函数
+
+        watch(() => isPolling.value, async (newPolling) => {
+            if (newPolling) {
+                // 开始轮询时，更新进度
+                progress.value = 30; // 初始进度
+                progressStatus.value = "active";
+            } else {
+                // 轮询结束时
+                progress.value = 100;
+                progressStatus.value = "success";
+                
+                // 延迟重置状态
+                setTimeout(() => {
+                    isProcessing.value = false;
+                    progress.value = 0;
+                    progressStatus.value = "active";
+                    activeStep.value++;
+                }, 500);
+            }
+        }, { immediate: true });
         
 
-        if (!isPolling.value) {
-            const timer = setInterval(() => {
-                currentStep++;
-                progress.value = Math.min((currentStep / stepsCount) * 100, 100);
-    
-                if (progress.value >= 100) {
-                    clearInterval(timer);
-                    progressStatus.value = "success";
-    
-                    setTimeout(() => {
-                        isProcessing.value = false;
-                        progress.value = 0;
-                        progressStatus.value = "active";
-                        activeStep.value++;
-                    }, 500);
-                }
-            }, interval);
-        }
-    }
+        // const timer = setInterval(() => {
+        //     currentStep++;
+        //     progress.value = Math.min((currentStep / stepsCount) * 100, 100);
 
+        //     if (progress.value >= 100) {
+        //         clearInterval(timer);
+        //         progressStatus.value = "success";
+
+        //         setTimeout(() => {
+        //             isProcessing.value = false;
+        //             progress.value = 0;
+        //             progressStatus.value = "active";
+        //             activeStep.value++;
+        //         }, 500);
+        //     }
+        // }, interval);
+     
+    }
 
 };
 
@@ -204,4 +222,4 @@ export const updateIsZoomed = (newZoomedStatus:boolean) => {
 
 export const updateTranslateY = (newTranslateY:number) => {
   translateY.value = newTranslateY;
-};  
+}; 
