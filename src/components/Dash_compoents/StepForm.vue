@@ -1,5 +1,6 @@
 <template>
   <div>
+  <!-- 步骤1：大纲生成 -->
   <div v-if="activeStep === 0" class="step-form">
     <el-form :model="form" label-position="top">
       <el-row :gutter="20" justify="center">
@@ -39,7 +40,7 @@
         <el-col :span="12">
           <el-form-item label="思维导图（单击放大）">
             <img :src="Mindimgsrc" alt="思维导图" :style="imageStyle" @click="toggleImageSize"
-              @mouseenter="isHovering = true" @mouseleave="isHovering = false" />
+              @mouseenter="isHovering = true" @mouseleave="isHovering = false" @wheel = "onWheel"/>
           </el-form-item>
         </el-col>
         <!-- 放大的图片和背景遮罩 -->
@@ -65,7 +66,7 @@
 </div>
 </template>
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed,onMounted, onBeforeUnmount } from 'vue';
 
 const props = defineProps({
   activeStep: Number,
@@ -84,10 +85,14 @@ const showResult = ref(false);
 const isHovering = ref(false);
 const isGenerating = ref(false);
 const isProcessing = ref(false);
-const emit = defineEmits(['update:showResult','update:isZoomed', 'update:translateY']);
+const emit = defineEmits([
+  'update:showResult',
+  'update:isZoomed', 
+  'update:translateY']);
 
 const toggleImageSize = () => {
   emit('update:isZoomed', !props.isZoomed);
+  emit('update:translateY', 0); 
 };
 
 
@@ -99,15 +104,31 @@ const onWheel = (event) => {
   emit('update:translateY', newTranslateY);  
 };
 
+const wheelOptions = { passive: true };
+
+onMounted(() => {
+  const zoomedImageContainer = document.querySelector('.zoomed-image');
+  zoomedImageContainer && zoomedImageContainer.addEventListener('wheel', onWheel, wheelOptions);
+});
+
+onBeforeUnmount(() => {
+  const zoomedImageContainer = document.querySelector('.zoomed-image');
+  zoomedImageContainer && zoomedImageContainer.removeEventListener('wheel', onWheel, wheelOptions);
+});
+
 const zoomedImageStyle = computed(() => ({
     transform: `translateY(${props.translateY}px)`,
     transition: 'transform 0.3s ease-in-out',
 }));
 
+const imageStyle = computed(() => ({
+    width: '100%',
+    height: 'auto',
+    cursor: isHovering.value ? 'zoom-in' : 'default',
+}));
 
 const generatePlan = async () => {
   isGenerating.value = true;
-  console.log('showResult updated:', showResult.value);
   setTimeout(() => {
       isProcessing.value = false;
       showResult.value = true;

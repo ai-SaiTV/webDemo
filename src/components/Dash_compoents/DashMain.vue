@@ -27,6 +27,7 @@
       :isZoomed="isZoomed" 
       :imageStyle="imageStyle"
       :endWaitingTime="waitingTime"
+      :translateY="translateY"
       @update:showResult="updateShowResult"
       @update:isZoomed="updateIsZoomed"
       @update:translateY="updateTranslateY"  />
@@ -44,10 +45,7 @@
 
 <!-- 生成结果展示 -->
 <template v-else>
-  <div class="result-header">
-    <h2>{{ generatedContent.lessonPlan.title }} - 教案生成结果</h2>
-    <el-button @click="showResult = false">返回编辑</el-button>
-  </div>
+  <ResultHeader :generatedContent="generatedContent" @update:showResult="updateShowResult" />
 
   <div class="result-content">
     <!-- 教案内容卡片 -->
@@ -157,14 +155,17 @@
   import PlanHeader from './PlanHeader.vue';
   import StepProgress from './StepProgress.vue';
   import StepForm from './StepForm.vue';
-  // import ResultHeader from './ResultHeader.vue';
+  import ResultHeader from './ResultHeader.vue';
   // import ResultCard from './ResultCard.vue';
   // import ExerciseCard from './ExerciseCard.vue';
   import {
-  activeStep, nextStep, prevStep,updateIsZoomed,updateTranslateY,
-  previewMindMap, showResult, updateShowResult,steps,
-  form, form1, Mindimgsrc, progressStatus, imageStyle, 
-  isProcessing, isZoomed,progress,
+  activeStep, nextStep, prevStep,steps,
+  updateIsZoomed,isZoomed,
+  updateTranslateY,translateY,
+  previewMindMap, Mindimgsrc,imageStyle, 
+  showResult, updateShowResult,
+  form, form1,  progressStatus, 
+  isProcessing, progress,
   generatedContent, gradientColor,waitingTime
 } from './DashCompoents';
   
