@@ -4,8 +4,12 @@
             
   <PlanHeader />
   
-  <el-progress v-if="isProcessing" :percentage="progress" :stroke-width="8" :color="gradientColor"
-    :status="progressStatus" />
+  <StepProgress 
+      :isProcessing="isProcessing"
+      :progress="progress"
+      :gradientColor="gradientColor"
+      :progressStatus="progressStatus"
+    />
 
   <el-steps :active="activeStep" finish-status="success" process-status="process" class="custom-steps">
     <el-step v-for="(step, index) in steps" :key="index" :title="step.title"
@@ -205,7 +209,7 @@
 <script setup lang="ts">
 
   import PlanHeader from './PlanHeader.vue';
-  // import StepProgress from './StepProgress.vue';
+  import StepProgress from './StepProgress.vue';
   // import StepForm from './StepForm.vue';
   // import ResultHeader from './ResultHeader.vue';
   // import ResultCard from './ResultCard.vue';
