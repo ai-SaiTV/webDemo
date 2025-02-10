@@ -1,5 +1,6 @@
-import { ref } from 'vue';
-
+import { ref,watch } from 'vue';
+import { storageService } from '@/services/storage/storageService';
+import type {  ChatMessagesResponse } from '@/types/api';
 export const showResult = ref(false);
 
 //------------------api Test------------------//    
@@ -28,18 +29,66 @@ export const {                                               // 从 useChatPolli
   startPolling
 } = useChatPolling();
 
- export const handleSubmit = async () => {    // 按钮槽函数
-  if (!chatConfig.value.apiKey || !chatConfig.value.apiKey || !chatConfig.value.message) {
-    console.log('Please fill in all fields');
-    return;
-  }
 
-  try {
-    const initialResponse = await sendMessage(chatConfig.value.apiKey, chatConfig.value.botId, chatConfig.value.message);   //对api发送请求
-    await startPolling(chatConfig.value.apiKey, initialResponse);    //开始异步轮询
-  } catch (err) {
-    // Error handling is already done in useChat composable
-    console.error(err);
-  }
+
+
+ export const handleSubmit = async () => {    // 按钮槽函数
+
+
+    // ----------------------------------------->>
+
+    // 创建新会话
+    const sessionId = await storageService.createSession();
+
+    // 保存用户消息
+    await storageService.updateMessages(sessionId, {
+        role: 'user',
+        content: chatConfig.value.message
+      });
+
+    //<<-----------------------------------------
+
+
+
+    if (!chatConfig.value.apiKey || !chatConfig.value.apiKey || !chatConfig.value.message) {
+        console.log('Please fill in all fields');
+        return;
+    }
+
+    try {
+        const initialResponse = await sendMessage(
+            chatConfig.value.apiKey, 
+            chatConfig.value.botId, 
+            chatConfig.value.message);   //对api发送请求
+        await startPolling(chatConfig.value.apiKey, initialResponse);    //开始异步轮询
+
+
+        // ----------------------------------------->>
+        // 监听消息变化
+        //watch(
+        //    source,      // 监听源
+        //    callback,    // 回调函数
+        //    options      // 配置选项
+        //)
+        watch(() => chatMessages.value, async (newMessages: ChatMessagesResponse | null) => {
+            if (newMessages?.data) {
+            const lastMessage = newMessages.data[0];
+            if (lastMessage.role === 'assistant') {
+                await storageService.updateMessages(sessionId, {
+                role: 'assistant',
+                content: lastMessage.content
+                });
+            }
+            }
+        }, { deep: true });
+
+        // <<-----------------------------------------
+
+
+
+    } catch (err) {
+        // Error handling is already done in useChat composable
+        console.error(err);
+    }
 };
 

@@ -43,6 +43,42 @@ export class StorageService {
     }
   }
 
+   // 更新教案资源
+   async updateTeachingPlan(sessionId: string, data: { text: string, downLoad_url: string }) {
+    const session = this.data.value.find(s => s.id === sessionId)
+    if (session) {
+      session.resources.tesching_plan = {
+        text: data.text,
+        downLoad_url: data.downLoad_url
+      }
+      session.metadata.lastUpdate = Date.now()
+      await this.saveToFile()
+    }
+  }
+
+  // 更新课件资源
+  async updateCourseware(sessionId: string, data: {
+    videos?: { name: string, url: string }[],
+    images?: { name: string, url: string }[],
+    exercises?: { name: string, url: string }[]
+  }) {
+    const session = this.data.value.find(s => s.id === sessionId)
+    if (session) {
+      if (data.videos) {
+        session.resources.courseware.videos = data.videos
+      }
+      if (data.images) {
+        session.resources.courseware.images = data.images
+      }
+      if (data.exercises) {
+        session.resources.courseware.exercises = data.exercises
+      }
+      session.metadata.lastUpdate = Date.now()
+      await this.saveToFile()
+    }
+  }
+
+
   // 保存到文件
   private async saveToFile() {
     try {
