@@ -27,6 +27,7 @@
       :isZoomed="isZoomed" 
       :imageStyle="imageStyle"
       :endWaitingTime="waitingTime"
+      :translateY="translateY"
       @update:showResult="updateShowResult"
       @update:isZoomed="updateIsZoomed"
       @update:translateY="updateTranslateY"  />
@@ -161,7 +162,7 @@
   // import ResultCard from './ResultCard.vue';
   // import ExerciseCard from './ExerciseCard.vue';
   import {
-  activeStep, nextStep, prevStep,updateIsZoomed,updateTranslateY,
+  activeStep, nextStep, prevStep,updateIsZoomed,updateTranslateY,translateY,
   previewMindMap, showResult, updateShowResult,steps,
   form, form1, Mindimgsrc, progressStatus, imageStyle, 
   isProcessing, isZoomed,progress,
