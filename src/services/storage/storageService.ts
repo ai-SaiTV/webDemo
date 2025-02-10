@@ -13,7 +13,7 @@ export class StorageService {
       timestamp: Date.now(),      
       conversation: { messages: [] },
       resources: { 
-        tesching_plan: { text: '', downLoad_url: '' },
+        teaching_plan: { text: '', downLoad_url: '' },
         tp_MindMap: { url: '' },
         courseware: { videos: [], images: [], exercises: [] }
       },
@@ -47,7 +47,7 @@ export class StorageService {
    async updateTeachingPlan(sessionId: string, data: { text: string, downLoad_url: string }) {
     const session = this.data.value.find(s => s.id === sessionId)
     if (session) {
-      session.resources.tesching_plan = {
+      session.resources.teaching_plan = {
         text: data.text,
         downLoad_url: data.downLoad_url
       }
@@ -77,6 +77,22 @@ export class StorageService {
       await this.saveToFile()
     }
   }
+
+   // 获取指定会话数据
+   async getSessionData(sessionId: string): Promise<StorageData | null> {
+    try {
+        // 从本地存储获取数据
+        const session = this.data.value.find(s => s.id === sessionId);
+        
+        // 打印调试信息
+        console.log('获取会话数据:', sessionId, session);
+        
+        return session || null;
+    } catch (error) {
+        console.error('获取会话数据失败:', error);
+        return null;
+    }
+}
 
 
   // 保存到文件

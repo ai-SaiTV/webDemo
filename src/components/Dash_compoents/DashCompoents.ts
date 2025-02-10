@@ -1,12 +1,17 @@
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch,toRaw, nextTick } from 'vue';
 
 // ------------------------------------------------------------>> api
 import {
     response, chatMessages,handleSubmit, isPolling, chatConfig
   } from '@/components/api_compoents/api_handler';
-  //import ResponseDisplay from '@/components/api_compoents/ResponseDisplay.vue';
-//<<------------------------------------------------------------
 
+import { storageService } from '@/services/storage/storageService';
+import type { StorageData } from '@/types/storageData'
+
+  
+//<<------------------------------------------------------------
+const sessionId = ref<string>("-1");  // 会话ID
+const DataThisSession = ref< StorageData | null> (null);  // 会话数据
 
 
 export const activeStep = ref(0);
@@ -108,9 +113,15 @@ export const generatedContent = ref({
     }
 });
 
+
+//note : 按钮槽函数，但chatConfig不同，需要根据情况修改
 export const nextStep = async() => {
     if (activeStep.value < steps.length - 1) {
-        isProcessing.value = true;    //note: 输入框为空也可以progcess bug，应该加入 || 判断
+        if(activeStep.value === 0){
+            // 创建新会话
+            sessionId.value = await storageService.createSession();
+        }
+        isProcessing.value = true;   
         progress.value = 0;          
         progressStatus.value = "active";
 
@@ -119,7 +130,8 @@ export const nextStep = async() => {
         // let currentStep = 0;
 
 
-        await handleSubmit(); // api调用服务函数
+        const result = await handleSubmit(sessionId.value,activeStep.value); // api调用服务函数
+        DataThisSession.value = result || null;
 
         watch(() => isPolling.value, async (newPolling) => {
             if (newPolling) {
@@ -130,6 +142,8 @@ export const nextStep = async() => {
                 // 轮询结束时
                 progress.value = 100;
                 progressStatus.value = "success";
+
+                await turnStep(activeStep.value);  // 更新步骤之前做的数据准备
                 
                 // 延迟重置状态
                 setTimeout(() => {
@@ -161,6 +175,22 @@ export const nextStep = async() => {
      
     }
 
+};
+const turnStep = async (step: number) => {
+    if (step === 0) {
+        
+        await nextTick()  
+        
+        if (DataThisSession.value?.resources?.teaching_plan?.text) {
+            form1.value.requirements = DataThisSession.value.resources.teaching_plan.text
+        }
+        
+        return 'first'
+    } else if (step === steps.length - 1) {
+        return 'last';
+    } else {
+        return '';
+    }
 };
 
 export const prevStep = () => {
@@ -198,10 +228,6 @@ export const previewMindMap = () => {
 };
 
 
-
-
-
-
 export const imageStyle = computed(() => ({
     width: '100%',
     height: 'auto',
@@ -209,7 +235,7 @@ export const imageStyle = computed(() => ({
 }));
 
 export const form1 = ref({
-    requirements: `《算法与数据结构：二叉树》教学大纲...`
+    requirements: `😿`
 });
 
 export const updateShowResult = (newValue:boolean) => {

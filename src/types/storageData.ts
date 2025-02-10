@@ -10,7 +10,7 @@ export interface StorageData {
     }
     resources: {
         // 1. 教案纯文本
-        tesching_plan: {
+        teaching_plan: {
             text: string,
             downLoad_url: string
         },

@@ -4,7 +4,7 @@
   <div v-if="activeStep === 0" class="step-form">
 
 
-    
+
      <!-- 测试接口 -->
         <!-- Chat  -->
         <!-- <div class="w-full">
@@ -48,6 +48,12 @@
           <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
             class="custom-textarea"></textarea>
         </el-form-item>
+        
+        <ResponseDisplay 
+          :response="response"
+          :messages="chatMessages"
+        />
+
       </el-row>
     </el-form>
   </div>
@@ -94,6 +100,12 @@
 
 
 import { ref, computed,onMounted, onBeforeUnmount } from 'vue';
+import ResponseDisplay from '@/components/api_compoents/ResponseDisplay.vue';
+import {
+    response, chatMessages,handleSubmit, isPolling, chatConfig
+  } from '@/components/api_compoents/api_handler';
+
+
 
 const props = defineProps({
   activeStep: Number,
