@@ -26,8 +26,10 @@
       :Mindimgsrc="Mindimgsrc" 
       :isZoomed="isZoomed" 
       :imageStyle="imageStyle"
-      :waitingTime="waitingTime"
-      @update:showResult="updateShowResult"  />
+      :endWaitingTime="waitingTime"
+      @update:showResult="updateShowResult"
+      @update:isZoomed="updateIsZoomed"
+      @update:translateY="updateTranslateY"  />
   </div>
 
   <div class="step-actions">
@@ -159,12 +161,12 @@
   // import ResultCard from './ResultCard.vue';
   // import ExerciseCard from './ExerciseCard.vue';
   import {
-  activeStep, nextStep, prevStep,
+  activeStep, nextStep, prevStep,updateIsZoomed,updateTranslateY,
   previewMindMap, showResult, updateShowResult,steps,
   form, form1, Mindimgsrc, progressStatus, imageStyle, 
   isProcessing, isZoomed,progress,
   generatedContent, gradientColor,waitingTime
-} from './Dash_compoents';
+} from './DashCompoents';
   
 </script>
   

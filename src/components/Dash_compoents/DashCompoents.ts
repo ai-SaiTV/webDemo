@@ -182,5 +182,18 @@ export const form1 = ref({
 });
 
 export const updateShowResult = (newValue:boolean) => {
+    console.log('showResult updated:', newValue); 
     showResult.value = newValue;
   };
+
+
+
+// 更新 isZoomed
+export const updateIsZoomed = (newZoomedStatus:boolean) => {
+  isZoomed.value = newZoomedStatus;
+};
+
+// 更新 translateY
+export const updateTranslateY = (newTranslateY:number) => {
+  translateY.value = newTranslateY;
+};  

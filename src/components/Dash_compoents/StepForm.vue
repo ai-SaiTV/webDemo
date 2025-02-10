@@ -75,7 +75,7 @@ const props = defineProps({
   Mindimgsrc: String,
   isZoomed: Boolean,
   imageStyle: Object,
-  waitingTime: Number,
+  endWaitingTime: Number,
   showResult: Boolean,
   
 });
@@ -83,34 +83,37 @@ const props = defineProps({
 const showResult = ref(false);
 const isHovering = ref(false);
 const isGenerating = ref(false);
-
+const isProcessing = ref(false);
+const emit = defineEmits(['update:showResult','update:isZoomed', 'update:translateY']);
 
 const toggleImageSize = () => {
-  isZoomed.value = !isZoomed.value;
+  emit('update:isZoomed', !props.isZoomed);
 };
 
 
 const onWheel = (event) => {
-    if (event.deltaY > 0) {
-        translateY.value = Math.min(translateY.value - 40, 0);
-    } else {
-        translateY.value = Math.max(translateY.value + 40, -500);
-    }
+  const newTranslateY = event.deltaY > 0
+    ? Math.min(props.translateY - 40, 0)
+    : Math.max(props.translateY + 40, -500);
+  
+  emit('update:translateY', newTranslateY);  
 };
 
 const zoomedImageStyle = computed(() => ({
-    transform: `translateY(${translateY.value}px)`,
+    transform: `translateY(${props.translateY}px)`,
     transition: 'transform 0.3s ease-in-out',
 }));
 
 
 const generatePlan = async () => {
   isGenerating.value = true;
+  console.log('showResult updated:', showResult.value);
   setTimeout(() => {
       isProcessing.value = false;
       showResult.value = true;
+      
       emit('update:showResult', showResult.value);
-    }, waitingTime.value);
+    }, props.endWaitingTime);
 };
 
 </script>
