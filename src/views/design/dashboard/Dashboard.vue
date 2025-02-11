@@ -14,9 +14,7 @@ import { showResult } from './Dashboard';
     <el-row :gutter="24">
       <el-col :span="showResult ? 24 : 16">
         <el-card class="main-card" :body-style="{ padding: '0' }">
-
           <DashMain/>
-
         </el-card>
       </el-col>
 

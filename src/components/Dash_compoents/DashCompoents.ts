@@ -199,33 +199,13 @@ export const prevStep = () => {
     }
 };
 
-export const generatePlan = async () => {
-    isGenerating.value = true;
-    setTimeout(() => {
-        isProcessing.value = false;
-        showResult.value = true;
-      }, waitingTime.value); // 模拟生成过程
-};
-
-export const previewMindMap = () => {
-    const mindMapWindow = window.open('', '_blank');
-    if (mindMapWindow) {
-        mindMapWindow.document.write(`
-      <html>
-        <head>
-          <title>思维导图预览</title>
-          <style>
-            body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f0f2f5; }
-            img { max-width: 90%; max-height: 90vh; object-fit: contain; }
-          </style>
-        </head>
-        <body>
-          <img src="${generatedContent.value.mindMap.preview}" alt="思维导图">
-        </body>
-      </html>
-    `);
-    }
-};
+// export const generatePlan = async () => {
+//     isGenerating.value = true;
+//     setTimeout(() => {
+//         isProcessing.value = false;
+//         showResult.value = true;
+//       }, waitingTime.value); // 模拟生成过程
+// };
 
 
 export const imageStyle = computed(() => ({

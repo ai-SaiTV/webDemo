@@ -13,6 +13,6 @@
     isProcessing: Boolean,
     progress: Number,
     progressStatus: String,
-    gradientColor: String, // 接收动态渐变颜色
+    gradientColor: String,
   });
   </script>
