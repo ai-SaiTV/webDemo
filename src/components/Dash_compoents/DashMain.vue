@@ -34,7 +34,6 @@
   <!-- 生成结果展示 -->
   <template v-else>
     <ResultHeader :generatedContent="generatedContent" @update:showResult="updateShowResult" />
-
     <ResultCard :generatedContent="generatedContent"/>
   </template>
 

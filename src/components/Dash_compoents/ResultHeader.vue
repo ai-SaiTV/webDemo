@@ -26,5 +26,17 @@ const handleBackToEdit = () => {
 </script>
 
 <style scoped lang="scss">
-@import "./Dashstyle.css";
+.result-header {
+      background: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      h2 {
+        margin: 0;
+        font-size: 1.75rem;
+      }
+    }
 </style>
