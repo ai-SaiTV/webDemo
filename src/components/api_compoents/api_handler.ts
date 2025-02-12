@@ -12,13 +12,13 @@ interface ChatConfig {
     apiKey: string
     botId: string[]
     message: string
-  }
+}
   
-  export const chatConfig = ref<ChatConfig>({
-    apiKey: 'pat_DdQD93S1Vy2WBf0KZdOJ1ob5U9GzeR2Yjmkzaj5xVBq7EAAwd6OmSLKRmMnI4WYw',
-    botId: ['7449786123129847845'],
-    message: '我想上一节小学五年级《杨氏之子》'
-  })
+export const chatConfig = ref<ChatConfig>({
+apiKey: 'pat_DdQD93S1Vy2WBf0KZdOJ1ob5U9GzeR2Yjmkzaj5xVBq7EAAwd6OmSLKRmMnI4WYw',
+botId: ['7449786123129847845'],
+message: ''
+})
 
 const { error: chatError, sendMessage } = useChat();  // 从 useChat composable 中导入 error 和 sendMessage方法
 export const {                                               // 从 useChatPolling composable 中导入以下属性和方法
