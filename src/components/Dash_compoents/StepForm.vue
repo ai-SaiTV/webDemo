@@ -78,7 +78,7 @@
           </el-form-item>
 
           <ResponseDisplay :response="response" :messages="chatMessages" />
-
+        </el-col>
         </el-row>
       </el-form>
     </div>
