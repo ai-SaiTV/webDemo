@@ -2,7 +2,7 @@ import { ref, computed, watch,toRaw, nextTick } from 'vue';
 
 // ------------------------------------------------------------>> api
 import {
-    response, chatMessages,handleSubmit, isPolling, chatConfig
+    handleSubmit, isPolling, chatConfig
   } from '@/components/api_compoents/api_handler';
 
 import { storageService } from '@/services/storage/storageService';

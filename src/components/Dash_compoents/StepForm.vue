@@ -49,10 +49,10 @@
             class="custom-textarea"></textarea>
         </el-form-item>
         
-        <ResponseDisplay 
+        <!-- <ResponseDisplay 
           :response="response"
           :messages="chatMessages"
-        />
+        /> -->
 
       </el-row>
     </el-form>
