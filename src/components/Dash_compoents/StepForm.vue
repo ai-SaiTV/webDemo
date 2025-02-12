@@ -48,22 +48,6 @@
           <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
             class="custom-textarea"></textarea>
         </el-form-item>
-        
-        <!-- <ResponseDisplay 
-          :response="response"
-          :messages="chatMessages"
-        /> -->
-    <!-- 步骤2：大纲修改 -->
-    <div v-if="activeStep === 1" class="step-form">
-      <el-form :model="form" label-position="top">
-        <el-row :gutter="24" justify="center">
-          <el-form-item label="大纲内容">
-            <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
-              class="custom-textarea"></textarea>
-          </el-form-item>
-
-          <ResponseDisplay :response="response" :messages="chatMessages" />
-
       </el-row>
     </el-form>
   </div>
