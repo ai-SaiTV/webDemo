@@ -16,7 +16,7 @@ interface ChatConfig {
   
 export const chatConfig = ref<ChatConfig>({
 apiKey: 'pat_DdQD93S1Vy2WBf0KZdOJ1ob5U9GzeR2Yjmkzaj5xVBq7EAAwd6OmSLKRmMnI4WYw',
-botId: ['7449786123129847845','7463461062474498089'],
+botId: ['7449786123129847845','7463464443028963340'],
 message: ''
 })
 
@@ -31,23 +31,17 @@ export const {                                               // 从 useChatPolli
 
 
 
+let unwatch: (() => void) | null = null; // 模块级变量，保存停止函数
 
- export const handleSubmit = async (sessionId: string ,step: number) => {    // 按钮槽函数
-
-    if(sessionId!="-1"){
-         // ----------------------------------------->>
-
+export const handleSubmit = async (sessionId: string, step: number) => {
+    if (sessionId !== "-1") {
         // 保存用户消息
         await storageService.updateMessages(sessionId, {
             role: 'user',
             content: chatConfig.value.message
         });
 
-        //<<-----------------------------------------
-
-
-
-        if (!chatConfig.value.apiKey || !chatConfig.value.apiKey || !chatConfig.value.message) {
+        if (!chatConfig.value.apiKey || !chatConfig.value.message) {
             console.log('chatConfig not complete');
             return;
         }
@@ -56,68 +50,54 @@ export const {                                               // 从 useChatPolli
             const initialResponse = await sendMessage(
                 chatConfig.value.apiKey, 
                 chatConfig.value.botId[step], 
-                chatConfig.value.message);   //对api发送请求
-            await startPolling(chatConfig.value.apiKey, initialResponse);    //开始异步轮询
+                chatConfig.value.message
+            );
+            await startPolling(chatConfig.value.apiKey, initialResponse);
 
+            // 清理之前的 watcher
+            if (unwatch) {
+                unwatch();
+                unwatch = null;
+            }
 
-            // ----------------------------------------->>
-            // 监听消息变化
-            //watch(
-            //    source,      // 监听源
-            //    callback,    // 回调函数
-            //    options      // 配置选项
-            //)
-            watch(() => chatMessages.value, async (newMessages: ChatMessagesResponse | null) => {
+            const currentStep = step; // 通过闭包捕获当前 step
+            unwatch = watch(() => chatMessages.value, async (newMessages) => {
                 if (newMessages?.data) {
                     const lastMessage = newMessages.data.find(msg => msg.type === 'answer') || newMessages.data[0];
-
-
                     if (lastMessage.role === 'assistant') {
-
-                        // 1. 保存助手消息
                         await storageService.updateMessages(sessionId, {
-                        role: 'assistant',
-                        content: lastMessage.content
+                            role: 'assistant',
+                            content: lastMessage.content
                         });
-                        
-                        switch (step) {
+
+                        switch (currentStep) { // 使用闭包中的 currentStep
                             case 0:
-                                // 2. 保存教案
                                 await storageService.updateTeachingPlan(sessionId, {
                                     text: lastMessage.content,
                                 });
                                 break;
                             case 1:
-                                // 2. 保存导图
                                 await storageService.updateTeachingMindMap(sessionId, {
                                     url: lastMessage.content,
                                 });
-                                console.log('MindMap saved',lastMessage.content);
-                                break;
-                            case 2:
-                                showResult.value = true;
                                 break;
                             default:
                                 break;
                         }
-                    }else{
-                        console.log('No assistant message found');
+
+                        // 处理完成后，停止本次 watcher
+                        if (unwatch) {
+                            unwatch();
+                            unwatch = null;
+                        }
                     }
                 }
             }, { deep: true });
 
             return storageService.getSessionData(sessionId) || null;
-
-            // <<-----------------------------------------
-
-
-
         } catch (err) {
-            // Error handling is already done in useChat composable
             console.error(err);
             return null;
         }
-
     }
 };
-

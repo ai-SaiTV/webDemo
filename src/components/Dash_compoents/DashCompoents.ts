@@ -129,7 +129,17 @@ export const nextStep = async () => {
         // const stepsCount = waitingTime.value / interval;
         // let currentStep = 0;
 
-        chatConfig.value.message = form.value.unit; // 读取输入框的值
+        switch (activeStep.value) {
+            case 0:  //教案生成 (一句话生成大纲)
+                chatConfig.value.message = form.value.unit;
+                break;
+            case 1:  //教案修改 
+                chatConfig.value.message = form1.value.requirements;
+                break;
+        }
+
+        console.log('chatConfig', chatConfig.value);
+
         const result = await handleSubmit(sessionId.value, activeStep.value); // api调用服务函数
         DataThisSession.value = result || null;
 

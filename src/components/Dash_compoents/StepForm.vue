@@ -24,8 +24,6 @@
       
         </div> -->
       <!-- chat -->
-
-
       <el-form :model="form" label-position="top">
         <el-row :gutter="20" justify="center">
           <el-col :span="20">
@@ -51,19 +49,6 @@
       </el-row>
     </el-form>
   </div>
-  <!-- 步骤3：教学要求 -->
-  <div v-if="activeStep === 2" class="step-form">
-    <el-form :model="form1" label-position="top">
-      <el-row :gutter="24" justify="center">
-        <el-col :span="12">
-          <el-form-item label="大纲内容">
-            <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
-              class="custom-textarea"></textarea>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      </el-form>
-    </div>
     <!-- 步骤3：教学要求 -->
     <div v-if="activeStep === 2" class="step-form">
       <el-form :model="form1" label-position="top">

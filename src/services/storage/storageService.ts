@@ -45,6 +45,7 @@ export class StorageService {
 
   // 更新教案资源
   async updateTeachingPlan(sessionId: string, data: { text: string, }) {
+    console.log('更新教案资源:', sessionId, data)
     const session = this.data.value.find(s => s.id === sessionId)
     if (session) {
       session.resources.teaching_plan = {
@@ -58,6 +59,7 @@ export class StorageService {
 
   // 更新思维导图资源
   async updateTeachingMindMap(sessionId: string, data: { url: string, }) {
+    console.log('更新思维导图资源:', sessionId, data)
     const session = this.data.value.find(s => s.id === sessionId)
     if (session) {
       session.resources.tp_MindMap = {
