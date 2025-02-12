@@ -16,7 +16,7 @@ interface ChatConfig {
   
 export const chatConfig = ref<ChatConfig>({
 apiKey: 'pat_DdQD93S1Vy2WBf0KZdOJ1ob5U9GzeR2Yjmkzaj5xVBq7EAAwd6OmSLKRmMnI4WYw',
-botId: ['7449786123129847845'],
+botId: ['7449786123129847845','7463461062474498089'],
 message: ''
 })
 
@@ -48,7 +48,7 @@ export const {                                               // 从 useChatPolli
 
 
         if (!chatConfig.value.apiKey || !chatConfig.value.apiKey || !chatConfig.value.message) {
-            console.log('Please fill in all fields');
+            console.log('chatConfig not complete');
             return;
         }
 
@@ -69,7 +69,6 @@ export const {                                               // 从 useChatPolli
             //)
             watch(() => chatMessages.value, async (newMessages: ChatMessagesResponse | null) => {
                 if (newMessages?.data) {
-                    console.log('New messages:', newMessages);
                     const lastMessage = newMessages.data.find(msg => msg.type === 'answer') || newMessages.data[0];
 
 

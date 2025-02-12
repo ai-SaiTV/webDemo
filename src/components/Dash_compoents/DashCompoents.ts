@@ -1,4 +1,4 @@
-import { ref, computed, watch, toRaw, nextTick } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 
 // ------------------------------------------------------------>> api
 import {
@@ -23,7 +23,7 @@ export const isHovering = ref(false);
 
 export const progressStatus = ref("active");
 export const Mindimgsrc = ref(
-    'https://img1.baidu.com/it/u=4289792486,3256351331&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=1133'
+    'https://static.shutu.cn/shutu/jpeg/open3e/2025/02/12/8b749027703a3e2a62682ac20c04931c.jpeg'
 ); // 这里需要提供实际的图片路径
 
 export const translateY = ref(0);
