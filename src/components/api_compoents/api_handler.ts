@@ -80,13 +80,26 @@ export const {                                               // 从 useChatPolli
                         content: lastMessage.content
                         });
                         
-                        // 2. 保存教案
-                        await storageService.updateTeachingPlan(sessionId, {
-                            text: lastMessage.content,
-                            downLoad_url: lastMessage.content
-                        });
-
-
+                        switch (step) {
+                            case 0:
+                                // 2. 保存教案
+                                await storageService.updateTeachingPlan(sessionId, {
+                                    text: lastMessage.content,
+                                });
+                                break;
+                            case 1:
+                                // 2. 保存导图
+                                await storageService.updateTeachingMindMap(sessionId, {
+                                    url: lastMessage.content,
+                                });
+                                console.log('MindMap saved',lastMessage.content);
+                                break;
+                            case 2:
+                                showResult.value = true;
+                                break;
+                            default:
+                                break;
+                        }
                     }else{
                         console.log('No assistant message found');
                     }

@@ -12,7 +12,6 @@ export interface StorageData {
         // 1. 教案纯文本
         teaching_plan: {
             text: string,
-            downLoad_url: string
         },
 
         // 2. 思维导图

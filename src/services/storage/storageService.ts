@@ -13,7 +13,7 @@ export class StorageService {
       timestamp: Date.now(),      
       conversation: { messages: [] },
       resources: { 
-        teaching_plan: { text: '', downLoad_url: '' },
+        teaching_plan: { text: '' },
         tp_MindMap: { url: '' },
         courseware: { videos: [], images: [], exercises: [] }
       },
@@ -43,13 +43,25 @@ export class StorageService {
     }
   }
 
-   // 更新教案资源
-   async updateTeachingPlan(sessionId: string, data: { text: string, downLoad_url: string }) {
+  // 更新教案资源
+  async updateTeachingPlan(sessionId: string, data: { text: string, }) {
     const session = this.data.value.find(s => s.id === sessionId)
     if (session) {
       session.resources.teaching_plan = {
         text: data.text,
-        downLoad_url: data.downLoad_url
+      }
+      session.metadata.lastUpdate = Date.now()
+      await this.saveToFile()
+    }
+  }
+
+
+  // 更新思维导图资源
+  async updateTeachingMindMap(sessionId: string, data: { url: string, }) {
+    const session = this.data.value.find(s => s.id === sessionId)
+    if (session) {
+      session.resources.tp_MindMap = {
+        url: data.url,
       }
       session.metadata.lastUpdate = Date.now()
       await this.saveToFile()

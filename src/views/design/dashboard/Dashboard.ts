@@ -85,7 +85,6 @@ export const {                                               // 从 useChatPolli
                     // 2. 保存教案
                     await storageService.updateTeachingPlan(sessionId, {
                         text: lastMessage.content,
-                        downLoad_url: lastMessage.content
                     });
 
 
