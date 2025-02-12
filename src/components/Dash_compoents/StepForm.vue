@@ -76,10 +76,8 @@
             <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
               class="custom-textarea"></textarea>
           </el-form-item>
-
-          <ResponseDisplay :response="response" :messages="chatMessages" />
         </el-col>
-        </el-row>
+      </el-row>
       </el-form>
     </div>
     <!-- 步骤3：教学要求 -->
