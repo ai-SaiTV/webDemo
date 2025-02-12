@@ -17,7 +17,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import StepProgress from './StepProgress.vue'; // 引入进度条组件
+import StepProgress from './StepProgress.vue';
 
 // 组件的属性
 const showResult = ref(false); // 控制是否显示结果
@@ -31,7 +31,6 @@ const gradientColor = computed(() => {
   const startColor = { r: 24, g: 144, b: 255 }; // 蓝色 rgb(24, 144, 255)
   const endColor = { r: 54, g: 207, b: 201 }; // 青色 rgb(54, 207, 201)
 
-  //线性插值公式
   const r = Math.round(startColor.r + (endColor.r - startColor.r) * (percentage / 100));
   const g = Math.round(startColor.g + (endColor.g - startColor.g) * (percentage / 100));
   const b = Math.round(startColor.b + (endColor.b - startColor.b) * (percentage / 100));
