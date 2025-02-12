@@ -115,90 +115,90 @@ export const generatedContent = ref({
 
 
 //note : 按钮槽函数，但chatConfig不同，需要根据情况修改
+let stopPollingWatch: (() => void) | null = null;
+let isUpdatingStep = false; // 状态锁
+
 export const nextStep = async () => {
-    if (activeStep.value < steps.length - 1) {
-        if (activeStep.value === 0) {
-            // 创建新会话
-            sessionId.value = await storageService.createSession();
-        }
-        isProcessing.value = true;
-        progress.value = 0;
-        progressStatus.value = "active";
+    if (activeStep.value >= steps.length - 1 || isUpdatingStep) return;
+    isUpdatingStep = true;
 
-        // const interval = 50;
-        // const stepsCount = waitingTime.value / interval;
-        // let currentStep = 0;
-
-        switch (activeStep.value) {
-            case 0:  //教案生成 (一句话生成大纲)
-                chatConfig.value.message = form.value.unit;
-                break;
-            case 1:  //教案修改 
-                chatConfig.value.message = form1.value.requirements;
-                break;
-        }
-
-        console.log('chatConfig', chatConfig.value);
-
-        const result = await handleSubmit(sessionId.value, activeStep.value); // api调用服务函数
-        DataThisSession.value = result || null;
-
-        watch(() => isPolling.value, async (newPolling) => {
-            if (newPolling) {
-                // 开始轮询时，更新进度
-                progress.value = 30; // 初始进度
-                progressStatus.value = "active";
-            } else {
-                // 轮询结束时
-                progress.value = 100;
-                progressStatus.value = "success";
-
-                await turnStep(activeStep.value);  // 更新步骤之前做的数据准备
-
-                // 延迟重置状态
-                setTimeout(() => {
-                    isProcessing.value = false;
-                    progress.value = 0;
-                    progressStatus.value = "active";
-                    activeStep.value++;
-                }, 500);
-            }
-        }, { immediate: true });
-
-
-        // const timer = setInterval(() => {
-        //     currentStep++;
-        //     progress.value = Math.min((currentStep / stepsCount) * 100, 100);
-
-        //     if (progress.value >= 100) {
-        //         clearInterval(timer);
-        //         progressStatus.value = "success";
-
-        //         setTimeout(() => {
-        //             isProcessing.value = false;
-        //             progress.value = 0;
-        //             progressStatus.value = "active";
-        //             activeStep.value++;
-        //         }, 500);
-        //     }
-        // }, interval);
-
+    // 清理旧监听器
+    if (stopPollingWatch) {
+        stopPollingWatch();
+        stopPollingWatch = null;
     }
 
+    if (activeStep.value === 0) {
+        sessionId.value = await storageService.createSession();
+    }
+
+    isProcessing.value = true;
+    progress.value = 0;
+    progressStatus.value = "active";
+
+    switch (activeStep.value) {
+        case 0:
+            chatConfig.value.message = form.value.unit;
+            break;
+        case 1:
+            chatConfig.value.message = form1.value.requirements;
+            break;
+    }
+
+    const result = await handleSubmit(sessionId.value, activeStep.value);
+    DataThisSession.value = result || null;
+
+    // 闭包保存当前步骤
+    const currentStep = activeStep.value;
+    stopPollingWatch = watch(() => isPolling.value, async (newPolling) => {
+        if (newPolling) {
+            progress.value = 30;
+            progressStatus.value = "active";
+        } else {
+            progress.value = 100;
+            progressStatus.value = "success";
+            await turnStep(currentStep);
+
+            setTimeout(() => {
+                isProcessing.value = false;
+                progress.value = 0;
+                progressStatus.value = "active";
+                // 安全递增步骤
+                if (activeStep.value === currentStep) {
+                    activeStep.value++;
+                }
+                console.log('activeStep', activeStep.value);
+                // 清理监听器并释放锁
+                if (stopPollingWatch) {
+                    stopPollingWatch();
+                    stopPollingWatch = null;
+                }
+                isUpdatingStep = false;
+            }, 500);
+        }
+    }, { immediate: true });
 };
+
+
+
+
 const turnStep = async (step: number) => {
     if (step === 0) {
-
         await nextTick()
-
         if (DataThisSession.value?.resources?.teaching_plan?.text) {
             form1.value.requirements = DataThisSession.value.resources.teaching_plan.text
         }
-
-        return 'first'
+        return '0'
+    } else if (step === 1) {
+        await nextTick()
+        if (DataThisSession.value?.resources?.tp_MindMap?.url) {
+            Mindimgsrc.value = DataThisSession.value.resources.tp_MindMap.url
+        }
+        return '1';
     } else if (step === steps.length - 1) {
         return 'last';
-    } else {
+    } 
+    else {
         return '';
     }
 };
