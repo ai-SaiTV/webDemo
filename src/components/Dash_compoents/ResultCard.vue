@@ -36,7 +36,7 @@
           </div>
         </template>
         <div class="mind-map">
-          <img :src="generatedContent.mindMap.preview" alt="思维导图" style="width: 100%; cursor: pointer"
+          <img :src="generatedContent.mindMap.preview" alt="思维导图"
             @click="previewMindMap">
         </div>
       </el-card>
@@ -134,7 +134,114 @@ const previewMindMap = () => {
 
 
 </script>
-
 <style scoped lang="scss">
-@import "./Dashstyle.css";
+.result-content {
+  padding: 2rem;
+
+  .result-card {
+    height: 100%;
+    margin-bottom: 20px;
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: #1f2937;
+      }
+    }
+  }
+
+  .lesson-plan {
+    h4 {
+      margin: 1rem 0 0.5rem;
+      color: #1f2937;
+    }
+
+    ul,
+    ol {
+      margin: 0;
+      padding-left: 1.5rem;
+      color: #4b5563;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .resources {
+    .resource-card {
+      background: #f8fafc;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+
+      img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+      }
+
+      .resource-info {
+        padding: 0.75rem;
+
+        h4 {
+          margin: 0 0 0.5rem;
+          font-size: 0.95rem;
+          color: #1f2937;
+        }
+      }
+    }
+  }
+
+  .exercises {
+    .exercise-item {
+      padding: 1rem;
+      border-bottom: 1px solid #e5e7eb;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .exercise-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+
+        h4 {
+          margin: 0;
+          font-size: 0.95rem;
+          color: #1f2937;
+        }
+      }
+
+      .exercise-preview {
+        color: #4b5563;
+        font-size: 0.875rem;
+        margin: 0.5rem 0;
+      }
+
+      .exercise-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.5rem;
+        color: #6b7280;
+        font-size: 0.875rem;
+      }
+    }
+  }
+  .mt-20 {
+    margin-top: 20px;
+  }
+  .mind-map {
+    width: 100%; 
+    cursor: pointer;
+  }
+}
 </style>

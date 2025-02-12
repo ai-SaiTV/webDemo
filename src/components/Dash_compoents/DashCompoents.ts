@@ -1,17 +1,17 @@
-import { ref, computed, watch,toRaw, nextTick } from 'vue';
+import { ref, computed, watch, toRaw, nextTick } from 'vue';
 
 // ------------------------------------------------------------>> api
 import {
-    response, chatMessages,handleSubmit, isPolling, chatConfig
-  } from '@/components/api_compoents/api_handler';
+    response, chatMessages, handleSubmit, isPolling, chatConfig
+} from '@/components/api_compoents/api_handler';
 
 import { storageService } from '@/services/storage/storageService';
 import type { StorageData } from '@/types/storageData'
 
-  
+
 //<<------------------------------------------------------------
 const sessionId = ref<string>("-1");  // 会话ID
-const DataThisSession = ref< StorageData | null> (null);  // 会话数据
+const DataThisSession = ref<StorageData | null>(null);  // 会话数据
 
 
 export const activeStep = ref(0);
@@ -115,14 +115,14 @@ export const generatedContent = ref({
 
 
 //note : 按钮槽函数，但chatConfig不同，需要根据情况修改
-export const nextStep = async() => {
+export const nextStep = async () => {
     if (activeStep.value < steps.length - 1) {
-        if(activeStep.value === 0){
+        if (activeStep.value === 0) {
             // 创建新会话
             sessionId.value = await storageService.createSession();
         }
-        isProcessing.value = true;   
-        progress.value = 0;          
+        isProcessing.value = true;
+        progress.value = 0;
         progressStatus.value = "active";
 
         // const interval = 50;
@@ -130,7 +130,7 @@ export const nextStep = async() => {
         // let currentStep = 0;
 
 
-        const result = await handleSubmit(sessionId.value,activeStep.value); // api调用服务函数
+        const result = await handleSubmit(sessionId.value, activeStep.value); // api调用服务函数
         DataThisSession.value = result || null;
 
         watch(() => isPolling.value, async (newPolling) => {
@@ -144,7 +144,7 @@ export const nextStep = async() => {
                 progressStatus.value = "success";
 
                 await turnStep(activeStep.value);  // 更新步骤之前做的数据准备
-                
+
                 // 延迟重置状态
                 setTimeout(() => {
                     isProcessing.value = false;
@@ -154,7 +154,7 @@ export const nextStep = async() => {
                 }, 500);
             }
         }, { immediate: true });
-        
+
 
         // const timer = setInterval(() => {
         //     currentStep++;
@@ -172,19 +172,19 @@ export const nextStep = async() => {
         //         }, 500);
         //     }
         // }, interval);
-     
+
     }
 
 };
 const turnStep = async (step: number) => {
     if (step === 0) {
-        
-        await nextTick()  
-        
+
+        await nextTick()
+
         if (DataThisSession.value?.resources?.teaching_plan?.text) {
             form1.value.requirements = DataThisSession.value.resources.teaching_plan.text
         }
-        
+
         return 'first'
     } else if (step === steps.length - 1) {
         return 'last';
@@ -218,14 +218,14 @@ export const form1 = ref({
     requirements: `😿`
 });
 
-export const updateShowResult = (newValue:boolean) => {
+export const updateShowResult = (newValue: boolean) => {
     showResult.value = newValue;
-  };
-
-export const updateIsZoomed = (newZoomedStatus:boolean) => {
-  isZoomed.value = newZoomedStatus;
 };
 
-export const updateTranslateY = (newTranslateY:number) => {
-  translateY.value = newTranslateY;
+export const updateIsZoomed = (newZoomedStatus: boolean) => {
+    isZoomed.value = newZoomedStatus;
+};
+
+export const updateTranslateY = (newTranslateY: number) => {
+    translateY.value = newTranslateY;
 }; 

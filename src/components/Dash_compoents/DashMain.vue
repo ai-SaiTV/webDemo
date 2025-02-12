@@ -34,7 +34,7 @@
   <!-- 生成结果展示 -->
   <template v-else>
     <ResultHeader :generatedContent="generatedContent" @update:showResult="updateShowResult" />
-    <ResultCard :generatedContent="generatedContent"/>
+    <ResultCard :generatedContent="generatedContent" />
   </template>
 
 </template>
@@ -60,5 +60,38 @@ import {
 </script>
 
 <style scoped lang="scss">
-@import "./Dashstyle.css";
+.custom-steps {
+  padding: 2rem 2rem 0;
+
+  :deep(.el-step__title) {
+    font-size: 0.9rem;
+  }
+
+  :deep(.el-step__description) {
+    font-size: 0.8rem;
+  }
+}
+
+.step-content {
+  padding: 2rem;
+  min-height: 300px;
+
+  .step-form {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .unit-label {
+    margin-left: 8px;
+    color: #666;
+  }
+}
+
+.step-actions {
+  padding: 1rem 2rem;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
 </style>

@@ -54,5 +54,58 @@ const time_sum = ref(45)
 </script>
 
 <style scoped lang="scss">
-@import "./Dashstyle.css";
+.stat-card,
+  .recent-card {
+    margin-bottom: 1.5rem;
+
+    .stat-header,
+    .recent-header {
+      h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: #1f2937;
+      }
+    }
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+
+    .stat-item {
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      text-align: center;
+
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1890ff;
+        line-height: 1.2;
+      }
+
+      .stat-label {
+        margin-top: 0.5rem;
+        color: #64748b;
+        font-size: 0.875rem;
+      }
+    }
+  }
+
+  .timeline-content {
+    h4 {
+      margin: 0;
+      color: #1f2937;
+      font-size: 0.95rem;
+    }
+
+    p {
+      margin: 0.25rem 0 0;
+      color: #64748b;
+      font-size: 0.875rem;
+    }
+  }
+
 </style>
