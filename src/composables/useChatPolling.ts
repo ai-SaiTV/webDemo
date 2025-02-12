@@ -18,15 +18,22 @@ export function useChatPolling() {
     isPolling.value = false;
   };
 
+
+  // 生成完毕，从api获取聊天消息
   const fetchChatMessages = async (apiKey: string, chatId: string, conversationId: string) => {
     try {
       const messages = await chatApi.retrieveChatMessages(apiKey, chatId, conversationId);
+      
       chatMessages.value = messages;
+
+
     } catch (err: any) {
       error.value = err.message || 'Failed to retrieve chat messages';
     }
   };
 
+
+  // 轮询生成结果
   const startPolling = async (apiKey: string, initialResponse: ChatResponse) => {
     currentResponse.value = initialResponse;
     const { id: chatId, conversation_id: conversationId } = initialResponse.data;
@@ -35,19 +42,25 @@ export function useChatPolling() {
       error.value = 'Invalid chat or conversation ID';
       return;
     }
-
     isPolling.value = true;
     error.value = '';
 
+
+    // 轮询获取聊天状态
     pollingInterval.value = setInterval(async () => {
       try {
+
+        
         const response = await chatApi.retrieveChat(apiKey, chatId, conversationId);
         currentResponse.value = response;
 
+        // 状态变化，停止轮询
         if (response.data.status !== CHAT_STATUS.IN_PROGRESS) {
           await fetchChatMessages(apiKey, chatId, conversationId);
           stopPolling();
         }
+
+        
       } catch (err: any) {
         error.value = err.message || 'Failed to retrieve chat status';
         stopPolling();
