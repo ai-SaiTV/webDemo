@@ -143,6 +143,9 @@ export const nextStep = async () => {
         case 1:
             chatConfig.value.message = form1.value.requirements;
             break;
+        case 2:
+            chatConfig.value.message = form1.value.requirements;
+            break;
     }
 
     const result = await handleSubmit(sessionId.value, activeStep.value);

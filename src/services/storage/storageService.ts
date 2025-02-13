@@ -76,6 +76,7 @@ export class StorageService {
     images?: { name: string, url: string }[],
     exercises?: { name: string, url: string }[]
   }) {
+    console.log('更新课件资源:', sessionId, data)
     const session = this.data.value.find(s => s.id === sessionId)
     if (session) {
       if (data.videos) {
