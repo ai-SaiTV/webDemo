@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/home/Home.vue'
 import Portal from '../views/Portal.vue'
-import Dashboard from '../views/design/dashboard/Dashboard.vue'
+import Dashboard from '../views/design/Dashboard.vue'
 import Analysis from '../views/design/Analysis.vue'
 import CourseManagement from '../views/design/CourseManagement.vue'
 import AppLayout from '../components/AppLayout.vue'
