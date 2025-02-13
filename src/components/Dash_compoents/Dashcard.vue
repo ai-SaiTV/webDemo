@@ -1,5 +1,5 @@
 <template>
-  <el-col  :span="8">
+  <el-col  v-if="!showResult" :span="8">
     <el-card class="stat-card">
       <template #header>
         <div class="stat-header">
@@ -51,6 +51,10 @@ const plan_Num = ref(12)
 const resource_Num = ref(25)
 const applause_rate = ref("98%")
 const time_sum = ref(45)
+
+defineProps({
+  showResult:Boolean,
+})
 </script>
 
 <style scoped lang="scss">

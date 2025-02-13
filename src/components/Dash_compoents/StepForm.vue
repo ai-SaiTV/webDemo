@@ -163,7 +163,7 @@ const generatePlan = async () => {
   setTimeout(() => {
     isProcessing.value = false;
     showResult.value = true;
-
+    console.log(showResult.value);
     emit('update:showResult', showResult.value);
   }, props.endWaitingTime);
 };
