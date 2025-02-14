@@ -16,7 +16,10 @@ interface ChatConfig {
   
 export const chatConfig = ref<ChatConfig>({
 apiKey: 'pat_DdQD93S1Vy2WBf0KZdOJ1ob5U9GzeR2Yjmkzaj5xVBq7EAAwd6OmSLKRmMnI4WYw',
-botId: ['7449786123129847845','7463464443028963340'],
+botId: [
+    '7449786123129847845',
+    '7463464443028963340',
+    '7470802643641008180'],
 message: ''
 })
 
