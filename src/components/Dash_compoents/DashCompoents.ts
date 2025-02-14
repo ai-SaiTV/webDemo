@@ -14,7 +14,7 @@ const sessionId = ref<string>("-1");  // 会话ID
 const DataThisSession = ref<StorageData | null>(null);  // 会话数据
 
 
-export const activeStep = ref(3);
+export const activeStep = ref(0);
 export const isGenerating = ref(false);
 export const showResult = ref(false);
 export const isProcessing = ref(false);
