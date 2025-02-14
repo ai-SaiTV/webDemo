@@ -10,16 +10,18 @@ import { useChatPolling } from '@/composables/useChatPolling';
 
 interface ChatConfig {
     apiKey: string
-    botId: string[]
+    botId: (string)[]
     message: string
 }
   
 export const chatConfig = ref<ChatConfig>({
 apiKey: 'pat_DdQD93S1Vy2WBf0KZdOJ1ob5U9GzeR2Yjmkzaj5xVBq7EAAwd6OmSLKRmMnI4WYw',
 botId: [
-    '7449786123129847845',
-    '7463464443028963340',
-    '7470802643641008180'],
+    '7449786123129847845',    //教案
+    '7463464443028963340',    //思维导图
+    '7470499360309723155',    //视频图片资源
+    '7470802643641008180',      //练习题
+    '111'],  
 message: ''
 })
 
@@ -66,7 +68,9 @@ export const handleSubmit = async (sessionId: string, step: number) => {
             const currentStep = step; // 通过闭包捕获当前 step
             unwatch = watch(() => chatMessages.value, async (newMessages) => {
                 if (newMessages?.data) {
-                    const lastMessage = newMessages.data.find(msg => msg.type === 'answer') || newMessages.data[0];
+                    console.log('newMessages:', newMessages)
+                    const lastMessage = newMessages.data.find(msg => 
+                        (msg.type === 'answer' && msg.content_type === 'text')) || newMessages.data[0];
                     if (lastMessage.role === 'assistant') {
                         await storageService.updateMessages(sessionId, {
                             role: 'assistant',
@@ -86,7 +90,8 @@ export const handleSubmit = async (sessionId: string, step: number) => {
                                 break;
                             case 2:
                                 await storageService.updateCourseware(sessionId, {
-                                    exercises: [{ name: 'exercise1', url: lastMessage.content }],
+                                    // exercises: [{ name: 'exercise1', url: lastMessage.content }],
+                                    videos: [{ name: 'video1', url: lastMessage.content }],
                                 });
                                 break;
                             default:
