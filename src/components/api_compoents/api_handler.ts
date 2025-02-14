@@ -89,12 +89,7 @@ export const handleSubmit = async (sessionId: string, step: number) => {
                                     url: lastMessage.content,
                                 });
                                 break;
-                            case 2:
-                                await storageService.updateCourseware(sessionId, {
-                                    // exercises: [{ name: 'exercise1', url: lastMessage.content }],
-                                    videos: [{ name: 'video1', url: lastMessage.content }],
-                                });
-                                break;
+                            
                             default:
                                 break;
                         }
