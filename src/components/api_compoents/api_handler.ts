@@ -5,6 +5,7 @@ export const showResult = ref(false);
 //------------------api Test------------------//    
 import { useChat } from '@/composables/useChat';
 import { useChatPolling } from '@/composables/useChatPolling';
+import { Message } from 'postcss';
 
 
 interface ChatConfig {
@@ -113,21 +114,19 @@ export const handleSubmit = async (sessionId: string, step: number) => {
 
 
 export const handleSubmitParallel = async (sessionId: string, botIndices: number[]) => {
-    if (sessionId === "-1" || !chatConfig.value.apiKey || !chatConfig.value.message) {
-        console.log('chatConfig not complete');
-        return null;
-    }
+    if (sessionId === "-1") return null;
 
     try {
-        // 创建响应存储对象
+        // 为每个 bot 创建独立的聊天实例
+        const chatInstances = botIndices.map(() => useChatPolling());
         const responses = {
             exercises: null as string | null,
             Courseware: null as string | null,
             videos: null as string | null
         };
 
-        // 并行处理每个 bot 的请求
-        const promises = botIndices.map(async (botIndex) => {
+        // 每个 bot 的请求处理函数
+        const handleBotRequest = async (botIndex: number, chatInstance: any) => {
             return new Promise<void>(async (resolve) => {
                 const initialResponse = await sendMessage(
                     chatConfig.value.apiKey,
@@ -135,17 +134,14 @@ export const handleSubmitParallel = async (sessionId: string, botIndices: number
                     chatConfig.value.message
                 );
 
-                let stopWatch = watch(() => chatMessages.value, async (newMessages) => {
+                let stopWatch = watch(() => chatInstance.chatMessages.value, async (newMessages) => {
                     if (newMessages?.data) {
-                        const lastMessage = newMessages.data.find(msg => 
+                        console.log(`Bot ${botIndex} messages:`, newMessages);
+                        const lastMessage = newMessages.data.find((msg: Message) => 
                             msg.type === 'answer' && msg.content_type === 'text'
                         );
 
                         if (lastMessage?.role === 'assistant') {
-                            // 根据 botIndex 存储对应的响应
-
-                            console.log('lastMessage:', lastMessage)
-                            console.log('botIndex:', botIndex)
                             switch (botIndex) {
                                 case 2:
                                     responses.exercises = lastMessage.content;
@@ -157,42 +153,41 @@ export const handleSubmitParallel = async (sessionId: string, botIndices: number
                                     responses.videos = lastMessage.content;
                                     break;
                             }
-
                             stopWatch();
                             resolve();
                         }
                     }
                 }, { deep: true });
 
-                await startPolling(chatConfig.value.apiKey, initialResponse);
+                await chatInstance.startPolling(chatConfig.value.apiKey, initialResponse);
             });
-        });
+        };
 
-        // 等待所有响应完成
+        // 并行处理所有 bot 请求
+        const promises = botIndices.map((botIndex, index) => 
+            handleBotRequest(botIndex, chatInstances[index])
+        );
+
         await Promise.all(promises);
 
-        // 检查是否所有响应都收到
         if (responses.exercises && responses.Courseware && responses.videos) {
-            // 一次性更新所有资源
             await storageService.updateCourseware(sessionId, {
                 exercises: [{ 
-                    name: 'exercise1',
+                    name: `exercise-${Date.now()}`,
                     url: responses.exercises 
                 }],
                 Courseware: [{ 
-                    name: 'courseware1',
+                    name: `courseware-${Date.now()}`,
                     url: responses.Courseware 
                 }],
                 videos: [{ 
-                    name: 'video1',
+                    name: `video-${Date.now()}`,
                     url: responses.videos 
                 }]
             });
 
             return await storageService.getSessionData(sessionId);
         }
-
-        console.error('Not all responses received.');
         return null;
     } catch (err) {
         console.error('Parallel submission error:', err);

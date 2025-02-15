@@ -2,28 +2,6 @@
   <div>
     <!-- 步骤1：大纲生成 -->
     <div v-if="activeStep === 0" class="step-form">
-
-
-
-      <!-- 测试接口 -->
-      <!-- Chat  -->
-      <!-- <div class="w-full">
-          <button
-            @click="handleSubmit"
-            :disabled="isPolling || !chatConfig.apiKey || !chatConfig.botId || !chatConfig.message"
-            class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-4 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-          >
-            {{ isPolling ? 'Generating Response...' : 'Send Message' }}
-            
-          </button>
-
-          <ResponseDisplay 
-          :response="response"
-          :messages="chatMessages"
-        />
-      
-        </div> -->
-      <!-- chat -->
       <el-form :model="form" label-position="top">
         <el-row :gutter="20" justify="center">
           <el-col :span="20">
@@ -96,6 +74,8 @@ import ResponseDisplay from '@/components/api_compoents/ResponseDisplay.vue';
 import {
   response, chatMessages, handleSubmit, isPolling, chatConfig
 } from '@/components/api_compoents/api_handler';
+
+import { generatePlan } from './DashCompoents';
 
 
 
