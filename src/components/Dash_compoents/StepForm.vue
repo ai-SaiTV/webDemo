@@ -157,15 +157,15 @@ const imageStyle = computed(() => ({
   cursor: isHovering.value ? 'zoom-in' : 'default',
 }));
 
-const generatePlan = async () => {
-  isGenerating.value = true;
-  setTimeout(() => {
-    isProcessing.value = false;
-    showResult.value = true;
-    console.log(showResult.value);
-    emit('update:showResult', showResult.value);
-  }, props.endWaitingTime);
-};
+// const generatePlan = async () => {
+//   isGenerating.value = true;
+//   setTimeout(() => {
+//     isProcessing.value = false;
+//     showResult.value = true;
+//     console.log(showResult.value);
+//     emit('update:showResult', showResult.value);
+//   }, props.endWaitingTime);
+// };
 
 </script>
 
