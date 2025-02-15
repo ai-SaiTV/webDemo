@@ -106,7 +106,6 @@ const toggleImageSize = () => {
   emit('update:translateY', 0);
 };
 
-
 const onWheel = (event) => {
   const newTranslateY = event.deltaY > 0
     ? Math.min(props.translateY - 40, 0)

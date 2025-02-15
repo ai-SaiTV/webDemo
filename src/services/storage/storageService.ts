@@ -15,7 +15,7 @@ export class StorageService {
       resources: { 
         teaching_plan: { text: '' },
         tp_MindMap: { url: '' },
-        courseware: { videos: [], images: [], exercises: [] }
+        courseware: { videos: [], Courseware: [], exercises: [] }
       },
       metadata: {
         status: 'pending',
@@ -73,7 +73,7 @@ export class StorageService {
   // 更新课件资源
   async updateCourseware(sessionId: string, data: {
     videos?: { name: string, url: string }[],
-    images?: { name: string, url: string }[],
+    Courseware?: { name: string, url: string }[],
     exercises?: { name: string, url: string }[]
   }) {
     console.log('更新课件资源:', sessionId, data)
@@ -82,8 +82,8 @@ export class StorageService {
       if (data.videos) {
         session.resources.courseware.videos = data.videos
       }
-      if (data.images) {
-        session.resources.courseware.images = data.images
+      if (data.Courseware) {
+        session.resources.courseware.Courseware = data.Courseware
       }
       if (data.exercises) {
         session.resources.courseware.exercises = data.exercises

@@ -14,7 +14,7 @@ const sessionId = ref<string>("-1");  // 会话ID
 const DataThisSession = ref<StorageData | null>(null);  // 会话数据
 
 
-export const activeStep = ref(0);
+export const activeStep = ref(3);
 export const isGenerating = ref(false);
 export const showResult = ref(false);
 export const isProcessing = ref(false);
@@ -215,18 +215,19 @@ export const prevStep = () => {
 export const generatePlan = async () => {
     isGenerating.value = true;
 
-    const generateResources = async (sessionId: string) => {
-        // 传入要使用的 bot 索引数组 [2,3,4] 分别对应练习题、课件、视频
-        const result = await handleSubmitParallel(sessionId, [2, 3, 4]);
-        console.log('generateResources:', result);
-        return result;
-    };
+    sessionId.value = await storageService.createSession();
+
+    // 传入要使用的 bot 索引数组 [2,3,4] 分别对应练习题、课件、视频
+    const result = await handleSubmitParallel(sessionId.value, [2, 3, 4]);
+    console.log('generateResources:', result);
 
 
     setTimeout(() => {
         isProcessing.value = false;
         showResult.value = true;
       }, waitingTime.value); // 模拟生成过程
+
+
 };
 
 

@@ -19,14 +19,14 @@ export interface StorageData {
             url: string
         },
 
-        // 3. 课件
+        // 3. 课程资源
         courseware: {
             videos: {
                 name: string,
                 url: string
             }[],
 
-            images: {
+            Courseware: {
                 name: string,
                 url: string
             }[],
