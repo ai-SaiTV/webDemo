@@ -2,30 +2,7 @@
   <div>
     <!-- 步骤1：大纲生成 -->
     <div v-if="activeStep === 0" class="step-form">
-
-
-
-      <!-- 测试接口 -->
-      <!-- Chat  -->
-      <!-- <div class="w-full">
-          <button
-            @click="handleSubmit"
-            :disabled="isPolling || !chatConfig.apiKey || !chatConfig.botId || !chatConfig.message"
-            class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-4 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-          >
-            {{ isPolling ? 'Generating Response...' : 'Send Message' }}
-            
-          </button>
-
-          <ResponseDisplay 
-          :response="response"
-          :messages="chatMessages"
-        />
-      
-        </div> -->
       <!-- chat -->
-
-
       <el-form :model="form" label-position="top">
         <el-row :gutter="20" justify="center">
           <el-col :span="20">
@@ -51,19 +28,6 @@
       </el-row>
     </el-form>
   </div>
-  <!-- 步骤3：教学要求 -->
-  <div v-if="activeStep === 2" class="step-form">
-    <el-form :model="form1" label-position="top">
-      <el-row :gutter="24" justify="center">
-        <el-col :span="12">
-          <el-form-item label="大纲内容">
-            <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
-              class="custom-textarea"></textarea>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      </el-form>
-    </div>
     <!-- 步骤3：教学要求 -->
     <div v-if="activeStep === 2" class="step-form">
       <el-form :model="form1" label-position="top">
@@ -111,6 +75,7 @@ import ResponseDisplay from '@/components/api_compoents/ResponseDisplay.vue';
 import {
   response, chatMessages, handleSubmit, isPolling, chatConfig
 } from '@/components/api_compoents/api_handler';
+import { generatePlan } from './DashCompoents';
 
 
 
@@ -173,15 +138,15 @@ const imageStyle = computed(() => ({
   cursor: isHovering.value ? 'zoom-in' : 'default',
 }));
 
-const generatePlan = async () => {
-  isGenerating.value = true;
-  setTimeout(() => {
-    isProcessing.value = false;
-    showResult.value = true;
-
-    emit('update:showResult', showResult.value);
-  }, props.endWaitingTime);
-};
+// const generatePlan = async () => {
+//   isGenerating.value = true;
+//   setTimeout(() => {
+//     isProcessing.value = false;
+//     showResult.value = true;
+//     console.log(showResult.value);
+//     emit('update:showResult', showResult.value);
+//   }, props.endWaitingTime);
+// };
 
 </script>
 

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { Menu, User, UserFilled, Calendar } from '@element-plus/icons-vue';
+import 'element-plus/es/components/icon/style/css';
 
 interface CourseClass {
   id: string
@@ -10,6 +12,7 @@ interface CourseClass {
   students: number
   teacher: string
   createdAt: string
+  bookname: string
 }
 
 const router = useRouter()
@@ -22,7 +25,8 @@ const courseClasses = ref<CourseClass[]>([
     subject: '语文',
     students: 45,
     teacher: '张老师',
-    createdAt: '2024-03-15'
+    createdAt: '2024-03-15',
+    bookname: '人教版语文下册（24版）',
   },
   {
     id: '2',
@@ -31,7 +35,8 @@ const courseClasses = ref<CourseClass[]>([
     subject: '数学',
     students: 42,
     teacher: '李老师',
-    createdAt: '2024-03-14'
+    createdAt: '2024-03-14',
+    bookname: '人教版数学下册（24版）',
   }
 ])
 
@@ -40,7 +45,8 @@ const form = ref({
   grade: '',
   subject: '',
   students: 0,
-  teacher: ''
+  teacher: '',
+  bookname: '',
 })
 
 const handleCardClick = (classId: string) => {
@@ -62,7 +68,8 @@ const handleCreateClass = () => {
     grade: '',
     subject: '',
     students: 0,
-    teacher: ''
+    teacher: '',
+    bookname:'',
   }
 }
 </script>
@@ -96,6 +103,7 @@ const handleCreateClass = () => {
           <p><el-icon><User /></el-icon> {{ classItem.teacher }}</p>
           <p><el-icon><UserFilled /></el-icon> {{ classItem.students }} 名学生</p>
           <p><el-icon><Calendar /></el-icon> 创建于 {{ classItem.createdAt }}</p>
+          <p><el-icon><Menu /></el-icon> {{ classItem.bookname }}</p>
         </div>
       </div>
     </div>
@@ -129,6 +137,9 @@ const handleCreateClass = () => {
         </el-form-item>
         <el-form-item label="任课教师">
           <el-input v-model="form.teacher" placeholder="请输入教师姓名" />
+        </el-form-item>
+        <el-form-item label="教材名称">
+          <el-input v-model="form.bookname" placeholder="请输入教材名称如：人教版语文下册（24年版）" />
         </el-form-item>
       </el-form>
       <template #footer>

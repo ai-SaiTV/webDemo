@@ -32,10 +32,15 @@ export function useChatPolling() {
     }
   };
 
-
   // 轮询生成结果
   const startPolling = async (apiKey: string, initialResponse: ChatResponse) => {
     currentResponse.value = initialResponse;
+    
+    if (!initialResponse.data) {
+      error.value = 'Invalid response data';
+      return;
+    }
+
     const { id: chatId, conversation_id: conversationId } = initialResponse.data;
     
     if (!chatId || !conversationId) {

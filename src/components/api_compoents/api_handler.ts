@@ -1,6 +1,5 @@
 import { ref,watch } from 'vue';
 import { storageService } from '@/services/storage/storageService';
-import type {  ChatMessagesResponse } from '@/types/api';
 export const showResult = ref(false);
 
 //------------------api Test------------------//    
@@ -10,13 +9,20 @@ import { useChatPolling } from '@/composables/useChatPolling';
 
 interface ChatConfig {
     apiKey: string
-    botId: string[]
+    botId: (string)[]
     message: string
 }
   
 export const chatConfig = ref<ChatConfig>({
 apiKey: 'pat_DdQD93S1Vy2WBf0KZdOJ1ob5U9GzeR2Yjmkzaj5xVBq7EAAwd6OmSLKRmMnI4WYw',
-botId: ['7449786123129847845'],
+botId: [
+    '7449786123129847845',    //教案
+    '7463464443028963340',    //思维导图
+
+    '7470802643641008180',      //练习题
+    '7470499360309723155',       //课件
+    '7471291204710219812'        //视频
+    ],  
 message: ''
 })
 
@@ -31,24 +37,18 @@ export const {                                               // 从 useChatPolli
 
 
 
+let unwatch: (() => void) | null = null; // 模块级变量，保存停止函数
 
- export const handleSubmit = async (sessionId: string ,step: number) => {    // 按钮槽函数
-
-    if(sessionId!="-1"){
-         // ----------------------------------------->>
-
+export const handleSubmit = async (sessionId: string, step: number) => {
+    if (sessionId !== "-1") {
         // 保存用户消息
         await storageService.updateMessages(sessionId, {
             role: 'user',
             content: chatConfig.value.message
         });
 
-        //<<-----------------------------------------
-
-
-
-        if (!chatConfig.value.apiKey || !chatConfig.value.apiKey || !chatConfig.value.message) {
-            console.log('Please fill in all fields');
+        if (!chatConfig.value.apiKey || !chatConfig.value.message) {
+            console.log('chatConfig not complete');
             return;
         }
 
@@ -56,56 +56,136 @@ export const {                                               // 从 useChatPolli
             const initialResponse = await sendMessage(
                 chatConfig.value.apiKey, 
                 chatConfig.value.botId[step], 
-                chatConfig.value.message);   //对api发送请求
-            await startPolling(chatConfig.value.apiKey, initialResponse);    //开始异步轮询
+                chatConfig.value.message
+            );
+            await startPolling(chatConfig.value.apiKey, initialResponse);
 
+            // 清理之前的 watcher
+            if (unwatch) {
+                unwatch();
+                unwatch = null;
+            }
 
-            // ----------------------------------------->>
-            // 监听消息变化
-            //watch(
-            //    source,      // 监听源
-            //    callback,    // 回调函数
-            //    options      // 配置选项
-            //)
-            watch(() => chatMessages.value, async (newMessages: ChatMessagesResponse | null) => {
+            const currentStep = step; // 通过闭包捕获当前 step
+            unwatch = watch(() => chatMessages.value, async (newMessages) => {
                 if (newMessages?.data) {
-                    console.log('New messages:', newMessages);
-                    const lastMessage = newMessages.data.find(msg => msg.type === 'answer') || newMessages.data[0];
-
-
+                    console.log('newMessages:', newMessages)
+                    const lastMessage = newMessages.data.find(msg => 
+                        (msg.type === 'answer' && msg.content_type === 'text')) || newMessages.data[0];
                     if (lastMessage.role === 'assistant') {
-
-                        // 1. 保存助手消息
                         await storageService.updateMessages(sessionId, {
-                        role: 'assistant',
-                        content: lastMessage.content
-                        });
-                        
-                        // 2. 保存教案
-                        await storageService.updateTeachingPlan(sessionId, {
-                            text: lastMessage.content,
-                            downLoad_url: lastMessage.content
+                            role: 'assistant',
+                            content: lastMessage.content
                         });
 
+                        switch (currentStep) { // 使用闭包中的 currentStep
+                            case 0:
+                                await storageService.updateTeachingPlan(sessionId, {
+                                    text: lastMessage.content,
+                                });
+                                break;
+                            case 1:
+                                await storageService.updateTeachingMindMap(sessionId, {
+                                    url: lastMessage.content,
+                                });
+                                break;
+                            
+                            default:
+                                break;
+                        }
 
-                    }else{
-                        console.log('No assistant message found');
+                        // 处理完成后，停止本次 watcher
+                        if (unwatch) {
+                            unwatch();
+                            unwatch = null;
+                        }
                     }
                 }
             }, { deep: true });
 
             return storageService.getSessionData(sessionId) || null;
-
-            // <<-----------------------------------------
-
-
-
         } catch (err) {
-            // Error handling is already done in useChat composable
             console.error(err);
             return null;
         }
-
     }
 };
 
+
+export const handleSubmitParallel = async (sessionId: string, botIndices: number[]) => {
+    if (sessionId === "-1" || !chatConfig.value.apiKey || !chatConfig.value.message) {
+        console.log('Invalid session or config');
+        return null;
+    }
+
+    try {
+        // 创建所有 bot 的请求数组
+        const botRequests = botIndices.map(async (botIndex) => {
+            const initialResponse = await sendMessage(
+                chatConfig.value.apiKey,
+                chatConfig.value.botId[botIndex],
+                chatConfig.value.message
+            );
+            return { botIndex, response: initialResponse };
+        });
+
+        // 并行执行所有请求
+        const responses = await Promise.all(botRequests);
+
+        // 为每个响应创建轮询
+        const pollRequests = responses.map(({ botIndex, response }) => {
+            return new Promise<void>(async (resolve) => {
+                let stopWatch = watch(() => chatMessages.value, async (newMessages) => {
+                    if (newMessages?.data) {
+                        const lastMessage = newMessages.data.find(msg => 
+                            (msg.type === 'answer' && msg.content_type === 'text')) || newMessages.data[0];
+                        
+                        if (lastMessage.role === 'assistant') {
+                            // 更新消息
+                            await storageService.updateMessages(sessionId, {
+                                role: 'assistant',
+                                content: lastMessage.content
+                            });
+
+                            // 根据不同的 bot 更新不同的资源
+                            switch (botIndex) {
+                                case 2: // 练习题
+                                    await storageService.updateCourseware(sessionId, {
+                                        exercises: [{ name: 'exercise1', url: lastMessage.content }]
+                                    });
+                                    break;
+                                case 3: // 课件
+                                    await storageService.updateCourseware(sessionId, {
+                                        images: [{ name: 'courseware1', url: lastMessage.content }]
+                                    });
+                                    break;
+                                case 4: // 视频
+                                    await storageService.updateCourseware(sessionId, {
+                                        videos: [{ name: 'video1', url: lastMessage.content }]
+                                    });
+                                    break;
+                            }
+
+                            // 停止监听并解析 Promise
+                            stopWatch();
+                            resolve();
+                        }
+                    }
+                }, { deep: true });
+
+                // 开始轮询
+                await startPolling(chatConfig.value.apiKey, response);
+            });
+        });
+
+        // 等待所有轮询完成
+        await Promise.all(pollRequests);
+
+        // 返回更新后的会话数据
+        return await storageService.getSessionData(sessionId);
+        
+    } catch (err) {
+        console.error('Parallel submission error:', err);
+        return null;
+    }
+};
