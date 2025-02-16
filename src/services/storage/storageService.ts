@@ -93,11 +93,18 @@ export class StorageService {
     }
   }
 
-   // 获取指定会话数据
-   async getSessionData(sessionId: string): Promise<StorageData | null> {
+    // 获取指定会话数据
+  async getSessionData(sessionId: string): Promise<StorageData | null> {
     try {
-        // 从本地存储获取数据
-        const session = this.data.value.find(s => s.id === sessionId);
+        let session: StorageData | undefined;
+        
+        // 如果 sessionId 为 "0"，获取最后一条数据
+        if (sessionId === "0") {
+            session = this.data.value[this.data.value.length - 1];
+        } else {
+            // 否则按 id 查找
+            session = this.data.value.find(s => s.id === sessionId);
+        }
         
         // 打印调试信息
         console.log('获取会话数据:', sessionId, session);
@@ -107,7 +114,7 @@ export class StorageService {
         console.error('获取会话数据失败:', error);
         return null;
     }
-}
+  }
 
 
   // 保存到文件

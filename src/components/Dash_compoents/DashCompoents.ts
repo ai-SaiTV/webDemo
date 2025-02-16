@@ -7,11 +7,12 @@ import {
 
 import { storageService } from '@/services/storage/storageService';
 import type { StorageData } from '@/types/storageData'
+import { tr } from 'element-plus/es/locales.mjs';
 
 
 //<<------------------------------------------------------------
-const sessionId = ref<string>("-1");  // 会话ID
-const DataThisSession = ref<StorageData | null>(null);  // 会话数据
+export const sessionId = ref<string>("-1");  // 会话ID
+export  const DataThisSession = ref<StorageData | null>(null);  // 会话数据
 
 
 export const activeStep = ref(0);
@@ -232,6 +233,7 @@ export const generatePlan = async () => {
         // 等待所有资源生成完成
         const result = await handleSubmitParallel(sessionId.value, [2, 3, 4]);
         console.log('generateResources:', result);
+        DataThisSession.value = result || null;
 
         if (result) {
             isProcessing.value = false;

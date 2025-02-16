@@ -6,7 +6,7 @@
         <template #header>
           <div class="card-header">
             <h3>教学设计</h3>
-            <el-button type="primary" link>查看详情</el-button>
+            <el-button type="primary" link @click="initializeData">查看详情</el-button>
           </div>
         </template>
         <div class="lesson-plan">
@@ -69,7 +69,6 @@
       </el-card>
     </el-col>
 
-
     <!-- 练习题卡片 -->
     <el-col :span="12">
       <el-card class="result-card">
@@ -110,8 +109,60 @@
 
 <script setup>
 import { progressProps } from 'element-plus';
-import { defineProps , ref , computed } from 'vue';
+import { defineProps , ref , computed, onMounted } from 'vue';
 import { parseMarkdown } from '@/utils/markdownUtils';
+import { sessionId, DataThisSession } from './DashCompoents.ts'
+import { el } from 'element-plus/es/locales.mjs';
+import { storageService } from '@/services/storage/storageService';
+
+
+
+
+
+// 初始化数据函数
+const initializeData = async() => {
+
+  if (DataThisSession.value) {
+    // 获取教案数据
+    const teachingPlan = DataThisSession.value.resources.teaching_plan?.text || '';
+    
+    // 获取思维导图
+    const mindMap = DataThisSession.value.resources.tp_MindMap?.url || '';
+    
+    // 获取课件资源
+    const courseware = DataThisSession.value.resources.courseware;
+    
+    console.log('teachingPlan:', teachingPlan);
+    console.log('mindMap:', mindMap);
+    console.log('courseware:', courseware);
+
+
+    // 更新组件数据
+    generatedContent.value = {
+      lessonPlan: parseLessonPlan(teachingPlan),
+      mindMap: {
+        preview: mindMap
+      },
+      resources: [
+        ...courseware.videos.map(video => ({
+          type: 'video',
+          title: video.name,
+          preview: video.url
+        }))
+      ],
+      exercises: courseware.exercises.map(exercise => ({
+        title: exercise.name,
+        difficulty: '中等',
+        preview: exercise.url,
+        count: 5
+      }))
+    };
+  }else{
+    console.log('DataThisSession.value is null');
+  }
+};
+
+
 
 const props = defineProps({
   generatedContent: {
@@ -124,18 +175,7 @@ const showAllExercises = ref(false);
 
 // 直接在组件中定义 Markdown 内容
 const markdownContent = ref(`
-# 《杨氏之子》练习题\n
-## 一、选择题（每题5分，共25分）\n
-1. 题目：下列句子中，朗读停顿不恰当的一项是（ ）\n
-    - 选项：A. 孔君平/诣/其父，父/不在，乃/呼儿出。\n
-    - 选项：B. 未闻孔雀/是/夫子家禽。\n
-    - 选项：C. 孔/指以示儿/曰：“此/是君/家果。”\n
-    - 选项：D. 梁国/杨氏子/九岁，甚聪惠。\n\n
-    2. 题目：下列对课文的理解有误的一项是（ ）\n
-    - 选项：A. 本文选自《世说新语》。\n
-    - 选项：B. 杨氏之子的回答妙在以其人之道还治其人之身。\n
-    - 选项：C. 杨氏之子的回答体现了他的机智和幽默。\n
-    - 选项：D. 杨氏之子的回答体现了他的不礼貌。\n
+## 暂无
 `);
 
 // 解析 Markdown 内容为 HTML
@@ -163,6 +203,10 @@ const previewMindMap = () => {
   }
 };
 
+
+onMounted(() => {
+  initializeData();
+});
 
 
 
