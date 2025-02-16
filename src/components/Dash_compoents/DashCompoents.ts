@@ -114,7 +114,6 @@ export const generatedContent = ref({
 });
 
 
-//note : 按钮槽函数，但chatConfig不同，需要根据情况修改
 let stopPollingWatch: (() => void) | null = null;
 let isUpdatingStep = false; // 状态锁
 
@@ -225,21 +224,29 @@ export const prevStep = () => {
 };
 
 export const generatePlan = async () => {
-    isGenerating.value = true;
-    isProcessing.value = true;
-    sessionId.value = await storageService.createSession();
+    try {
+        isGenerating.value = true;
+        isProcessing.value = true;
+        console.log('开始生成资源:', sessionId.value);
 
-    // 传入要使用的 bot 索引数组 [2,3,4] 分别对应练习题、课件、视频
-    const result = await handleSubmitParallel(sessionId.value, [2, 3, 4]);
-    console.log('generateResources:', result);
+        // 等待所有资源生成完成
+        const result = await handleSubmitParallel(sessionId.value, [2, 3, 4]);
+        console.log('generateResources:', result);
 
-
-    setTimeout(() => {
+        if (result) {
+            isProcessing.value = false;
+            showResult.value = true;
+        } else {
+            console.error('资源生成失败');
+            isProcessing.value = false;
+        }
+    } catch (error) {
+        console.error('生成过程出错:', error);
         isProcessing.value = false;
-        showResult.value = true;
-      }, waitingTime.value); // 模拟生成过程
-
-
+        console.log('资源生成结束:', sessionId.value);
+    } finally {
+        isGenerating.value = false;
+    }
 };
 
 
