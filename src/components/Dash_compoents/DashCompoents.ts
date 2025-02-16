@@ -14,7 +14,7 @@ const sessionId = ref<string>("-1");  // 会话ID
 const DataThisSession = ref<StorageData | null>(null);  // 会话数据
 
 
-export const activeStep = ref(3);
+export const activeStep = ref(0);
 export const isGenerating = ref(false);
 export const showResult = ref(false);
 export const isProcessing = ref(false);
@@ -119,6 +119,7 @@ let stopPollingWatch: (() => void) | null = null;
 let isUpdatingStep = false; // 状态锁
 
 export const nextStep = async () => {
+    if (activeStep.value == 2) activeStep.value = 3;
     if (activeStep.value >= steps.length - 1 || isUpdatingStep) return;
     isUpdatingStep = true;
 
@@ -143,21 +144,32 @@ export const nextStep = async () => {
         case 1:
             chatConfig.value.message = form1.value.requirements;
             break;
-        case 2:
-            chatConfig.value.message = form1.value.requirements;
-            break;
     }
 
     const result = await handleSubmit(sessionId.value, activeStep.value);
     DataThisSession.value = result || null;
-
+    let progressInterval: ReturnType<typeof setInterval> | null = null; // 用来保存定时器引用，便于清除
     // 闭包保存当前步骤
     const currentStep = activeStep.value;
     stopPollingWatch = watch(() => isPolling.value, async (newPolling) => {
         if (newPolling) {
-            progress.value = 30;
+            progress.value = 0;
             progressStatus.value = "active";
+            let startTime = Date.now();
+            const duration = 20000;
+            const targetProgress = 97;
+
+            progressInterval = setInterval(() => {
+            const elapsedTime = Date.now() - startTime;
+            const progressRatio = elapsedTime / duration;
+            progress.value = Math.min(targetProgress, progressRatio * targetProgress);
+
+            if (elapsedTime >= duration) {
+                clearInterval(progressInterval as ReturnType<typeof setInterval>);
+            }
+        }, 50);
         } else {
+            clearInterval(progressInterval as ReturnType<typeof setInterval>);
             progress.value = 100;
             progressStatus.value = "success";
             await turnStep(currentStep);
@@ -214,7 +226,7 @@ export const prevStep = () => {
 
 export const generatePlan = async () => {
     isGenerating.value = true;
-
+    isProcessing.value = true;
     sessionId.value = await storageService.createSession();
 
     // 传入要使用的 bot 索引数组 [2,3,4] 分别对应练习题、课件、视频
