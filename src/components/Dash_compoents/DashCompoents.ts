@@ -2,7 +2,7 @@ import { ref, computed, watch, nextTick } from 'vue';
 
 // ------------------------------------------------------------>> api
 import {
-     handleSubmit, handleSubmitParallel, isPolling, chatConfig
+    handleSubmit, handleSubmitParallel, isPolling, chatConfig
 } from '@/components/api_compoents/api_handler';
 
 import { storageService } from '@/services/storage/storageService';
@@ -116,7 +116,7 @@ export const generatedContent = ref({
 
 let stopPollingWatch: (() => void) | null = null;
 let isUpdatingStep = false; // 状态锁
-
+let progressInterval: ReturnType<typeof setInterval> | null = null; // 用来保存定时器引用，便于清除
 export const nextStep = async () => {
     if (activeStep.value == 2) activeStep.value = 3;
     if (activeStep.value >= steps.length - 1 || isUpdatingStep) return;
@@ -147,7 +147,7 @@ export const nextStep = async () => {
 
     const result = await handleSubmit(sessionId.value, activeStep.value);
     DataThisSession.value = result || null;
-    let progressInterval: ReturnType<typeof setInterval> | null = null; // 用来保存定时器引用，便于清除
+    
     // 闭包保存当前步骤
     const currentStep = activeStep.value;
     stopPollingWatch = watch(() => isPolling.value, async (newPolling) => {
@@ -159,14 +159,14 @@ export const nextStep = async () => {
             const targetProgress = 97;
 
             progressInterval = setInterval(() => {
-            const elapsedTime = Date.now() - startTime;
-            const progressRatio = elapsedTime / duration;
-            progress.value = Math.min(targetProgress, progressRatio * targetProgress);
+                const elapsedTime = Date.now() - startTime;
+                const progressRatio = elapsedTime / duration;
+                progress.value = Math.min(targetProgress, progressRatio * targetProgress);
 
-            if (elapsedTime >= duration) {
-                clearInterval(progressInterval as ReturnType<typeof setInterval>);
-            }
-        }, 50);
+                if (elapsedTime >= duration) {
+                    clearInterval(progressInterval as ReturnType<typeof setInterval>);
+                }
+            }, 50);
         } else {
             clearInterval(progressInterval as ReturnType<typeof setInterval>);
             progress.value = 100;
@@ -211,7 +211,7 @@ const turnStep = async (step: number) => {
         return '1';
     } else if (step === steps.length - 1) {
         return 'last';
-    } 
+    }
     else {
         return '';
     }
@@ -224,16 +224,34 @@ export const prevStep = () => {
 };
 
 export const generatePlan = async () => {
+    isGenerating.value = true;
     try {
-        isGenerating.value = true;
+        
         isProcessing.value = true;
         console.log('开始生成资源:', sessionId.value);
+        progress.value = 0;
+        progressStatus.value = "active";
+        let startTime = Date.now();
+        const duration = 20000;
+        const targetProgress = 97;
 
+        progressInterval = setInterval(() => {
+            const elapsedTime = Date.now() - startTime;
+            const progressRatio = elapsedTime / duration;
+            progress.value = Math.min(targetProgress, progressRatio * targetProgress);
+
+            if (elapsedTime >= duration) {
+                clearInterval(progressInterval as ReturnType<typeof setInterval>);
+            }
+        }, 50);
         // 等待所有资源生成完成
         const result = await handleSubmitParallel(sessionId.value, [2, 3, 4]);
         console.log('generateResources:', result);
 
         if (result) {
+            clearInterval(progressInterval as ReturnType<typeof setInterval>);
+            progress.value = 100;
+            progressStatus.value = "success";
             isProcessing.value = false;
             showResult.value = true;
         } else {

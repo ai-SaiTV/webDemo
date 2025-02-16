@@ -89,12 +89,11 @@ const props = defineProps({
   imageStyle: Object,
   endWaitingTime: Number,
   showResult: Boolean,
-
+  isGenerating: Boolean,
 });
 
 const showResult = ref(false);
 const isHovering = ref(false);
-const isGenerating = ref(false);
 const isProcessing = ref(false);
 const emit = defineEmits([
   'update:showResult',
