@@ -116,7 +116,54 @@ import { el } from 'element-plus/es/locales.mjs';
 import { storageService } from '@/services/storage/storageService';
 
 
+const generatedContent = ref({
+  lessonPlan: {
+    objectives: [],
+    steps: []
+  },
+  mindMap: {
+    preview: ''
+  },
+  resources: [],
+  exercises: []
+});
 
+const parseLessonPlan = (text) => {
+  try {
+    // 解析 Markdown 格式的教案
+    const lines = text.split('\n');
+    const objectives = [];
+    const steps = [];
+    
+    let currentSection = '';
+    
+    lines.forEach(line => {
+      if (line.includes('课程目标')) {
+        currentSection = 'objectives';
+      } else if (line.includes('课程内容')) {
+        currentSection = 'steps';
+      } else if (line.startsWith('-') || line.startsWith('•')) {
+        const content = line.replace(/^[- •]+/, '').trim();
+        if (currentSection === 'objectives') {
+          objectives.push(content);
+        } else if (currentSection === 'steps') {
+          steps.push(content);
+        }
+      }
+    });
+
+    return {
+      objectives,
+      steps
+    };
+  } catch (error) {
+    console.error('解析教案失败:', error);
+    return {
+      objectives: [],
+      steps: []
+    };
+  }
+};
 
 
 // 初始化数据函数
@@ -162,14 +209,6 @@ const initializeData = async() => {
   }
 };
 
-
-
-const props = defineProps({
-  generatedContent: {
-    type: Object,
-    required: true,
-  },
-});
 
 const showAllExercises = ref(false);
 
