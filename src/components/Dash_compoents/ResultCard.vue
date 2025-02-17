@@ -71,15 +71,18 @@
         <div class="exercises">
           <div v-for="(exercise, index) in generatedContent.exercises" :key="index" class="exercise-item">
             <div class="exercise-header">
-              <h4>{{ exercise.title }}</h4>
+            <h4>{{ exercise.title }}</h4>
+              
               <el-tag size="small" :type="exercise.difficulty === '简单' ? 'success' : 'warning'">
                 {{ exercise.difficulty }}
               </el-tag>
             </div>
-            <p class="exercise-preview">{{ exercise.preview }}</p>
+            <!-- <p class="exercise-preview">{{ exercise.preview }}</p> -->
             <div class="exercise-footer">
-              <span>{{ exercise.count }}道题目</span>
-              <el-button type="primary" link size="small">开始练习</el-button>
+              <!-- <span>{{ exercise.count }}道题目</span> -->
+              <a :href="exercise.preview" download="file.pdf">
+                <el-button type="primary" link size="small">下载</el-button>
+              </a>
             </div>
           </div>
         </div>
@@ -134,12 +137,10 @@ const initializeData = async () => {
     const exercises = DataThisSession.value.resources.courseware.exercises[0].url || "";
     const parsedExercise = parseMarkdownList(exercises);
 
-    console.log(exercises)
-    console.log(resourcesMarkdown)
 
     // 更新组件数据
     generatedContent.value = {
-      lessonPlan: parseMarkdown(teachingPlan),
+      lessonPlan: parseMarkdown(teachingPlan).__html,
       mindMap: {
         preview: mindMap
       },
@@ -167,10 +168,10 @@ const markdownContent = ref(`
 ## 暂无
 `);
 
-// 解析 Markdown 内容为 HTML
-const parsedExercise = computed(() => {
-  return parseMarkdown(markdownContent.value);
-});
+// // 解析 Markdown 内容为 HTML
+// const parsedExercise = computed(() => {
+//   return parseMarkdown(markdownContent.value);
+// });
 
 const previewMindMap = () => {
   const mindMapWindow = window.open('', '_blank');
@@ -264,7 +265,7 @@ onMounted(() => {
   .exercises {
     .exercise-item {
       padding: 1rem;
-      border-bottom: 1px solid #e5e7eb;
+      border-bottom: 1px solid #0a1d42;
 
       &:last-child {
         border-bottom: none;
@@ -341,19 +342,105 @@ onMounted(() => {
   line-height: 1.6;
   color: #24292e;
   text-align: left; /* 设置内容左对齐 */
+  padding: 1rem;
 }
 
 .markdown-content h1 {
+  font-size: 2em;
+  font-weight: bold;
   border-bottom: 1px solid #eaecef;
   padding-bottom: 0.3em;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-content h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-content h3 {
+  font-size: 1.25em;
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-content h4 {
+  font-size: 1em;
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-content h5 {
+  font-size: 0.875em;
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-content h6 {
+  font-size: 0.85em;
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-content p {
+  margin: 1em 0;
 }
 
 .markdown-content ul {
   padding-left: 2em;
   list-style-type: disc;
+  margin: 1em 0;
+}
+
+.markdown-content ol {
+  padding-left: 2em;
+  list-style-type: decimal;
+  margin: 1em 0;
 }
 
 .markdown-content li {
   margin: 0.25em 0;
+}
+
+.markdown-content blockquote {
+  border-left: 4px solid #dfe2e5;
+  padding-left: 1em;
+  margin: 1em 0;
+  color: #6a737d;
+}
+
+.markdown-content code {
+  background-color: rgba(27, 31, 35, 0.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  padding: 0.2em 0.4em;
+}
+
+.markdown-content pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45;
+  margin-top: 0;
+  margin-bottom: 16px;
+  padding: 16px;
+  overflow: auto;
+}
+
+.markdown-content a {
+  color: #0366d6;
+  text-decoration: none;
+}
+
+.markdown-content a:hover {
+  text-decoration: underline;
 }
 </style>

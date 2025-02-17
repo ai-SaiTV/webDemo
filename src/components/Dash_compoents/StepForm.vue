@@ -7,7 +7,7 @@
           <el-col :span="20">
             <el-form-item label="输入课程名称">
               <span>&nbsp;</span>
-              <el-input v-model="form.unit" placeholder="如：算法与数据结构的二叉树课">
+              <el-input v-model="form.unit" placeholder="如：人教版小学语文五年级下册《田忌赛马》">
                 <template #prepend>我想生成一节</template>
                 <template #append>的教案</template>
               </el-input>

@@ -1,4 +1,3 @@
-
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 
@@ -8,10 +7,14 @@ marked.setOptions({
   gfm: true          // 支持 GitHub Flavored Markdown（如表格）
 });
 
-export const parseMarkdown = (content) => {
-  const rawHtml = marked.parse(content);
-  return DOMPurify.sanitize(rawHtml); // 净化 HTML
+interface MarkdownParserResult {
+    readonly __html: string;
 }
+
+export const parseMarkdown = (content: string): MarkdownParserResult => {
+    const rawHtml = marked.parse(content) as string; // 使用 marked.parse 解析完整 Markdown
+    return { __html: DOMPurify.sanitize(rawHtml) }; // 净化 HTML
+};
 
 // utils/markdownUtils.ts
 export function parseMarkdownList(markdown: string): { title: string, url: string }[] {

@@ -15,7 +15,7 @@ interface ChatConfig {
 }
   
 export const chatConfig = ref<ChatConfig>({
-apiKey: 'pat_DdQD93S1Vy2WBf0KZdOJ1ob5U9GzeR2Yjmkzaj5xVBq7EAAwd6OmSLKRmMnI4WYw',
+apiKey: 'pat_J2WFfuv9jHWx8YugAw7pVR4ZCTv0X1go5yqCzmjEOjUPO99Vou3khJUc2tsh5RF5',
 botId: [
     '7449786123129847845',    //教案
     '7463464443028963340',    //思维导图
@@ -24,7 +24,7 @@ botId: [
     '7470499360309723155',       //课件
     '7471291204710219812'        //视频
     ],  
-message: '# 课程大纲\n- 课程主题：小学语文课《杨氏之子》\n- 课程目标：\n  - 让学生开始接触文言文，对文言文有一个初步的认识。\n  - 帮助学生理解古文的意思。\n  - 让学生感受到故事中人物语言的风趣机智。\n- 课程内容：\n  - 章节 1：朗读课文，根据注释说说课文的大意。\n  - 章节 2：体会杨氏之子的聪慧机智，感受文言文的语言魅力。\n  - 章节 3：拓展阅读，了解《世说新语》。\n- 课程总结：总结本节课的学习内容，强调文言文的学习方法和重要性。'
+message: ''
 })
 
 const { error: chatError, sendMessage } = useChat();  // 从 useChat composable 中导入 error 和 sendMessage方法
