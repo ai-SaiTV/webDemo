@@ -1,4 +1,4 @@
-// utils/markdownUtils.js
+
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 
@@ -11,4 +11,17 @@ marked.setOptions({
 export const parseMarkdown = (content) => {
   const rawHtml = marked.parse(content);
   return DOMPurify.sanitize(rawHtml); // 净化 HTML
+}
+
+// utils/markdownUtils.ts
+export function parseMarkdownList(markdown: string): { title: string, url: string }[] {
+    const regex = /\- \[(.*?)\]\((.*?)\)/g;
+    const matches = [];
+    let match;
+  
+    while ((match = regex.exec(markdown)) !== null) {
+      matches.push({ title: match[1], url: match[2] });
+    }
+  
+    return matches;
 };

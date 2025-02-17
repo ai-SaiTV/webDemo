@@ -7,9 +7,9 @@
           <div class="card-header">
             <el-button type="primary" link @click="initializeData">查看详情</el-button>
             <div class="markdown-container">
-            <!-- 渲染 Markdown 内容 -->
-            <div v-html="generatedContent.lessonPlan" class="markdown-content"></div>
-          </div>
+              <!-- 渲染 Markdown 内容 -->
+              <div v-html="generatedContent.lessonPlan" class="markdown-content"></div>
+            </div>
           </div>
         </template>
       </el-card>
@@ -38,7 +38,7 @@
       <el-card class="result-card">
         <template #header>
           <div class="card-header">
-            <h3>推荐教学资源</h3>
+            <h3>推荐教学视频</h3>
             <el-button type="primary" link>查看更多</el-button>
           </div>
         </template>
@@ -46,9 +46,10 @@
           <el-row :gutter="20">
             <el-col v-for="(resource, index) in generatedContent.resources" :key="index" :span="12">
               <div class="resource-card">
-                <img :src="resource.preview" :alt="resource.title">
                 <div class="resource-info">
-                  <h4>{{ resource.title }}</h4>
+                  <a :href="resource.url" target="_blank" rel="noopener noreferrer">
+                    <h4>{{ resource.title }}</h4>
+                  </a>
                   <el-tag size="small">{{ resource.type.toUpperCase() }}</el-tag>
                 </div>
               </div>
@@ -97,13 +98,10 @@
 </template>
 
 <script setup>
-import { progressProps } from 'element-plus';
-import { defineProps , ref , computed, onMounted } from 'vue';
-import { parseMarkdown } from '@/utils/markdownUtils';
-import { sessionId, DataThisSession } from './DashCompoents.ts'
-import { el } from 'element-plus/es/locales.mjs';
+import { defineProps, ref, computed, onMounted } from 'vue';
+import { parseMarkdown, parseMarkdownList } from '@/utils/markdownUtils.ts';
+import { sessionId, DataThisSession } from './DashCompoents.ts';
 import { storageService } from '@/services/storage/storageService';
-
 
 const generatedContent = ref({
   lessonPlan: {
@@ -117,87 +115,50 @@ const generatedContent = ref({
   exercises: []
 });
 
-// const parseLessonPlan = (text) => {
-//   try {
-//     // 解析 Markdown 格式的教案
-//     const lines = text.split('\n');
-//     const objectives = [];
-//     const steps = [];
-    
-//     let currentSection = '';
-    
-//     lines.forEach(line => {
-//       if (line.includes('课程目标')) {
-//         currentSection = 'objectives';
-//       } else if (line.includes('课程内容')) {
-//         currentSection = 'steps';
-//       } else if (line.startsWith('-') || line.startsWith('•')) {
-//         const content = line.replace(/^[- •]+/, '').trim();
-//         if (currentSection === 'objectives') {
-//           objectives.push(content);
-//         } else if (currentSection === 'steps') {
-//           steps.push(content);
-//         }
-//       }
-//     });
-
-//     return {
-//       objectives,
-//       steps
-//     };
-//   } catch (error) {
-//     console.error('解析教案失败:', error);
-//     return {
-//       objectives: [],
-//       steps: []
-//     };
-//   }
-// };
-
-
 // 初始化数据函数
-const initializeData = async() => {
-
+const initializeData = async () => {
   if (DataThisSession.value) {
     // 获取教案数据
     const teachingPlan = DataThisSession.value.resources.teaching_plan?.text || '';
-    
+
     // 获取思维导图
     const mindMap = DataThisSession.value.resources.tp_MindMap?.url || '';
-    
+
     // 获取课件资源
     const courseware = DataThisSession.value.resources.courseware;
-    
-    console.log('teachingPlan:', teachingPlan);
-    console.log('mindMap:', mindMap);
-    console.log('courseware:', courseware);
 
+    // 解析资源列表
+    const resourcesMarkdown = DataThisSession.value.resources.courseware.videos[0].url || '';
+    const resources = parseMarkdownList(resourcesMarkdown);
+
+    const exercises = DataThisSession.value.resources.courseware.exercises[0].url || "";
+    const parsedExercise = parseMarkdownList(exercises);
+
+    console.log(exercises)
+    console.log(resourcesMarkdown)
 
     // 更新组件数据
     generatedContent.value = {
-      lessonPlan:  parseMarkdown(teachingPlan),
+      lessonPlan: parseMarkdown(teachingPlan),
       mindMap: {
         preview: mindMap
       },
-      resources: [
-        ...courseware.videos.map(video => ({
-          type: 'video',
-          title: video.name,
-          preview: video.url
-        }))
-      ],
-      exercises: courseware.exercises.map(exercise => ({
-        title: exercise.name,
+      resources: resources.map(resource => ({
+        type: 'video',
+        title: resource.title,
+        url: resource.url
+      })),
+      exercises: parsedExercise.map(exercise => ({
+        title: exercise.title,
         difficulty: '中等',
         preview: exercise.url,
         count: 5
       }))
     };
-  }else{
+  } else {
     console.log('DataThisSession.value is null');
   }
 };
-
 
 const showAllExercises = ref(false);
 
@@ -210,7 +171,6 @@ const markdownContent = ref(`
 const parsedExercise = computed(() => {
   return parseMarkdown(markdownContent.value);
 });
-
 
 const previewMindMap = () => {
   const mindMapWindow = window.open('', '_blank');
@@ -225,21 +185,18 @@ const previewMindMap = () => {
           </style>
         </head>
         <body>
-          <img src="${props.generatedContent.mindMap.preview}" alt="思维导图">
+          <img src="${generatedContent.value.mindMap.preview}" alt="思维导图">
         </body>
       </html>
     `);
   }
 };
 
-
 onMounted(() => {
   initializeData();
 });
-
-
-
 </script>
+
 <style scoped lang="scss">
 .result-content {
   padding: 2rem;
@@ -346,7 +303,7 @@ onMounted(() => {
     margin-top: 20px;
   }
   .mind-map {
-    width: 100%; 
+    width: 100%;
     cursor: pointer;
   }
 }
@@ -377,6 +334,7 @@ onMounted(() => {
 .exercise-item {
   margin-bottom: 15px;
 }
+
 /* 使用 GitHub 风格的 Markdown 样式 */
 .markdown-content {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
