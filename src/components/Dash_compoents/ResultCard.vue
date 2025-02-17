@@ -5,24 +5,13 @@
       <el-card class="result-card">
         <template #header>
           <div class="card-header">
-            <h3>教学设计</h3>
             <el-button type="primary" link @click="initializeData">查看详情</el-button>
+            <div class="markdown-container">
+            <!-- 渲染 Markdown 内容 -->
+            <div v-html="generatedContent.lessonPlan" class="markdown-content"></div>
+          </div>
           </div>
         </template>
-        <div class="lesson-plan">
-          <h4>教学目标</h4>
-          <ul>
-            <li v-for="(objective, index) in generatedContent.lessonPlan.objectives" :key="index">
-              {{ objective }}
-            </li>
-          </ul>
-          <h4>教学步骤</h4>
-          <ol>
-            <li v-for="(step, index) in generatedContent.lessonPlan.steps" :key="index">
-              {{ step }}
-            </li>
-          </ol>
-        </div>
       </el-card>
     </el-col>
 
@@ -100,9 +89,9 @@
   <div v-if="showAllExercises" class="overlay" @click="showAllExercises = false">
     <div class="overlay-content" @click.stop>
       <div class="markdown-container">
-      <!-- 渲染 Markdown 内容 -->
-      <div v-html="parsedExercise" class="markdown-content"></div>
-  </div>
+        <!-- 渲染 Markdown 内容 -->
+        <div v-html="parsedExercise" class="markdown-content"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -128,42 +117,42 @@ const generatedContent = ref({
   exercises: []
 });
 
-const parseLessonPlan = (text) => {
-  try {
-    // 解析 Markdown 格式的教案
-    const lines = text.split('\n');
-    const objectives = [];
-    const steps = [];
+// const parseLessonPlan = (text) => {
+//   try {
+//     // 解析 Markdown 格式的教案
+//     const lines = text.split('\n');
+//     const objectives = [];
+//     const steps = [];
     
-    let currentSection = '';
+//     let currentSection = '';
     
-    lines.forEach(line => {
-      if (line.includes('课程目标')) {
-        currentSection = 'objectives';
-      } else if (line.includes('课程内容')) {
-        currentSection = 'steps';
-      } else if (line.startsWith('-') || line.startsWith('•')) {
-        const content = line.replace(/^[- •]+/, '').trim();
-        if (currentSection === 'objectives') {
-          objectives.push(content);
-        } else if (currentSection === 'steps') {
-          steps.push(content);
-        }
-      }
-    });
+//     lines.forEach(line => {
+//       if (line.includes('课程目标')) {
+//         currentSection = 'objectives';
+//       } else if (line.includes('课程内容')) {
+//         currentSection = 'steps';
+//       } else if (line.startsWith('-') || line.startsWith('•')) {
+//         const content = line.replace(/^[- •]+/, '').trim();
+//         if (currentSection === 'objectives') {
+//           objectives.push(content);
+//         } else if (currentSection === 'steps') {
+//           steps.push(content);
+//         }
+//       }
+//     });
 
-    return {
-      objectives,
-      steps
-    };
-  } catch (error) {
-    console.error('解析教案失败:', error);
-    return {
-      objectives: [],
-      steps: []
-    };
-  }
-};
+//     return {
+//       objectives,
+//       steps
+//     };
+//   } catch (error) {
+//     console.error('解析教案失败:', error);
+//     return {
+//       objectives: [],
+//       steps: []
+//     };
+//   }
+// };
 
 
 // 初始化数据函数
@@ -186,7 +175,7 @@ const initializeData = async() => {
 
     // 更新组件数据
     generatedContent.value = {
-      lessonPlan: parseLessonPlan(teachingPlan),
+      lessonPlan:  parseMarkdown(teachingPlan),
       mindMap: {
         preview: mindMap
       },
@@ -221,6 +210,7 @@ const markdownContent = ref(`
 const parsedExercise = computed(() => {
   return parseMarkdown(markdownContent.value);
 });
+
 
 const previewMindMap = () => {
   const mindMapWindow = window.open('', '_blank');
