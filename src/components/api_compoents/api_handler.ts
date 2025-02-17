@@ -86,6 +86,9 @@ export const handleSubmit = async (sessionId: string, step: number) => {
                                 });
                                 break;
                             case 1:
+                                //课堂设计接收
+                                break;
+                            case 2:
                                 await storageService.updateTeachingMindMap(sessionId, {
                                     url: lastMessage.content,
                                 });

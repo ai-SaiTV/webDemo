@@ -16,7 +16,8 @@
         </el-row>
       </el-form>
     </div>
-  <!-- 步骤2：大纲修改 -->
+
+  <!-- 步骤2：课堂设计 -->
   <div v-if="activeStep === 1" class="step-form">
     <el-form :model="form" label-position="top">
       <el-row :gutter="24" justify="center">
@@ -27,8 +28,21 @@
       </el-row>
     </el-form>
   </div>
-    <!-- 步骤3：教学要求 -->
-    <div v-if="activeStep === 2" class="step-form">
+
+  <!-- 步骤3：导图生成 -->
+  <div v-if="activeStep === 2" class="step-form">
+    <el-form :model="form" label-position="top">
+      <el-row :gutter="24" justify="center">
+        <el-form-item label="课堂设计">
+          <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
+            class="custom-textarea"></textarea>
+        </el-form-item>
+      </el-row>
+    </el-form>
+  </div>
+
+    <!-- 步骤4：导图生成 -->
+    <div v-if="activeStep === 3" class="step-form">
       <el-form :model="form1" label-position="top">
         <el-row :gutter="24" justify="center">
           <el-col :span="12">
@@ -54,7 +68,7 @@
       </el-form>
     </div>
     <!-- 步骤4：生成结果 -->
-    <div v-if="activeStep === 3" class="generation-step">
+    <div v-if="activeStep === 4" class="generation-step">
       <el-result icon="success" title="准备就绪" sub-title="已收集所有必要信息，点击下方按钮开始生成教案">
         <template #extra>
           <el-button type="primary" size="large" :loading="isGenerating" @click="generatePlan">
