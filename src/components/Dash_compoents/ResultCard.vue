@@ -198,7 +198,7 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .result-content {
   padding: 2rem;
 
@@ -336,49 +336,45 @@ onMounted(() => {
   margin-bottom: 15px;
 }
 
+.resource-card {
+  cursor: pointer;
+  background-color: #2e455d;
+}
+
+
 /* 教案专用样式 - 层次结构 & 高亮系统 */
 .markdown-content {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  line-height: 1.8;
+  line-height: 1.6;
   color: #333;
   max-width: 800px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
 }
 
 /* 标题层级系统 */
 .markdown-content h1 {
-  font-size: 2.2rem;
-  border-bottom: 3px solid #2c3e50;
-  padding-bottom: 0.5rem;
-  margin: 2rem 0 1.5rem;
+  font-size: 1.8rem;
+  margin: 1.5rem 0 1rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.3rem;
 }
 
 .markdown-content h2 {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
+  margin: 1.2rem 0 0.8rem;
   color: #34495e;
-  margin: 1.8rem 0 1rem;
-  padding-left: 0.5rem;
-  border-left: 4px solid #3498db;
 }
 
 .markdown-content h3 {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
+  margin: 1rem 0 0.5rem;
   color: #2c3e50;
-  margin: 1.5rem 0 0.8rem;
-  position: relative;
-}
-
-.markdown-content h3::before {
-  content: "▶";
-  color: #e74c3c;
-  margin-right: 0.5rem;
-  font-size: 0.9em;
 }
 
 /* 荧光笔高亮系统 */
 .markdown-content strong {
-  color: #c0392b; /* 重点文字颜色 */
+  color: #1c5be2; /* 重点文字颜色 */
 }
 
 .markdown-content code:not(pre code) {
@@ -392,28 +388,28 @@ onMounted(() => {
   background-color: #f8f9fa;
   border-left: 4px solid #3498db;
   margin: 1rem 0;
-  padding: 1rem 1.5rem;
+  padding: 0.5rem 1rem;
   color: #7f8c8d;
 }
 
 /* 表格增强样式 */
 .markdown-content table {
   width: 100%;
-  margin: 1.5rem 0;
+  margin: 1rem 0;
   border-collapse: collapse;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .markdown-content th {
-  background-color: #3498db;
-  color: white;
-  padding: 0.8rem;
+  background-color: #f4f4f4;
+  color: #333;
+  padding: 0.5rem;
   text-align: left;
+  border-bottom: 1px solid #ddd;
 }
 
 .markdown-content td {
-  padding: 0.6rem;
-  border-bottom: 1px solid #ecf0f1;
+  padding: 0.5rem;
+  border-bottom: 1px solid #ddd;
 }
 
 .markdown-content tr:hover {
@@ -425,10 +421,10 @@ onMounted(() => {
   background-color: #fff3d4; /* 荧光黄底色 */
   padding: 0.2rem 0.4rem;
   border-radius: 3px;
-  border-bottom: 2px solid #f1c40f; /* 下划线增强 */
+  border-bottom: 1px solid #f1c40f; /* 下划线增强 */
 }
 
-.key-concept {
+.keyconcept {
   background-color: #e8f5e9; /* 概念性内容绿色底色 */
   border-left: 3px solid #2ecc71;
   padding: 0.5rem 1rem;
@@ -438,7 +434,7 @@ onMounted(() => {
 /* 响应式优化 */
 @media (max-width: 768px) {
   .markdown-content {
-    padding: 1rem;
+    padding: 0.5rem;
   }
   
   .markdown-content table {
@@ -451,13 +447,12 @@ onMounted(() => {
 @media print {
   .markdown-content {
     font-size: 12pt;
-    line-height: 1.6;
+    line-height: 1.4;
   }
   
   .highlight, .key-concept {
     background-color: transparent;
-    border-bottom: 2px solid #999;
+    border-bottom: 1px solid #999;
   }
 }
-
 </style>
