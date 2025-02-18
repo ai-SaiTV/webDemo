@@ -14,6 +14,7 @@ import {
 
 import { storageService } from '@/services/storage/storageService';
 import type { StorageData } from '@/types/storageData'
+import { fa } from 'element-plus/es/locales.mjs';
 // import { tr } from 'element-plus/es/locales.mjs';
 
 

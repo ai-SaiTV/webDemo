@@ -239,7 +239,7 @@ onMounted(() => {
 
   .resources {
     .resource-card {
-      background: #f8fafc;
+      background: #acbac9;
       border-radius: 8px;
       overflow: hidden;
       margin-bottom: 1rem;
@@ -336,10 +336,6 @@ onMounted(() => {
   margin-bottom: 15px;
 }
 
-.resource-card {
-  cursor: pointer;
-  background-color: #2e455d;
-}
 
 
 /* 教案专用样式 - 层次结构 & 高亮系统 */
