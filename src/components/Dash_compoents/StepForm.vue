@@ -7,7 +7,9 @@
           <el-col :span="20">
             <el-form-item label="输入课程名称">
               <span>&nbsp;</span>
-              <el-input v-model="form.unit" placeholder="如：人教版小学语文五年级下册《田忌赛马》">
+              <el-input v-model="form.unit" placeholder="如：人教版小学语文五年级下册《田忌赛马》" 
+              @keydown.enter.prevent="handleEnter"
+              >
                 <template #prepend>我想生成一节</template>
                 <template #append>的教案</template>
               </el-input>
@@ -17,29 +19,29 @@
       </el-form>
     </div>
 
-  <!-- 步骤2：课堂设计 -->
-  <div v-if="activeStep === 1" class="step-form">
-    <el-form :model="form" label-position="top">
-      <el-row :gutter="24" justify="center">
-        <el-form-item label="大纲内容">
-          <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
-            class="custom-textarea"></textarea>
-        </el-form-item>
-      </el-row>
-    </el-form>
-  </div>
+    <!-- 步骤2：课堂设计 -->
+    <div v-if="activeStep === 1" class="step-form">
+      <el-form :model="form" label-position="top">
+        <el-row :gutter="24" justify="center">
+          <el-form-item label="大纲内容">
+            <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
+              class="custom-textarea"></textarea>
+          </el-form-item>
+        </el-row>
+      </el-form>
+    </div>
 
-  <!-- 步骤3：导图生成 -->
-  <div v-if="activeStep === 2" class="step-form">
-    <el-form :model="form" label-position="top">
-      <el-row :gutter="24" justify="center">
-        <el-form-item label="课堂设计">
-          <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
-            class="custom-textarea"></textarea>
-        </el-form-item>
-      </el-row>
-    </el-form>
-  </div>
+    <!-- 步骤3：导图生成 -->
+    <div v-if="activeStep === 2" class="step-form">
+      <el-form :model="form" label-position="top">
+        <el-row :gutter="24" justify="center">
+          <el-form-item label="课堂设计">
+            <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
+              class="custom-textarea"></textarea>
+          </el-form-item>
+        </el-row>
+      </el-form>
+    </div>
 
     <!-- 步骤4：导图生成 -->
     <div v-if="activeStep === 3" class="step-form">
@@ -112,7 +114,8 @@ const isProcessing = ref(false);
 const emit = defineEmits([
   'update:showResult',
   'update:isZoomed',
-  'update:translateY']);
+  'update:translateY',
+  'triggerNextStep']);
 
 const toggleImageSize = () => {
   emit('update:isZoomed', !props.isZoomed);
@@ -127,6 +130,9 @@ const onWheel = (event) => {
   emit('update:translateY', newTranslateY);
 };
 
+const handleEnter = (event) => {
+  emit('triggerNextStep', event);
+};
 const wheelOptions = { passive: true };
 
 onMounted(() => {
