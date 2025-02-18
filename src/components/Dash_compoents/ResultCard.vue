@@ -340,7 +340,7 @@ onMounted(() => {
 .markdown-content {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   line-height: 1.6;
-  color: #24292e;
+  color: #1db345;
   text-align: left; /* 设置内容左对齐 */
   padding: 1rem;
 }

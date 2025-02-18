@@ -1,6 +1,7 @@
 import { ref, computed, watch, nextTick } from 'vue';
 
 
+
 // step 0 ： 教学大纲生成， step 1 ： 课堂设计， step 2 ： 导图生成， step 3 ： 教学资源推荐
 
 
@@ -214,7 +215,11 @@ const turnStep = async (step: number) => {
         }
         return '0'
     } else if (step === 1) {      //课堂设计Res -->> 导图生成Pre
-        return 'last';
+        await nextTick()
+        if (DataThisSession.value?.resources?.class_design?.text) {
+            form1.value.requirements = DataThisSession.value.resources.class_design.text
+        }
+        return '1';
 
     } else if (step === 2) {   
         await nextTick()

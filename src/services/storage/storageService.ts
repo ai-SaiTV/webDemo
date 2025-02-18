@@ -14,6 +14,7 @@ export class StorageService {
       conversation: { messages: [] },
       resources: { 
         teaching_plan: { text: '' },
+        class_design: { text: '' },
         tp_MindMap: { url: '' },
         courseware: { videos: [], Courseware: [], exercises: [] }
       },
@@ -49,6 +50,19 @@ export class StorageService {
     const session = this.data.value.find(s => s.id === sessionId)
     if (session) {
       session.resources.teaching_plan = {
+        text: data.text,
+      }
+      session.metadata.lastUpdate = Date.now()
+      await this.saveToFile()
+    }
+  }
+
+  // 更新课堂设计
+  async updateClassDesign(sessionId: string, data: { text: string, }) {
+    console.log('更新课堂设计:', sessionId, data)
+    const session = this.data.value.find(s => s.id === sessionId)
+    if (session) {
+      session.resources.class_design = {
         text: data.text,
       }
       session.metadata.lastUpdate = Date.now()

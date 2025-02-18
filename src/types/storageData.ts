@@ -14,6 +14,11 @@ export interface StorageData {
             text: string,
         },
 
+        // 1.5. 课堂设计
+        class_design: {
+            text: string,
+        },
+
         // 2. 思维导图
         tp_MindMap: {
             url: string
