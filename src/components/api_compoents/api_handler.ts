@@ -23,7 +23,8 @@ import { ref,watch } from 'vue';
 import { storageService } from '@/services/storage/storageService';
 export const showResult = ref(false);
 
-//------------------api Test------------------//    
+//api import
+import { config } from '@/config/config';
 import { useChat } from '@/composables/useChat';
 import { useChatPolling } from '@/composables/useChatPolling';
 import { Message } from 'postcss';
@@ -36,7 +37,7 @@ interface ChatConfig {
 }
   
 export const chatConfig = ref<ChatConfig>({
-apiKey: 'pat_J2WFfuv9jHWx8YugAw7pVR4ZCTv0X1go5yqCzmjEOjUPO99Vou3khJUc2tsh5RF5',
+apiKey: config.apiKey,
 botId: [
     '7449786123129847845',    //教案
     '7472417501348069414',    //课堂设计
@@ -170,13 +171,13 @@ export const handleSubmitParallel = async (sessionId: string, botIndices: number
 
                         if (lastMessage?.role === 'assistant') {
                             switch (botIndex) {
-                                case 2:
+                                case 3:
                                     responses.exercises = lastMessage.content;
                                     break;
-                                case 3:
+                                case 4:
                                     responses.Courseware = lastMessage.content;
                                     break;
-                                case 4:
+                                case 5:
                                     responses.videos = lastMessage.content;
                                     break;
                             }

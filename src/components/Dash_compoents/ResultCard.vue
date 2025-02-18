@@ -336,111 +336,128 @@ onMounted(() => {
   margin-bottom: 15px;
 }
 
-/* 使用 GitHub 风格的 Markdown 样式 */
+/* 教案专用样式 - 层次结构 & 高亮系统 */
 .markdown-content {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  line-height: 1.6;
-  color: #1db345;
-  text-align: left; /* 设置内容左对齐 */
-  padding: 1rem;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.8;
+  color: #333;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
+/* 标题层级系统 */
 .markdown-content h1 {
-  font-size: 2em;
-  font-weight: bold;
-  border-bottom: 1px solid #eaecef;
-  padding-bottom: 0.3em;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
+  font-size: 2.2rem;
+  border-bottom: 3px solid #2c3e50;
+  padding-bottom: 0.5rem;
+  margin: 2rem 0 1.5rem;
 }
 
 .markdown-content h2 {
-  font-size: 1.5em;
-  font-weight: bold;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+  color: #34495e;
+  margin: 1.8rem 0 1rem;
+  padding-left: 0.5rem;
+  border-left: 4px solid #3498db;
 }
 
 .markdown-content h3 {
-  font-size: 1.25em;
-  font-weight: bold;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.4rem;
+  color: #2c3e50;
+  margin: 1.5rem 0 0.8rem;
+  position: relative;
 }
 
-.markdown-content h4 {
-  font-size: 1em;
-  font-weight: bold;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
+.markdown-content h3::before {
+  content: "▶";
+  color: #e74c3c;
+  margin-right: 0.5rem;
+  font-size: 0.9em;
 }
 
-.markdown-content h5 {
-  font-size: 0.875em;
-  font-weight: bold;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
+/* 荧光笔高亮系统 */
+.markdown-content strong {
+  color: #c0392b; /* 重点文字颜色 */
 }
 
-.markdown-content h6 {
-  font-size: 0.85em;
-  font-weight: bold;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-.markdown-content p {
-  margin: 1em 0;
-}
-
-.markdown-content ul {
-  padding-left: 2em;
-  list-style-type: disc;
-  margin: 1em 0;
-}
-
-.markdown-content ol {
-  padding-left: 2em;
-  list-style-type: decimal;
-  margin: 1em 0;
-}
-
-.markdown-content li {
-  margin: 0.25em 0;
+.markdown-content code:not(pre code) {
+  background-color: #f8f9fa; /* 浅灰代码背景 */
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  border: 1px solid #eaecef;
 }
 
 .markdown-content blockquote {
-  border-left: 4px solid #dfe2e5;
-  padding-left: 1em;
-  margin: 1em 0;
-  color: #6a737d;
+  background-color: #f8f9fa;
+  border-left: 4px solid #3498db;
+  margin: 1rem 0;
+  padding: 1rem 1.5rem;
+  color: #7f8c8d;
 }
 
-.markdown-content code {
-  background-color: rgba(27, 31, 35, 0.05);
+/* 表格增强样式 */
+.markdown-content table {
+  width: 100%;
+  margin: 1.5rem 0;
+  border-collapse: collapse;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.markdown-content th {
+  background-color: #3498db;
+  color: white;
+  padding: 0.8rem;
+  text-align: left;
+}
+
+.markdown-content td {
+  padding: 0.6rem;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.markdown-content tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* 自定义高亮类（在Markdown中用HTML标签实现） */
+.highlight {
+  background-color: #fff3d4; /* 荧光黄底色 */
+  padding: 0.2rem 0.4rem;
   border-radius: 3px;
-  font-size: 85%;
-  margin: 0;
-  padding: 0.2em 0.4em;
+  border-bottom: 2px solid #f1c40f; /* 下划线增强 */
 }
 
-.markdown-content pre {
-  background-color: #f6f8fa;
-  border-radius: 3px;
-  font-size: 85%;
-  line-height: 1.45;
-  margin-top: 0;
-  margin-bottom: 16px;
-  padding: 16px;
-  overflow: auto;
+.key-concept {
+  background-color: #e8f5e9; /* 概念性内容绿色底色 */
+  border-left: 3px solid #2ecc71;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 0;
 }
 
-.markdown-content a {
-  color: #0366d6;
-  text-decoration: none;
+/* 响应式优化 */
+@media (max-width: 768px) {
+  .markdown-content {
+    padding: 1rem;
+  }
+  
+  .markdown-content table {
+    display: block;
+    overflow-x: auto;
+  }
 }
 
-.markdown-content a:hover {
-  text-decoration: underline;
+/* 打印优化 */
+@media print {
+  .markdown-content {
+    font-size: 12pt;
+    line-height: 1.6;
+  }
+  
+  .highlight, .key-concept {
+    background-color: transparent;
+    border-bottom: 2px solid #999;
+  }
 }
+
 </style>

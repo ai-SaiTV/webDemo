@@ -270,7 +270,7 @@ export const generatePlan = async () => {
             }
         }, 50);
         // 等待所有资源生成完成
-        const result = await handleSubmitParallel(sessionId.value, [2, 3, 4]);
+        const result = await handleSubmitParallel(sessionId.value, [3, 4, 5]);
         console.log('generateResources:', result);
         DataThisSession.value = result || null;
 
