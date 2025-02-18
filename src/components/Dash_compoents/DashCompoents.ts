@@ -18,7 +18,7 @@ import type { StorageData } from '@/types/storageData'
 
 //<<------------------------------------------------------------
 export const sessionId = ref<string>("-1");  // 会话ID
-export  const DataThisSession = ref<StorageData | null>(null);  // 会话数据
+export const DataThisSession = ref<StorageData | null>(null);  // 会话数据
 
 
 export const activeStep = ref(0);
@@ -157,7 +157,7 @@ export const nextStep = async () => {
 
     const result = await handleSubmit(sessionId.value, activeStep.value);
     DataThisSession.value = result || null;
-    
+
     // 闭包保存当前步骤
     const currentStep = activeStep.value;
     stopPollingWatch = watch(() => isPolling.value, async (newPolling) => {
@@ -202,7 +202,13 @@ export const nextStep = async () => {
         }
     }, { immediate: true });
 };
-
+export const handleKeydown = (event: KeyboardEvent) => {
+    // 如果按下的是 Enter 键，触发 nextStep
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        nextStep();
+    }
+};
 
 
 
@@ -216,7 +222,7 @@ const turnStep = async (step: number) => {
     } else if (step === 1) {      //课堂设计Res -->> 导图生成Pre
         return 'last';
 
-    } else if (step === 2) {   
+    } else if (step === 2) {
         await nextTick()
         if (DataThisSession.value?.resources?.tp_MindMap?.url) {
             Mindimgsrc.value = DataThisSession.value.resources.tp_MindMap.url
@@ -239,7 +245,7 @@ export const prevStep = () => {
 export const generatePlan = async () => {
     isGenerating.value = true;
     try {
-        
+
         isProcessing.value = true;
         console.log('开始生成资源:', sessionId.value);
         progress.value = 0;
