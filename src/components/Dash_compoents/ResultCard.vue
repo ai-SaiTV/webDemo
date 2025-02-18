@@ -92,10 +92,11 @@
   <!-- 全部练习的覆盖层 -->
   <div v-if="showAllExercises" class="overlay" @click="showAllExercises = false">
     <div class="overlay-content" @click.stop>
-      <div class="markdown-container">
+      <!-- <div class="markdown-container"> -->
         <!-- 渲染 Markdown 内容 -->
-        <div v-html="parsedExercise" class="markdown-content"></div>
-      </div>
+        <PDF src="https://www.lingyuzhao.top/b/share/download?path=/share/2025_02_19/Exercises.pdf.pdf&userId=77" /> // npm i pdf-vue3
+        <!-- <div v-html="parsedExercise" class="markdown-content"></div> -->
+      <!-- </div> -->
     </div>
   </div>
 </template>
@@ -105,6 +106,7 @@ import { defineProps, ref, computed, onMounted } from 'vue';
 import { parseMarkdown, parseMarkdownList } from '@/utils/markdownUtils.ts';
 import { sessionId, DataThisSession } from './DashCompoents.ts';
 import { storageService } from '@/services/storage/storageService';
+import PDF from "pdf-vue3";
 
 const generatedContent = ref({
   lessonPlan: {
@@ -451,4 +453,6 @@ onMounted(() => {
     border-bottom: 1px solid #999;
   }
 }
+
+
 </style>
