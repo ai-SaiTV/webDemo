@@ -65,7 +65,8 @@ export const steps = [
     { title: '教学大纲生成', description: '🥰一句话生成大纲' },
     { title: '课堂设计', description: '⭐根据教学大纲和结合优秀教学案例生成课堂设计' },
     { title: '导图生成', description: '🗨️根据教学大纲生成思维导图' },
-    { title: '教学资源推荐', description: '🔥根据教学大纲和课堂设计生成教学资源' }
+    { title: '教学资源推荐', description: '🔥根据教学大纲和课堂设计生成教学资源' },
+    { title: '结果展示', description: '🎇整合展示备课资源' }
 ];
 
 export const generatedContent = ref({
@@ -126,7 +127,7 @@ let stopPollingWatch: (() => void) | null = null;
 let isUpdatingStep = false; // 状态锁
 let progressInterval: ReturnType<typeof setInterval> | null = null; // 用来保存定时器引用，便于清除
 export const nextStep = async () => {
-    // if (activeStep.value == 3) activeStep.value = 3;
+    if (activeStep.value == 3) activeStep.value = 4;
     if (activeStep.value >= steps.length - 1 || isUpdatingStep) return;
     isUpdatingStep = true;
 
