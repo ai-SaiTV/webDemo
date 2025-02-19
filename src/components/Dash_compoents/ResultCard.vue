@@ -94,7 +94,7 @@
     <div class="overlay-content" @click.stop>
       <!-- <div class="markdown-container"> -->
         <!-- 渲染 Markdown 内容 -->
-        <PDF src="https://www.lingyuzhao.top/b/share/download?path=/share/2025_02_19/Exercises.pdf.pdf&userId=77" /> // npm i pdf-vue3
+        <PDF src="https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf" /> // npm i pdf-vue3
         <!-- <div v-html="parsedExercise" class="markdown-content"></div> -->
       <!-- </div> -->
     </div>
