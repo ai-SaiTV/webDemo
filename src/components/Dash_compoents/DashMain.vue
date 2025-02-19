@@ -18,9 +18,9 @@
           <!-- 大纲生成具体步骤 -->
           <div class="step-content">
             <StepForm :activeStep="activeStep" :form="form" :form1="form1" :Mindimgsrc="Mindimgsrc" :isZoomed="isZoomed"
-              :imageStyle="imageStyle" :endWaitingTime="waitingTime" :translateY="translateY"
+              :imageStyle="imageStyle" :endWaitingTime="waitingTime" :translateY="translateY" :isGenerating="isGenerating"
               @update:showResult="updateShowResult" @update:isZoomed="updateIsZoomed"
-              @update:translateY="updateTranslateY" />
+              @update:translateY="updateTranslateY"  @triggerNextStep="handleKeydown"/>
           </div>
 
 
@@ -57,10 +57,10 @@ import Dashcard from './Dashcard.vue';
 
 import {
   activeStep, nextStep, prevStep, steps,
-  updateIsZoomed, isZoomed,
+  updateIsZoomed, isZoomed,isGenerating,
   updateTranslateY, translateY,
   showResult,updateShowResult,
-  Mindimgsrc, imageStyle,
+  Mindimgsrc, imageStyle,handleKeydown,
   form, form1, progressStatus,
   isProcessing, progress,
   generatedContent, gradientColor, waitingTime

@@ -1,10 +1,33 @@
+//       _____                    _____                    _____                    _____          
+//      |\    \                  /\    \                  /\    \                  /\    \         
+//      |:\____\                /::\    \                /::\    \                /::\____\        
+//      |::|   |                \:::\    \              /::::\    \              /::::|   |        
+//      |::|   |                 \:::\    \            /::::::\    \            /:::::|   |        
+//      |::|   |                  \:::\    \          /:::\/:::\    \          /::::::|   |        
+//      |::|   |                   \:::\    \        /:::/__\:::\    \        /:::/|::|   |        
+//      |::|   |                   /::::\    \      /::::\   \:::\    \      /:::/ |::|   |        
+//      |::|___|______    ____    /::::::\    \    /::::::\   \:::\    \    /:::/  |::|   | _____  
+//      /::::::::\    \  /\   \  /:::\/:::\    \  /:::\/:::\   \:::\    \  /:::/   |::|   |/\    \ 
+//     /::::::::::\____\/::\   \/:::/  \:::\____\/:::/  \:::\   \:::\____\/:: /    |::|   /::\____\
+//    /:::/~~~~/~~      \:::\  /:::/    \::/    /\::/    \:::\  /:::/    /\::/    /|::|  /:::/    /
+//   /:::/    /          \:::\/:::/    / \/____/  \/____/ \:::\/:::/    /  \/____/ |::| /:::/    / 
+//  /:::/    /            \::::::/    /                    \::::::/    /           |::|/:::/    /  
+// /:::/    /              \::::/____/                      \::::/    /            |::::::/    /   
+// \::/    /                \:::\    \                      /:::/    /             |:::::/    /    
+//  \/____/                  \:::\    \                    /:::/    /               /:::/    /     
+//                            \:::\____\                  /:::/    /               /:::/    /      
+//                             \::/    /                  \::/    /                \::/    /     
+//                              \/____/                    \/____/                  \/____/      
+
 import { ref,watch } from 'vue';
 import { storageService } from '@/services/storage/storageService';
 export const showResult = ref(false);
 
-//------------------api Test------------------//    
+//api import
+import { config } from '@/config/config';
 import { useChat } from '@/composables/useChat';
 import { useChatPolling } from '@/composables/useChatPolling';
+import { Message } from 'postcss';
 
 
 interface ChatConfig {
@@ -14,9 +37,10 @@ interface ChatConfig {
 }
   
 export const chatConfig = ref<ChatConfig>({
-apiKey: 'pat_DdQD93S1Vy2WBf0KZdOJ1ob5U9GzeR2Yjmkzaj5xVBq7EAAwd6OmSLKRmMnI4WYw',
+apiKey: config.apiKey,
 botId: [
     '7449786123129847845',    //教案
+    '7472417501348069414',    //课堂设计
     '7463464443028963340',    //思维导图
 
     '7470802643641008180',      //练习题
@@ -85,6 +109,11 @@ export const handleSubmit = async (sessionId: string, step: number) => {
                                 });
                                 break;
                             case 1:
+                                await storageService.updateClassDesign(sessionId, {
+                                    text: lastMessage.content,
+                                });
+                                break;
+                            case 2:
                                 await storageService.updateTeachingMindMap(sessionId, {
                                     url: lastMessage.content,
                                 });
@@ -113,77 +142,81 @@ export const handleSubmit = async (sessionId: string, step: number) => {
 
 
 export const handleSubmitParallel = async (sessionId: string, botIndices: number[]) => {
-    if (sessionId === "-1" || !chatConfig.value.apiKey || !chatConfig.value.message) {
-        console.log('Invalid session or config');
-        return null;
-    }
+    if (sessionId === "-1") return null;
 
     try {
-        // 创建所有 bot 的请求数组
-        const botRequests = botIndices.map(async (botIndex) => {
-            const initialResponse = await sendMessage(
-                chatConfig.value.apiKey,
-                chatConfig.value.botId[botIndex],
-                chatConfig.value.message
-            );
-            return { botIndex, response: initialResponse };
-        });
+        // 为每个 bot 创建独立的聊天实例
+        const chatInstances = botIndices.map(() => useChatPolling());
+        const responses = {
+            exercises: null as string | null,
+            Courseware: null as string | null,
+            videos: null as string | null
+        };
 
-        // 并行执行所有请求
-        const responses = await Promise.all(botRequests);
-
-        // 为每个响应创建轮询
-        const pollRequests = responses.map(({ botIndex, response }) => {
+        // 每个 bot 的请求处理函数
+        const handleBotRequest = async (botIndex: number, chatInstance: any) => {
             return new Promise<void>(async (resolve) => {
-                let stopWatch = watch(() => chatMessages.value, async (newMessages) => {
-                    if (newMessages?.data) {
-                        const lastMessage = newMessages.data.find(msg => 
-                            (msg.type === 'answer' && msg.content_type === 'text')) || newMessages.data[0];
-                        
-                        if (lastMessage.role === 'assistant') {
-                            // 更新消息
-                            await storageService.updateMessages(sessionId, {
-                                role: 'assistant',
-                                content: lastMessage.content
-                            });
+                const initialResponse = await sendMessage(
+                    chatConfig.value.apiKey,
+                    chatConfig.value.botId[botIndex],
+                    chatConfig.value.message
+                );
 
-                            // 根据不同的 bot 更新不同的资源
+                let stopWatch = watch(() => chatInstance.chatMessages.value, async (newMessages) => {
+                    if (newMessages?.data) {
+                        console.log(`Bot ${botIndex} messages:`, newMessages);
+                        const lastMessage = newMessages.data.find((msg: Message) => 
+                            msg.type === 'answer' && msg.content_type === 'text'
+                        );
+
+                        if (lastMessage?.role === 'assistant') {
                             switch (botIndex) {
-                                case 2: // 练习题
-                                    await storageService.updateCourseware(sessionId, {
-                                        exercises: [{ name: 'exercise1', url: lastMessage.content }]
-                                    });
+                                case 3:
+                                    responses.exercises = lastMessage.content;
                                     break;
-                                case 3: // 课件
-                                    await storageService.updateCourseware(sessionId, {
-                                        images: [{ name: 'courseware1', url: lastMessage.content }]
-                                    });
+                                case 4:
+                                    responses.Courseware = lastMessage.content;
                                     break;
-                                case 4: // 视频
-                                    await storageService.updateCourseware(sessionId, {
-                                        videos: [{ name: 'video1', url: lastMessage.content }]
-                                    });
+                                case 5:
+                                    responses.videos = lastMessage.content;
                                     break;
                             }
-
-                            // 停止监听并解析 Promise
                             stopWatch();
                             resolve();
                         }
                     }
                 }, { deep: true });
 
-                // 开始轮询
-                await startPolling(chatConfig.value.apiKey, response);
+                await chatInstance.startPolling(chatConfig.value.apiKey, initialResponse);
             });
-        });
+        };
 
-        // 等待所有轮询完成
-        await Promise.all(pollRequests);
+        // 并行处理所有 bot 请求
+        const promises = botIndices.map((botIndex, index) => 
+            handleBotRequest(botIndex, chatInstances[index])
+        );
 
-        // 返回更新后的会话数据
-        return await storageService.getSessionData(sessionId);
-        
+        await Promise.all(promises);
+
+        if (responses.exercises && responses.Courseware && responses.videos) {
+            await storageService.updateCourseware(sessionId, {
+                exercises: [{ 
+                    name: `exercise-${Date.now()}`,
+                    url: responses.exercises 
+                }],
+                Courseware: [{ 
+                    name: `courseware-${Date.now()}`,
+                    url: responses.Courseware 
+                }],
+                videos: [{ 
+                    name: `video-${Date.now()}`,
+                    url: responses.videos 
+                }]
+            });
+
+            return await storageService.getSessionData(sessionId);
+        }
+        return null;
     } catch (err) {
         console.error('Parallel submission error:', err);
         return null;

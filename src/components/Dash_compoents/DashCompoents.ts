@@ -1,17 +1,26 @@
 import { ref, computed, watch, nextTick } from 'vue';
 
+
+
+// step 0 ： 教学大纲生成， step 1 ： 课堂设计， step 2 ： 导图生成， step 3 ： 教学资源推荐
+
+
+
+
 // ------------------------------------------------------------>> api
 import {
-     handleSubmit, handleSubmitParallel, isPolling, chatConfig
+    handleSubmit, handleSubmitParallel, isPolling, chatConfig
 } from '@/components/api_compoents/api_handler';
 
 import { storageService } from '@/services/storage/storageService';
 import type { StorageData } from '@/types/storageData'
+import { fa } from 'element-plus/es/locales.mjs';
+// import { tr } from 'element-plus/es/locales.mjs';
 
 
 //<<------------------------------------------------------------
-const sessionId = ref<string>("-1");  // 会话ID
-const DataThisSession = ref<StorageData | null>(null);  // 会话数据
+export const sessionId = ref<string>("-1");  // 会话ID
+export const DataThisSession = ref<StorageData | null>(null);  // 会话数据
 
 
 export const activeStep = ref(0);
@@ -54,10 +63,11 @@ export const form = ref({
 });
 
 export const steps = [
-    { title: '大纲生成', description: '一句话生成大纲' },
-    { title: '大纲修改', description: '提供修改以保证贴合教学安排' },
-    { title: '导图生成', description: '根据教学大纲生成思维导图' },
-    { title: '智能生成', description: '总结教学大纲与思维导图' }
+    { title: '教学大纲生成', description: '🥰一句话生成大纲' },
+    { title: '课堂设计', description: '⭐根据教学大纲和结合优秀教学案例生成课堂设计' },
+    { title: '导图生成', description: '🗨️根据教学大纲生成思维导图' },
+    { title: '教学资源推荐', description: '🔥根据教学大纲和课堂设计生成教学资源' },
+    { title: '结果展示', description: '🎇整合展示备课资源' }
 ];
 
 export const generatedContent = ref({
@@ -114,11 +124,11 @@ export const generatedContent = ref({
 });
 
 
-//note : 按钮槽函数，但chatConfig不同，需要根据情况修改
 let stopPollingWatch: (() => void) | null = null;
 let isUpdatingStep = false; // 状态锁
-
+let progressInterval: ReturnType<typeof setInterval> | null = null; // 用来保存定时器引用，便于清除
 export const nextStep = async () => {
+    if (activeStep.value == 3) activeStep.value = 4;
     if (activeStep.value >= steps.length - 1 || isUpdatingStep) return;
     isUpdatingStep = true;
 
@@ -155,9 +165,23 @@ export const nextStep = async () => {
     const currentStep = activeStep.value;
     stopPollingWatch = watch(() => isPolling.value, async (newPolling) => {
         if (newPolling) {
-            progress.value = 30;
+            progress.value = 0;
             progressStatus.value = "active";
+            let startTime = Date.now();
+            const duration = 20000;
+            const targetProgress = 97;
+
+            progressInterval = setInterval(() => {
+                const elapsedTime = Date.now() - startTime;
+                const progressRatio = elapsedTime / duration;
+                progress.value = Math.min(targetProgress, progressRatio * targetProgress);
+
+                if (elapsedTime >= duration) {
+                    clearInterval(progressInterval as ReturnType<typeof setInterval>);
+                }
+            }, 50);
         } else {
+            clearInterval(progressInterval as ReturnType<typeof setInterval>);
             progress.value = 100;
             progressStatus.value = "success";
             await turnStep(currentStep);
@@ -181,18 +205,31 @@ export const nextStep = async () => {
         }
     }, { immediate: true });
 };
-
+export const handleKeydown = (event: KeyboardEvent) => {
+    // 如果按下的是 Enter 键，触发 nextStep
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        nextStep();
+    }
+};
 
 
 
 const turnStep = async (step: number) => {
-    if (step === 0) {
+    if (step === 0) {         //教学大纲Res -->> 课堂设计Pre
         await nextTick()
         if (DataThisSession.value?.resources?.teaching_plan?.text) {
             form1.value.requirements = DataThisSession.value.resources.teaching_plan.text
         }
         return '0'
-    } else if (step === 1) {
+    } else if (step === 1) {      //课堂设计Res -->> 导图生成Pre
+        await nextTick()
+        if (DataThisSession.value?.resources?.class_design?.text) {
+            form1.value.requirements = DataThisSession.value.resources.class_design.text
+        }
+        return '1';
+
+    } else if (step === 2) {
         await nextTick()
         if (DataThisSession.value?.resources?.tp_MindMap?.url) {
             Mindimgsrc.value = DataThisSession.value.resources.tp_MindMap.url
@@ -200,7 +237,7 @@ const turnStep = async (step: number) => {
         return '1';
     } else if (step === steps.length - 1) {
         return 'last';
-    } 
+    }
     else {
         return '';
     }
@@ -214,19 +251,47 @@ export const prevStep = () => {
 
 export const generatePlan = async () => {
     isGenerating.value = true;
+    try {
 
-    const generateResources = async (sessionId: string) => {
-        // 传入要使用的 bot 索引数组 [2,3,4] 分别对应练习题、课件、视频
-        const result = await handleSubmitParallel(sessionId, [2, 3, 4]);
+        isProcessing.value = true;
+        console.log('开始生成资源:', sessionId.value);
+        progress.value = 0;
+        progressStatus.value = "active";
+        let startTime = Date.now();
+        const duration = 20000;
+        const targetProgress = 97;
+
+        progressInterval = setInterval(() => {
+            const elapsedTime = Date.now() - startTime;
+            const progressRatio = elapsedTime / duration;
+            progress.value = Math.min(targetProgress, progressRatio * targetProgress);
+
+            if (elapsedTime >= duration) {
+                clearInterval(progressInterval as ReturnType<typeof setInterval>);
+            }
+        }, 50);
+        // 等待所有资源生成完成
+        const result = await handleSubmitParallel(sessionId.value, [3, 4, 5]);
         console.log('generateResources:', result);
-        return result;
-    };
+        DataThisSession.value = result || null;
 
-
-    setTimeout(() => {
+        if (result) {
+            clearInterval(progressInterval as ReturnType<typeof setInterval>);
+            progress.value = 100;
+            progressStatus.value = "success";
+            isProcessing.value = false;
+            showResult.value = true;
+        } else {
+            console.error('资源生成失败');
+            isProcessing.value = false;
+        }
+    } catch (error) {
+        console.error('生成过程出错:', error);
         isProcessing.value = false;
-        showResult.value = true;
-      }, waitingTime.value); // 模拟生成过程
+        console.log('资源生成结束:', sessionId.value);
+    } finally {
+        isGenerating.value = false;
+    }
 };
 
 

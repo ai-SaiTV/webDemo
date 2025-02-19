@@ -5,24 +5,13 @@
       <el-card class="result-card">
         <template #header>
           <div class="card-header">
-            <h3>教学设计</h3>
-            <el-button type="primary" link>查看详情</el-button>
+            <el-button type="primary" link @click="initializeData">查看详情</el-button>
+            <div class="markdown-container">
+              <!-- 渲染 Markdown 内容 -->
+              <div v-html="generatedContent.lessonPlan" class="markdown-content"></div>
+            </div>
           </div>
         </template>
-        <div class="lesson-plan">
-          <h4>教学目标</h4>
-          <ul>
-            <li v-for="(objective, index) in generatedContent.lessonPlan.objectives" :key="index">
-              {{ objective }}
-            </li>
-          </ul>
-          <h4>教学步骤</h4>
-          <ol>
-            <li v-for="(step, index) in generatedContent.lessonPlan.steps" :key="index">
-              {{ step }}
-            </li>
-          </ol>
-        </div>
       </el-card>
     </el-col>
 
@@ -49,7 +38,7 @@
       <el-card class="result-card">
         <template #header>
           <div class="card-header">
-            <h3>推荐教学资源</h3>
+            <h3>推荐教学视频</h3>
             <el-button type="primary" link>查看更多</el-button>
           </div>
         </template>
@@ -57,9 +46,10 @@
           <el-row :gutter="20">
             <el-col v-for="(resource, index) in generatedContent.resources" :key="index" :span="12">
               <div class="resource-card">
-                <img :src="resource.preview" :alt="resource.title">
                 <div class="resource-info">
-                  <h4>{{ resource.title }}</h4>
+                  <a :href="resource.url" target="_blank" rel="noopener noreferrer">
+                    <h4>{{ resource.title }}</h4>
+                  </a>
                   <el-tag size="small">{{ resource.type.toUpperCase() }}</el-tag>
                 </div>
               </div>
@@ -68,7 +58,6 @@
         </div>
       </el-card>
     </el-col>
-
 
     <!-- 练习题卡片 -->
     <el-col :span="12">
@@ -82,15 +71,18 @@
         <div class="exercises">
           <div v-for="(exercise, index) in generatedContent.exercises" :key="index" class="exercise-item">
             <div class="exercise-header">
-              <h4>{{ exercise.title }}</h4>
+            <h4>{{ exercise.title }}</h4>
+              
               <el-tag size="small" :type="exercise.difficulty === '简单' ? 'success' : 'warning'">
                 {{ exercise.difficulty }}
               </el-tag>
             </div>
-            <p class="exercise-preview">{{ exercise.preview }}</p>
+            <!-- <p class="exercise-preview">{{ exercise.preview }}</p> -->
             <div class="exercise-footer">
-              <span>{{ exercise.count }}道题目</span>
-              <el-button type="primary" link size="small">开始练习</el-button>
+              <!-- <span>{{ exercise.count }}道题目</span> -->
+              <a :href="exercise.preview" download="file.pdf">
+                <el-button type="primary" link size="small">下载</el-button>
+              </a>
             </div>
           </div>
         </div>
@@ -100,48 +92,88 @@
   <!-- 全部练习的覆盖层 -->
   <div v-if="showAllExercises" class="overlay" @click="showAllExercises = false">
     <div class="overlay-content" @click.stop>
-      <div class="markdown-container">
-      <!-- 渲染 Markdown 内容 -->
-      <div v-html="parsedExercise" class="markdown-content"></div>
-  </div>
+      <!-- <div class="markdown-container"> -->
+        <!-- 渲染 Markdown 内容 -->
+        <PDF src="https://www.lingyuzhao.top/b/share/download?path=/share/2025_02_19/Exercises.pdf.pdf&userId=77" /> // npm i pdf-vue3
+        <!-- <div v-html="parsedExercise" class="markdown-content"></div> -->
+      <!-- </div> -->
     </div>
   </div>
 </template>
 
 <script setup>
-import { progressProps } from 'element-plus';
-import { defineProps , ref , computed } from 'vue';
-import { parseMarkdown } from '@/utils/markdownUtils';
+import { defineProps, ref, computed, onMounted } from 'vue';
+import { parseMarkdown, parseMarkdownList } from '@/utils/markdownUtils.ts';
+import { sessionId, DataThisSession } from './DashCompoents.ts';
+import { storageService } from '@/services/storage/storageService';
+import PDF from "pdf-vue3";
 
-const props = defineProps({
-  generatedContent: {
-    type: Object,
-    required: true,
+const generatedContent = ref({
+  lessonPlan: {
+    objectives: [],
+    steps: []
   },
+  mindMap: {
+    preview: ''
+  },
+  resources: [],
+  exercises: []
 });
+
+// 初始化数据函数
+const initializeData = async () => {
+  if (DataThisSession.value) {
+    // 获取教案数据
+    const teachingPlan = DataThisSession.value.resources.teaching_plan?.text || '';
+
+    // 获取思维导图
+    const mindMap = DataThisSession.value.resources.tp_MindMap?.url || '';
+
+    // 获取课件资源
+    const courseware = DataThisSession.value.resources.courseware;
+
+    // 解析资源列表
+    const resourcesMarkdown = DataThisSession.value.resources.courseware.videos[0].url || '';
+    const resources = parseMarkdownList(resourcesMarkdown);
+
+    const exercises = DataThisSession.value.resources.courseware.exercises[0].url || "";
+    const parsedExercise = parseMarkdownList(exercises);
+
+
+    // 更新组件数据
+    generatedContent.value = {
+      lessonPlan: parseMarkdown(teachingPlan).__html,
+      mindMap: {
+        preview: mindMap
+      },
+      resources: resources.map(resource => ({
+        type: 'video',
+        title: resource.title,
+        url: resource.url
+      })),
+      exercises: parsedExercise.map(exercise => ({
+        title: exercise.title,
+        difficulty: '中等',
+        preview: exercise.url,
+        count: 5
+      }))
+    };
+  } else {
+    console.log('DataThisSession.value is null');
+  }
+};
 
 const showAllExercises = ref(false);
 
 // 直接在组件中定义 Markdown 内容
 const markdownContent = ref(`
-# 《杨氏之子》练习题\n
-## 一、选择题（每题5分，共25分）\n
-1. 题目：下列句子中，朗读停顿不恰当的一项是（ ）\n
-    - 选项：A. 孔君平/诣/其父，父/不在，乃/呼儿出。\n
-    - 选项：B. 未闻孔雀/是/夫子家禽。\n
-    - 选项：C. 孔/指以示儿/曰：“此/是君/家果。”\n
-    - 选项：D. 梁国/杨氏子/九岁，甚聪惠。\n\n
-    2. 题目：下列对课文的理解有误的一项是（ ）\n
-    - 选项：A. 本文选自《世说新语》。\n
-    - 选项：B. 杨氏之子的回答妙在以其人之道还治其人之身。\n
-    - 选项：C. 杨氏之子的回答体现了他的机智和幽默。\n
-    - 选项：D. 杨氏之子的回答体现了他的不礼貌。\n
+## 暂无
 `);
 
-// 解析 Markdown 内容为 HTML
-const parsedExercise = computed(() => {
-  return parseMarkdown(markdownContent.value);
-});
+// // 解析 Markdown 内容为 HTML
+// const parsedExercise = computed(() => {
+//   return parseMarkdown(markdownContent.value);
+// });
 
 const previewMindMap = () => {
   const mindMapWindow = window.open('', '_blank');
@@ -156,18 +188,19 @@ const previewMindMap = () => {
           </style>
         </head>
         <body>
-          <img src="${props.generatedContent.mindMap.preview}" alt="思维导图">
+          <img src="${generatedContent.value.mindMap.preview}" alt="思维导图">
         </body>
       </html>
     `);
   }
 };
 
-
-
-
+onMounted(() => {
+  initializeData();
+});
 </script>
-<style scoped lang="scss">
+
+<style lang="scss">
 .result-content {
   padding: 2rem;
 
@@ -208,7 +241,7 @@ const previewMindMap = () => {
 
   .resources {
     .resource-card {
-      background: #f8fafc;
+      background: #acbac9;
       border-radius: 8px;
       overflow: hidden;
       margin-bottom: 1rem;
@@ -234,7 +267,7 @@ const previewMindMap = () => {
   .exercises {
     .exercise-item {
       padding: 1rem;
-      border-bottom: 1px solid #e5e7eb;
+      border-bottom: 1px solid #0a1d42;
 
       &:last-child {
         border-bottom: none;
@@ -273,7 +306,7 @@ const previewMindMap = () => {
     margin-top: 20px;
   }
   .mind-map {
-    width: 100%; 
+    width: 100%;
     cursor: pointer;
   }
 }
@@ -304,25 +337,122 @@ const previewMindMap = () => {
 .exercise-item {
   margin-bottom: 15px;
 }
-/* 使用 GitHub 风格的 Markdown 样式 */
+
+
+
+/* 教案专用样式 - 层次结构 & 高亮系统 */
 .markdown-content {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 1.6;
-  color: #24292e;
-  text-align: left; /* 设置内容左对齐 */
+  color: #333;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
+/* 标题层级系统 */
 .markdown-content h1 {
-  border-bottom: 1px solid #eaecef;
-  padding-bottom: 0.3em;
+  font-size: 1.8rem;
+  margin: 1.5rem 0 1rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.3rem;
 }
 
-.markdown-content ul {
-  padding-left: 2em;
-  list-style-type: disc;
+.markdown-content h2 {
+  font-size: 1.5rem;
+  margin: 1.2rem 0 0.8rem;
+  color: #34495e;
 }
 
-.markdown-content li {
-  margin: 0.25em 0;
+.markdown-content h3 {
+  font-size: 1.2rem;
+  margin: 1rem 0 0.5rem;
+  color: #2c3e50;
 }
+
+/* 荧光笔高亮系统 */
+.markdown-content strong {
+  color: #1c5be2; /* 重点文字颜色 */
+}
+
+.markdown-content code:not(pre code) {
+  background-color: #f8f9fa; /* 浅灰代码背景 */
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  border: 1px solid #eaecef;
+}
+
+.markdown-content blockquote {
+  background-color: #f8f9fa;
+  border-left: 4px solid #3498db;
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  color: #7f8c8d;
+}
+
+/* 表格增强样式 */
+.markdown-content table {
+  width: 100%;
+  margin: 1rem 0;
+  border-collapse: collapse;
+}
+
+.markdown-content th {
+  background-color: #f4f4f4;
+  color: #333;
+  padding: 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.markdown-content td {
+  padding: 0.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.markdown-content tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* 自定义高亮类（在Markdown中用HTML标签实现） */
+.highlight {
+  background-color: #fff3d4; /* 荧光黄底色 */
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  border-bottom: 1px solid #f1c40f; /* 下划线增强 */
+}
+
+.keyconcept {
+  background-color: #e8f5e9; /* 概念性内容绿色底色 */
+  border-left: 3px solid #2ecc71;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 0;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  .markdown-content {
+    padding: 0.5rem;
+  }
+  
+  .markdown-content table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+/* 打印优化 */
+@media print {
+  .markdown-content {
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+  
+  .highlight, .key-concept {
+    background-color: transparent;
+    border-bottom: 1px solid #999;
+  }
+}
+
+
 </style>

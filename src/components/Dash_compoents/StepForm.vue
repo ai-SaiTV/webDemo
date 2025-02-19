@@ -2,34 +2,14 @@
   <div>
     <!-- 步骤1：大纲生成 -->
     <div v-if="activeStep === 0" class="step-form">
-
-
-
-      <!-- 测试接口 -->
-      <!-- Chat  -->
-      <!-- <div class="w-full">
-          <button
-            @click="handleSubmit"
-            :disabled="isPolling || !chatConfig.apiKey || !chatConfig.botId || !chatConfig.message"
-            class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-4 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-          >
-            {{ isPolling ? 'Generating Response...' : 'Send Message' }}
-            
-          </button>
-
-          <ResponseDisplay 
-          :response="response"
-          :messages="chatMessages"
-        />
-      
-        </div> -->
-      <!-- chat -->
       <el-form :model="form" label-position="top">
         <el-row :gutter="20" justify="center">
           <el-col :span="20">
             <el-form-item label="输入课程名称">
               <span>&nbsp;</span>
-              <el-input v-model="form.unit" placeholder="如：算法与数据结构的二叉树课">
+              <el-input v-model="form.unit" placeholder="如：人教版小学语文五年级下册《田忌赛马》" 
+              @keydown.enter.prevent="handleEnter"
+              >
                 <template #prepend>我想生成一节</template>
                 <template #append>的教案</template>
               </el-input>
@@ -38,19 +18,33 @@
         </el-row>
       </el-form>
     </div>
-  <!-- 步骤2：大纲修改 -->
-  <div v-if="activeStep === 1" class="step-form">
-    <el-form :model="form" label-position="top">
-      <el-row :gutter="24" justify="center">
-        <el-form-item label="大纲内容">
-          <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
-            class="custom-textarea"></textarea>
-        </el-form-item>
-      </el-row>
-    </el-form>
-  </div>
-    <!-- 步骤3：教学要求 -->
+
+    <!-- 步骤2：课堂设计 -->
+    <div v-if="activeStep === 1" class="step-form">
+      <el-form :model="form" label-position="top">
+        <el-row :gutter="24" justify="center">
+          <el-form-item label="大纲内容">
+            <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
+              class="custom-textarea"></textarea>
+          </el-form-item>
+        </el-row>
+      </el-form>
+    </div>
+
+    <!-- 步骤3：导图生成 -->
     <div v-if="activeStep === 2" class="step-form">
+      <el-form :model="form" label-position="top">
+        <el-row :gutter="24" justify="center">
+          <el-form-item label="课堂设计">
+            <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
+              class="custom-textarea"></textarea>
+          </el-form-item>
+        </el-row>
+      </el-form>
+    </div>
+
+    <!-- 步骤4：导图生成 -->
+    <div v-if="activeStep === 3" class="step-form">
       <el-form :model="form1" label-position="top">
         <el-row :gutter="24" justify="center">
           <el-col :span="12">
@@ -76,7 +70,7 @@
       </el-form>
     </div>
     <!-- 步骤4：生成结果 -->
-    <div v-if="activeStep === 3" class="generation-step">
+    <div v-if="activeStep === 4" class="generation-step">
       <el-result icon="success" title="准备就绪" sub-title="已收集所有必要信息，点击下方按钮开始生成教案">
         <template #extra>
           <el-button type="primary" size="large" :loading="isGenerating" @click="generatePlan">
@@ -97,6 +91,8 @@ import {
   response, chatMessages, handleSubmit, isPolling, chatConfig
 } from '@/components/api_compoents/api_handler';
 
+import { generatePlan } from './DashCompoents';
+
 
 
 const props = defineProps({
@@ -109,23 +105,22 @@ const props = defineProps({
   imageStyle: Object,
   endWaitingTime: Number,
   showResult: Boolean,
-
+  isGenerating: Boolean,
 });
 
 const showResult = ref(false);
 const isHovering = ref(false);
-const isGenerating = ref(false);
 const isProcessing = ref(false);
 const emit = defineEmits([
   'update:showResult',
   'update:isZoomed',
-  'update:translateY']);
+  'update:translateY',
+  'triggerNextStep']);
 
 const toggleImageSize = () => {
   emit('update:isZoomed', !props.isZoomed);
   emit('update:translateY', 0);
 };
-
 
 const onWheel = (event) => {
   const newTranslateY = event.deltaY > 0
@@ -135,6 +130,9 @@ const onWheel = (event) => {
   emit('update:translateY', newTranslateY);
 };
 
+const handleEnter = (event) => {
+  emit('triggerNextStep', event);
+};
 const wheelOptions = { passive: true };
 
 onMounted(() => {
@@ -158,15 +156,15 @@ const imageStyle = computed(() => ({
   cursor: isHovering.value ? 'zoom-in' : 'default',
 }));
 
-const generatePlan = async () => {
-  isGenerating.value = true;
-  setTimeout(() => {
-    isProcessing.value = false;
-    showResult.value = true;
-    console.log(showResult.value);
-    emit('update:showResult', showResult.value);
-  }, props.endWaitingTime);
-};
+// const generatePlan = async () => {
+//   isGenerating.value = true;
+//   setTimeout(() => {
+//     isProcessing.value = false;
+//     showResult.value = true;
+//     console.log(showResult.value);
+//     emit('update:showResult', showResult.value);
+//   }, props.endWaitingTime);
+// };
 
 </script>
 
