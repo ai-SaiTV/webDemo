@@ -19,7 +19,7 @@
 //                             \::/    /                  \::/    /                \::/    /     
 //                              \/____/                    \/____/                  \/____/      
 
-import { ref,watch } from 'vue';
+import { ref,watch } from '@vue/runtime-core';
 import { storageService } from '@/services/storage/storageService';
 export const showResult = ref(false);
 
@@ -50,7 +50,7 @@ botId: [
 message: ''
 })
 
-const { error: chatError, sendMessage } = useChat();  // 从 useChat composable 中导入 error 和 sendMessage方法
+const {sendMessage } = useChat();  // 从 useChat composable 中导入 error 和 sendMessage方法
 export const {                                               // 从 useChatPolling composable 中导入以下属性和方法
   currentResponse: response,
   chatMessages,
@@ -94,28 +94,35 @@ export const handleSubmit = async (sessionId: string, step: number) => {
             unwatch = watch(() => chatMessages.value, async (newMessages) => {
                 if (newMessages?.data) {
                     console.log('newMessages:', newMessages)
-                    const lastMessage = newMessages.data.find(msg => 
+                    interface ChatMessage {
+                        type?: string;
+                        content_type?: string;
+                        role?: string;
+                        content?: string;
+                    }
+                    
+                    const lastMessage: ChatMessage = newMessages.data.find((msg: ChatMessage) => 
                         (msg.type === 'answer' && msg.content_type === 'text')) || newMessages.data[0];
                     if (lastMessage.role === 'assistant') {
                         await storageService.updateMessages(sessionId, {
                             role: 'assistant',
-                            content: lastMessage.content
+                            content: lastMessage.content || ''
                         });
 
                         switch (currentStep) { // 使用闭包中的 currentStep
                             case 0:
                                 await storageService.updateTeachingPlan(sessionId, {
-                                    text: lastMessage.content,
+                                    text: lastMessage.content || '',
                                 });
                                 break;
                             case 1:
                                 await storageService.updateClassDesign(sessionId, {
-                                    text: lastMessage.content,
+                                    text: lastMessage.content || '',
                                 });
                                 break;
                             case 2:
                                 await storageService.updateTeachingMindMap(sessionId, {
-                                    url: lastMessage.content,
+                                    url: lastMessage.content || '',
                                 });
                                 break;
                             
