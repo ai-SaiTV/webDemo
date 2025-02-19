@@ -30,6 +30,7 @@ export const isGenerating = ref(false);
 export const showResult = ref(false);
 export const isProcessing = ref(false);
 export const isZoomed = ref(false);
+export const isForm1Editing = ref(false);
 export const isHovering = ref(false);
 
 export const progressStatus = ref("active");
@@ -220,13 +221,15 @@ export const handleKeydown = (event: KeyboardEvent) => {
     }
 };
 
+import { parseMarkdown } from '../../utils/markdownUtils';
 
 
 const turnStep = async (step: number) => {
     if (step === 0) {         //教学大纲Res -->> 课堂设计Pre
         await nextTick(() => {})
         if (DataThisSession.value?.resources?.teaching_plan?.text) {
-            form1.value.requirements = DataThisSession.value.resources.teaching_plan.text
+
+            form1.value.requirements = parseMarkdown(DataThisSession.value.resources.teaching_plan.text).__html
         }
         return '0'
     } else if (step === 1) {      //课堂设计Res -->> 导图生成Pre
