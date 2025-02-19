@@ -1,122 +1,129 @@
 <template>
   <div class="analysis-container">
-    <!-- 班级选择和上传区域 -->
-    <el-row :gutter="20" class="mb-4">
-      <el-col :span="16">
+    <el-row class="main-row" :gutter="10">
+      <!-- 左侧部分 -->
+      <el-col :span="18">
         <el-card class="upload-card">
           <template #header>
-            <div class="card-header">
-              <span>成绩单导入</span>
-              <el-select v-model="selectedClassId" placeholder="选择班级" @change="reloadClassData">
-                <el-option
-                  v-for="class_ in classes"
-                  :key="class_.id"
-                  :label="class_.name"
-                  :value="class_.id"
-                />
-              </el-select>
-            </div>
+            <div class="card-header">选择班级</div>
           </template>
-          <div class="upload-area">
-            <input
-              ref="uploadRef"
-              type="file"
-              accept=".xlsx,.xls"
-              style="display: none"
-              @change="handleExcelUpload"
+          <el-select v-model="selectedClassId" placeholder="选择班级" class="class-select">
+            <el-option
+              v-for="class_ in classes"
+              :key="class_.id"
+              :label="class_.name"
+              :value="class_.id"
             />
-            <el-button type="primary" @click="uploadRef.click()">
-              <el-icon><Upload /></el-icon>
-              上传成绩单
-            </el-button>
-            <p class="upload-tip">支持.xlsx或.xls格式，请确保第一列为学生姓名，后续列为题目分数</p>
+          </el-select>
+        </el-card>
+
+        <el-card class="add-question-card">
+          <template #header>
+            <div class="card-header">设置题目数量</div>
+          </template>
+          <el-input-number
+            v-model="newQuestionCount"
+            :min="1"
+            :max="10"
+            style="width: 100%;"
+            @change="updateQuestionCount"
+          />
+        </el-card>
+
+        <!-- 动态学生成绩输入 -->
+        <el-card class="add-student-card">
+          <template #header>
+            <div class="card-header">添加学生成绩</div>
+          </template>
+          <div>
+            <el-input v-model="newStudentName" placeholder="请输入学生姓名" class="input-field" />
+            <el-row :gutter="8">
+              <el-col v-for="(score, index) in newQuestionCount" :key="index" :span="6">
+                <el-input-number
+                  v-model="newStudentScores[index]"
+                  :min="0"
+                  :max="100"
+                  :step="1"
+                  style="width: 100%;"
+                  :placeholder="'题目' + (index + 1)"
+                />
+              </el-col>
+            </el-row>
+            <el-button type="primary" class="add-btn" @click="addStudent">添加成绩</el-button>
           </div>
         </el-card>
       </el-col>
-      <el-col :span="8">
-        <el-card class="student-list-card">
+
+      <!-- 右侧部分 - 成绩明细 -->
+      <el-col :span="6">
+        <el-card class="table-card">
           <template #header>
-            <div class="card-header">
-              <span>班级学生</span>
-            </div>
+            <div class="card-header">成绩明细</div>
           </template>
-          <el-scrollbar height="200px">
-            <div class="student-list">
-              <div
-                v-for="student in currentClassStudents"
-                :key="student.id"
-                class="student-item"
-                @click="viewStudentDetails(student)"
-              >
-                <el-avatar :size="32">{{ student.name.charAt(0) }}</el-avatar>
-                <span class="student-name">{{ student.name }}</span>
-                <el-button type="primary" link size="small">查看详情</el-button>
-              </div>
-            </div>
-          </el-scrollbar>
+          <el-table :data="tableData" style="width: 100%" max-height="400">
+            <el-table-column label="姓名" width="160">
+              <template #default="{ row }">
+                <div class="student-name-with-avatar">
+                  <el-avatar
+                    :size="40"
+                    src="https://cube.elemecdn.com/0/88/03b0d3956334df583a3b41686ae9f4d.png"
+                    class="student-avatar"
+                  />
+                  <span class="student-name">{{ row.name }}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="100">
+              <template #default="{ row }">
+                <el-button type="text" @click="viewStudentDetails(row)">查看详情</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </el-card>
       </el-col>
     </el-row>
 
-    <!-- 数据分析区域 -->
-    <template v-if="1">
-      <!-- 图表分析 -->
-      <el-row :gutter="20" class="chart-row">
-        <el-col :span="12">
-          <el-card class="chart-card">
-            <div ref="performanceChartRef" style="height: 400px;"></div>
-          </el-card>
-        </el-col>
-        <el-col :span="12">
-          <el-card class="chart-card">
-            <div ref="questionAnalysisChartRef" style="height: 400px;"></div>
-          </el-card>
-        </el-col>
-      </el-row>
-
-      <!-- 成绩明细表格 -->
-      <el-card class="table-card">
-        <template #header>
-          <div class="card-header">
-            <span>成绩明细</span>
-            <el-button type="primary" @click="generateAIAnalysis">
-              <el-icon><Connection /></el-icon>
-              AI分析
-            </el-button>
-          </div>
-        </template>
-        <el-table :data="tableData" style="width: 100%" max-height="400">
-          <el-table-column prop="name" label="姓名" width="120" fixed />
-          <el-table-column
-            v-for="(_, index) in questions"
-            :key="index"
-            :prop="`scores[${index}]`"
-            :label="`题目${index + 1}`"
-            width="100"
+    <!-- 学生详情对话框 -->
+    <el-dialog
+      v-model="showStudentDetails"
+      title="学生详情"
+      width="50%"
+      :before-close="handleClose"
+    >
+      <div v-if="selectedStudent" class="student-details-container">
+        <div class="student-info">
+          <el-avatar
+            :size="80"
+            src="https://cube.elemecdn.com/0/88/03b0d3956334df583a3b41686ae9f4d.png"
+            class="student-avatar"
           />
-          <el-table-column prop="total" label="总分" width="100" fixed="right" />
-          <el-table-column prop="rank" label="排名" width="80" fixed="right" />
-          <el-table-column label="操作" width="120" fixed="right">
+          <div class="info-text">
+            <p><strong>姓名：</strong>{{ selectedStudent.name }}</p>
+            <p><strong>班级：</strong>{{ selectedStudent.class }}</p>
+            <p><strong>总分：</strong>{{ selectedStudent.total }}</p>
+            <p><strong>平均分：</strong>{{ selectedStudent.average.toFixed(2) }}</p>
+          </div>
+        </div>
+
+        <!-- 成绩明细表格 -->
+        <h3>成绩明细</h3>
+        <el-table :data="selectedStudent.scores" style="width: 100%">
+          <el-table-column label="题目" prop="index" width="80">
+            <template #default="{ row, $index }">
+              题目{{ $index + 1 }}
+            </template>
+          </el-table-column>
+          <el-table-column label="得分" prop="score" width="80">
             <template #default="{ row }">
-              <el-button type="primary" link @click="viewStudentDetails(row)">
-                查看详情
-              </el-button>
+              {{ row }}
             </template>
           </el-table-column>
         </el-table>
-      </el-card>
 
-      <!-- AI分析结果 -->
-      <el-card v-if="showAIAnalysis" class="ai-analysis-card">
-        <template #header>
-          <div class="card-header">
-            <span>AI学情分析</span>
-            <el-tag type="success">智能分析报告</el-tag>
-          </div>
-        </template>
-        <div v-loading="isAnalyzing" class="ai-analysis-content">
+        <!-- AI 总体学情分析 -->
+        <div class="ai-analysis-content">
           <div class="analysis-section">
-            <h4>整体分析</h4>
+            <h4>AI 总体学情分析</h4>
             <p>{{ aiAnalysisResult.overallAnalysis }}</p>
           </div>
           <div class="analysis-section">
@@ -136,108 +143,61 @@
             </ul>
           </div>
         </div>
-      </el-card>
-    </template>
+      </div>
+    </el-dialog>
 
-    <!-- 学生详情对话框 -->
-    <el-dialog
-      v-model="showStudentDetails"
-      :title="`${selectedStudent?.name || ''} - 学生详情`"
-      width="80%"
-    >
-      <div v-loading="isAnalyzing">
-        <el-row :gutter="20">
-          <!-- 基本信息 -->
-          <el-col :span="8">
-            <el-card class="student-info-card">
-              <div class="student-profile">
-                <el-avatar :size="64">{{ selectedStudent?.name.charAt(0) }}</el-avatar>
-                <h3>{{ selectedStudent?.name }}</h3>
-                <p>{{ selectedStudent?.class }}</p>
-                <div class="student-stats">
-                  <div class="stat-item">
-                    <div class="label">本次得分</div>
-                    <div class="value">{{ selectedStudent?.total || 0 }}</div>
-                  </div>
-                  <div class="stat-item">
-                    <div class="label">平均分</div>
-                    <div class="value">{{ selectedStudent?.average || 0 }}</div>
-                  </div>
-                  <div class="stat-item">
-                    <div class="label">排名</div>
-                    <div class="value">{{ selectedStudent?.rank || '-' }}</div>
-                  </div>
-                </div>
-              </div>
-            </el-card>
-          </el-col>
+    <!-- 成绩分布与题目得分分析 -->
+    <el-row :gutter="10" class="chart-row">
+      <el-col :span="12">
+        <el-card class="chart-card">
+          <div ref="performanceChartRef" style="height: 300px;"></div>
+        </el-card>
+      </el-col>
+      <el-col :span="12">
+        <el-card class="chart-card">
+          <div ref="questionAnalysisChartRef" style="height: 300px;"></div>
+        </el-card>
+      </el-col>
+    </el-row>
 
-          <!-- 成绩趋势 -->
-          <el-col :span="16">
-            <el-card class="trend-card">
-              <div ref="studentPerformanceChartRef" style="height: 300px;"></div>
-            </el-card>
-          </el-col>
-        </el-row>
-
-        <!-- 个人分析 -->
-        <el-row :gutter="20" class="mt-4">
-          <el-col :span="12">
-            <el-card>
-              <template #header>
-                <div class="card-header">
-                  <span>优势分析</span>
-                </div>
-              </template>
-              <ul class="analysis-list">
-                <li v-for="(strength, index) in studentAnalysis.strengths" :key="index">
-                  <el-icon class="success-icon"><CircleCheckFilled /></el-icon>
-                  {{ strength }}
-                </li>
-              </ul>
-            </el-card>
-          </el-col>
-          <el-col :span="12">
-            <el-card>
-              <template #header>
-                <div class="card-header">
-                  <span>待提升项</span>
-                </div>
-              </template>
-              <ul class="analysis-list">
-                <li v-for="(weakness, index) in studentAnalysis.weaknesses" :key="index">
-                  <el-icon class="warning-icon"><Warning /></el-icon>
-                  {{ weakness }}
-                </li>
-              </ul>
-            </el-card>
-          </el-col>
-        </el-row>
-
-        <!-- 学习建议 -->
-        <el-card class="mt-4">
-          <template #header>
-            <div class="card-header">
-              <span>学习建议</span>
-            </div>
-          </template>
-          <ul class="recommendation-list">
-            <li v-for="(rec, index) in studentAnalysis.recommendations" :key="index">
-              <el-icon><Star /></el-icon>
+    <!-- AI 班级整体分析 -->
+    <el-card class="ai-class-analysis-card">
+      <template #header>
+        <div class="card-header">
+          <span>AI 班级整体分析</span>
+          <el-tag type="success">班级智能分析报告</el-tag>
+        </div>
+      </template>
+      <div v-loading="isAnalyzing" class="ai-analysis-content">
+        <div class="analysis-section">
+          <h4>班级整体分析</h4>
+          <p>{{ classAnalysisResult.overallAnalysis }}</p>
+        </div>
+        <div class="analysis-section">
+          <h4>关键发现</h4>
+          <ul>
+            <li v-for="(point, index) in classAnalysisResult.keyPoints" :key="index">
+              {{ point }}
+            </li>
+          </ul>
+        </div>
+        <div class="analysis-section">
+          <h4>教学建议</h4>
+          <ul>
+            <li v-for="(rec, index) in classAnalysisResult.recommendations" :key="index">
               {{ rec }}
             </li>
           </ul>
-        </el-card>
+        </div>
       </div>
-    </el-dialog>
+    </el-card>
+
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from "vue";
-import * as echarts from "echarts";
-import * as XLSX from "xlsx";
-import { ElMessage } from "element-plus";
+import { ref, onMounted, computed, watch } from 'vue';
+import * as echarts from 'echarts';
 
 interface Student {
   id: string;
@@ -263,129 +223,197 @@ interface Class {
   students: Student[];
 }
 
+interface AIAanalysisResult {
+  overallAnalysis: string;
+  keyPoints: string[];
+  recommendations: string[];
+}
+
 const performanceChartRef = ref<HTMLElement>();
 const questionAnalysisChartRef = ref<HTMLElement>();
-const studentPerformanceChartRef = ref<HTMLElement>();
-const uploadRef = ref();
+const studentPerformanceChartRef = ref<HTMLElement | null>(null);
 const tableData = ref<Student[]>([]);
-const questions = ref<Question[]>([]);
-const showAIAnalysis = ref(false);
+const selectedClassId = ref('1-1');
+const aiAnalysisResult = ref<AIAanalysisResult>({
+  overallAnalysis: '',
+  keyPoints: [],
+  recommendations: []
+});
+const classAnalysisResult = ref<AIAanalysisResult>({
+  overallAnalysis: '',
+  keyPoints: [],
+  recommendations: []
+});
 const isAnalyzing = ref(false);
-const showStudentDetails = ref(false);
-const selectedStudent = ref<Student | null>(null);
-const selectedClassId = ref("1-1");
 
+// 静态班级数据
 const classes = ref<Class[]>([
   {
-    id: "1-1",
-    name: "一年级一班",
-    grade: "一年级",
-    students: [],
+    id: '1-1',
+    name: '一年级一班',
+    grade: '一年级',
+    students: [
+      { id: '1', name: '张三', class: '一年级一班', scores: [85, 90, 78, 88], total: 341, average: 85.25, rank: 2 },
+      { id: '2', name: '李四', class: '一年级一班', scores: [92, 88, 90, 85], total: 355, average: 88.75, rank: 1 },
+      { id: '3', name: '王五', class: '一年级一班', scores: [78, 82, 80, 75], total: 315, average: 78.75, rank: 3 }
+    ]
   },
   {
-    id: "1-2",
-    name: "一年级二班",
-    grade: "一年级",
-    students: [],
-  },
+    id: '1-2',
+    name: '一年级二班',
+    grade: '一年级',
+    students: [
+      { id: '4', name: '赵六', class: '一年级二班', scores: [80, 85, 88, 82], total: 335, average: 83.75, rank: 1 },
+      { id: '5', name: '钱七', class: '一年级二班', scores: [75, 78, 80, 72], total: 305, average: 76.25, rank: 2 }
+    ]
+  }
 ]);
 
-const aiAnalysisResult = ref({
-  overallAnalysis: "",
-  recommendations: [],
-  keyPoints: [],
-});
+// 静态题目数据（可以增加题目数量）
+const questions = ref<Question[]>([
+  { id: 1, correctRate: 0.85, averageScore: 80, maxScore: 100 },
+  { id: 2, correctRate: 0.75, averageScore: 70, maxScore: 95 },
+  { id: 3, correctRate: 0.90, averageScore: 90, maxScore: 100 },
+  { id: 4, correctRate: 0.65, averageScore: 60, maxScore: 90 }
+]);
 
-const studentAnalysis = ref({
-  strengths: [] as string[],
-  weaknesses: [] as string[],
-  trend: [] as { date: string; score: number }[],
-  recommendations: [] as string[],
-});
-
-// 处理Excel文件上传
-const handleExcelUpload = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  if (target.files) {
-    const file = target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      const data = e.target?.result;
-      if (!data) {
-        ElMessage.error("文件读取失败");
-        return;
-      }
-
-      const workbook = XLSX.read(data as ArrayBuffer, { type: "array" });
-      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-
-      processExcelData(jsonData);
-    };
-
-    reader.readAsArrayBuffer(file);
-  }
-};
-
-// 处理Excel数据
-const processExcelData = (data: any[]) => {
-  const processedData: Student[] = [];
-  const questionCount = Object.keys(data[0]).length - 1;
-
-  questions.value = Array.from({ length: questionCount }, (_, i) => ({
+// 动态调整题目数量
+const newQuestionCount = ref(4); // 默认有4个题目
+const updateQuestionCount = () => {
+  questions.value = Array.from({ length: newQuestionCount.value }, (_, i) => ({
     id: i + 1,
-    correctRate: 0,
-    averageScore: 0,
-    maxScore: 0,
+    correctRate: 0.75,
+    averageScore: 80,
+    maxScore: 100
   }));
 
-  data.forEach((row, index) => {
-    const scores = Array.from({ length: questionCount }, (_, i) =>
-      Number(row[`题目${i + 1}`] || 0)
-    );
-    const total = scores.reduce((a, b) => a + b, 0);
-
-    processedData.push({
-      id: String(index + 1),
-      name: row["姓名"],
-      class: selectedClassId.value,
-      scores,
-      total,
-      average: total / questionCount,
-      rank: 0,
-    });
-
-    scores.forEach((score, index) => {
-      questions.value[index].maxScore = Math.max(
-        questions.value[index].maxScore,
-        score
-      );
-      questions.value[index].averageScore += score;
-    });
+  // 根据新题目数量，更新学生的成绩
+  tableData.value.forEach(student => {
+    const currentScores = student.scores.slice(0, newQuestionCount.value); // 截取当前题目的成绩
+    while (currentScores.length < newQuestionCount.value) {
+      currentScores.push(0); // 默认新题目的成绩为0
+    }
+    student.scores = currentScores;
+    student.total = student.scores.reduce((sum, score) => sum + score, 0);
+    student.average = student.total / student.scores.length;
   });
 
-  // 计算每个题目的平均得分（总分除以班级人数）
-  questions.value.forEach((q) => {
-    q.averageScore /= data.length;
-  });
+  updateCharts(); // 更新图表
+};
 
-  processedData.sort((a, b) => b.total - a.total);
-  processedData.forEach((student, index) => {
-    student.rank = index + 1;
-  });
+// 获取当前选中班级的学生列表
+const currentClassStudents = computed(() => {
+  const currentClass = classes.value.find(c => c.id === selectedClassId.value);
+  return currentClass ? currentClass.students : [];
+});
 
-  tableData.value = processedData;
+// 处理学生数据
+const newStudentName = ref(''); // 新学生姓名
+const newStudentScores = ref<number[]>([]); // 存储新学生的成绩
 
-  // 更新班级学生列表
-  const currentClass = classes.value.find((c) => c.id === selectedClassId.value);
-  if (currentClass) {
-    currentClass.students = processedData;
+// 添加学生成绩
+const addStudent = () => {
+  if (newStudentName.value.trim() === '' || newStudentScores.value.length === 0) {
+    alert('请填写学生姓名和成绩！');
+    return;
   }
 
-  // 更新图表和分析
-  updateCharts();
-  generateAIAnalysis();
+  const newStudent: Student = {
+    id: (tableData.value.length + 1).toString(),
+    name: newStudentName.value,
+    class: selectedClassId.value,
+    scores: newStudentScores.value,
+    total: newStudentScores.value.reduce((sum, score) => sum + score, 0),
+    average: newStudentScores.value.reduce((sum, score) => sum + score, 0) / newStudentScores.value.length,
+    rank: tableData.value.length + 1
+  };
+
+  tableData.value.push(newStudent);
+  newStudentName.value = '';
+  newStudentScores.value = []; // 清空成绩输入
+  updateCharts(); // 更新图表
+};
+
+// 是否显示学生详情对话框
+const showStudentDetails = ref(false);
+
+// 当前选中的学生
+const selectedStudent = ref<Student | null>(null);
+
+// 查看学生详情
+const viewStudentDetails = (student: Student) => {
+  selectedStudent.value = student;
+  showStudentDetails.value = true;
+  generateAIAnalysis(student);
+};
+
+// 生成 AI 分析结果
+const generateAIAnalysis = (student: Student) => {
+  isAnalyzing.value = true;
+  setTimeout(() => {
+    const { average, scores } = student;
+    const overallAnalysis = `
+      该学生在本次考试中的整体表现较为${average >= 80 ? '出色' : '一般'}。平均分为${average.toFixed(2)}分，显示出在知识掌握和应用能力上的${average >= 80 ? '较强水平' : '一定差距'}。
+      在所有题目中，最高分为${Math.max(...scores)}分，最低分为${Math.min(...scores)}分，反映出学生在不同知识点上的掌握程度存在明显差异。
+    `;
+    const keyPoints = [
+      `最高分：${Math.max(...scores)}分，最低分：${Math.min(...scores)}分`,
+      `平均分：${average.toFixed(2)}分，排名：${student.rank}`,
+      `学生在第${scores.indexOf(Math.min(...scores)) + 1}题得分最低，可能需要重点关注该知识点的学习和巩固。`
+    ];
+    const recommendations = [
+      average < 60 ? '建议加强基础知识学习，尤其是薄弱知识点的复习。' : '继续保持良好的学习状态，尝试更具挑战性的题目以进一步提升能力。',
+      scores.some(score => score < 60) ? '针对薄弱科目进行专项练习，提高解题技巧和准确性。' : '尝试参加一些拓展学习活动，如竞赛或兴趣小组，以拓宽知识面和提升思维能力。',
+      '建议定期进行自我评估，总结学习方法和经验，调整学习计划以更好地适应学习进度。'
+    ];
+
+    aiAnalysisResult.value = {
+      overallAnalysis,
+      keyPoints,
+      recommendations
+    };
+
+    isAnalyzing.value = false;
+  }, 1500); // 模拟异步分析过程
+};
+
+// 生成班级整体分析结果
+const generateClassAnalysis = () => {
+  isAnalyzing.value = true;
+  setTimeout(() => {
+    const classStudents = currentClassStudents.value;
+    const totalScores = classStudents.map(student => student.total);
+    const classAverage = totalScores.reduce((sum, total) => sum + total, 0) / classStudents.length;
+    const passRate = totalScores.filter(total => total >= 60).length / classStudents.length * 100;
+
+    const overallAnalysis = `
+      本班级在本次考试中的整体表现较为${classAverage >= 80 ? '出色' : '一般'}。班级平均分为${classAverage.toFixed(2)}分，
+      及格率为${passRate.toFixed(2)}%。从整体来看，班级在知识掌握和应用能力上表现${classAverage >= 80 ? '较强' : '有待提高'}。
+    `;
+    const keyPoints = [
+      `班级平均分：${classAverage.toFixed(2)}分`,
+      `及格率：${passRate.toFixed(2)}%`,
+      `最高总分：${Math.max(...totalScores)}分，最低总分：${Math.min(...totalScores)}分`
+    ];
+    const recommendations = [
+      classAverage < 60 ? '建议加强班级整体的基础知识教学，尤其是对低分学生的辅导。' : '继续保持良好的教学状态，鼓励学生挑战更高难度的题目。',
+      passRate < 80 ? '针对及格率较低的情况，建议开展针对性的复习和辅导活动。' : '继续保持良好的教学效果，鼓励学生参与更多拓展学习活动。',
+      '建议定期进行班级整体评估，总结教学方法和经验，调整教学计划以更好地适应班级学习进度。'
+    ];
+
+    classAnalysisResult.value = {
+      overallAnalysis,
+      keyPoints,
+      recommendations
+    };
+
+    isAnalyzing.value = false;
+  }, 1500); // 模拟异步分析过程
+};
+
+const handleClose = () => {
+  showStudentDetails.value = false;
+  selectedStudent.value = null;
 };
 
 // 更新图表
@@ -394,389 +422,243 @@ const updateCharts = () => {
     const performanceChart = echarts.init(performanceChartRef.value);
     const questionAnalysisChart = echarts.init(questionAnalysisChartRef.value);
 
-    const scoreRanges = ["90-100", "80-89", "70-79", "60-69", "60以下"];
+    // 成绩分布图
+    const scoreRanges = ['90-100', '80-89', '70-79', '60-69', '60以下'];
     const scoreCounts = new Array(5).fill(0);
 
-    tableData.value.forEach((student) => {
-      const total = student.total;
-      if (total >= 90) scoreCounts[0]++;
-      else if (total >= 80) scoreCounts[1]++;
-      else if (total >= 70) scoreCounts[2]++;
-      else if (total >= 60) scoreCounts[3]++;
+    tableData.value.forEach(student => {
+      const average = student.average;
+      if (average >= 90) scoreCounts[0]++;
+      else if (average >= 80) scoreCounts[1]++;
+      else if (average >= 70) scoreCounts[2]++;
+      else if (average >= 60) scoreCounts[3]++;
       else scoreCounts[4]++;
     });
 
     performanceChart.setOption({
-      title: { text: "成绩分布" },
+      title: {
+        text: '成绩分布'
+      },
       tooltip: {},
-      xAxis: { data: scoreRanges },
+      xAxis: {
+        data: scoreRanges
+      },
       yAxis: {},
-      series: [
-        {
-          name: "学生人数",
-          type: "bar",
-          data: scoreCounts,
-          itemStyle: { color: "#1890ff" },
-        },
-      ],
+      series: [{
+        name: '学生人数',
+        type: 'bar',
+        data: scoreCounts,
+        itemStyle: {
+          color: '#1890ff'
+        }
+      }]
+    });
+
+    // 题目得分分析
+    const averageScoresPerQuestion = new Array(questions.value.length).fill(0);
+    const maxScoresPerQuestion = new Array(questions.value.length).fill(0);
+    const minScoresPerQuestion = new Array(questions.value.length).fill(100);
+
+    tableData.value.forEach(student => {
+      student.scores.forEach((score, index) => {
+        averageScoresPerQuestion[index] += score;
+        if (score > maxScoresPerQuestion[index]) {
+          maxScoresPerQuestion[index] = score;
+        }
+        if (score < minScoresPerQuestion[index]) {
+          minScoresPerQuestion[index] = score;
+        }
+      });
+    });
+
+    const totalStudents = tableData.value.length;
+    averageScoresPerQuestion.forEach((score, index) => {
+      averageScoresPerQuestion[index] = (score / totalStudents).toFixed(2);
     });
 
     questionAnalysisChart.setOption({
-      title: { text: "题目得分分析" },
-      tooltip: { trigger: "axis" },
-      legend: { data: ["平均得分"] },
-      xAxis: {
-        type: "category",
-        data: questions.value.map((q) => `题目${q.id}`),
+      title: {
+        text: '题目得分分析'
       },
-      yAxis: { type: "value" },
+      tooltip: {
+        trigger: 'axis'
+      },
+      legend: {
+        data: ['平均得分', '最高得分', '最低得分']
+      },
+      xAxis: {
+        type: 'category',
+        data: questions.value.map(q => `题目${q.id}`)
+      },
+      yAxis: {
+        type: 'value'
+      },
       series: [
         {
-          name: "平均得分",
-          type: "line",
-          data: questions.value.map((q) => q.averageScore.toFixed(2)),
+          name: '平均得分',
+          type: 'line',
+          data: averageScoresPerQuestion,
+          itemStyle: {
+            color: '#1890ff'
+          }
         },
-      ],
+        {
+          name: '最高得分',
+          type: 'line',
+          data: maxScoresPerQuestion,
+          itemStyle: {
+            color: '#ff7f50'
+          }
+        },
+        {
+          name: '最低得分',
+          type: 'line',
+          data: minScoresPerQuestion,
+          itemStyle: {
+            color: '#ff4500'
+          }
+        }
+      ]
     });
   }
 };
 
-// 生成AI分析
-const generateAIAnalysis = async () => {
-  isAnalyzing.value = true;
-  showAIAnalysis.value = true;
-
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-
-  // 计算题目正确率和平均分
-  questions.value.forEach((q) => {
-    q.correctRate = (q.averageScore / q.maxScore) * 100;
-  });
-
-  // 整体分析
-  const totalStudents = tableData.value.length;
-  const classAverageScore = questions.value.reduce((sum, q) => sum + q.averageScore, 0) / questions.value.length;
-  const overallAnalysis = `本次考试共有${totalStudents}名学生参加，平均得分为${classAverageScore.toFixed(2)}分。`;
-
-  // 关键发现：找出正确率最低的3道题目
-  const keyPoints = questions.value
-    .map((q, index) => ({
-      question: `题目${index + 1}`,
-      averageScore: q.averageScore,
-      correctRate: q.correctRate,
-    }))
-    .sort((a, b) => a.correctRate - b.correctRate)
-    .slice(0, 3) // 提取正确率最低的3道题目
-    .map((q) => `${q.question}的平均得分为${q.averageScore.toFixed(2)}分，正确率为${q.correctRate.toFixed(1)}%。`);
-
-  // 教学建议：针对这些题目提出建议
-  const recommendations = [
-    `针对正确率较低的题目（如${keyPoints.map((q) => q.question).join(", ")}），建议加强相关知识点的讲解和练习。`,
-    `对于整体得分较低的学生，建议进行一对一辅导，帮助他们巩固基础知识。`,
-    `鼓励学生在课后多做类似的练习题，提高解题能力和应试技巧。`,
-  ];
-
-  aiAnalysisResult.value = {
-    overallAnalysis,
-    keyPoints,
-    recommendations,
-  };
-
-  isAnalyzing.value = false;
-};
-
-// 生成学生个人分析
-const generateStudentAnalysis = async (student: Student) => {
-  isAnalyzing.value = true;
-
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-
-  // 计算学生在每个题目的得分情况
-  const studentScores = student.scores.map((score, index) => ({
-    question: `题目${index + 1}`,
-    score,
-    maxScore: questions.value[index].maxScore,
-    correctRate: questions.value[index].correctRate,
-  }));
-
-  // 优势分析：得分高于平均分的题目
-  const strengths = studentScores
-    .filter((q) => q.score > q.maxScore * 0.8)
-    .map((q) => `${q.question}得分较高，为${q.score}分，表现优秀。`);
-
-  // 待提升项：得分低于平均分的题目
-  const weaknesses = studentScores
-    .filter((q) => q.score < q.maxScore * 0.5)
-    .map((q) => `${q.question}得分较低，为${q.score}分，需要加强练习。`);
-
-  // 学习建议：针对待提升的题目提出建议
-  const recommendations = [
-    `针对得分较低的题目，建议多做相关练习题，巩固知识点。`,
-    `保持在得分较高的题目的优势，继续提升解题技巧。`,
-    `建议定期复习错题，总结解题思路，避免重复错误。`,
-  ];
-
-  studentAnalysis.value = {
-    strengths,
-    weaknesses,
-    trend: [
-      { date: "2024-01", score: 85 },
-      { date: "2024-02", score: 88 },
-      { date: "2024-03", score: 92 },
-    ],
-    recommendations,
-  };
-
-  if (studentPerformanceChartRef.value) {
-    const chart = echarts.init(studentPerformanceChartRef.value);
-    chart.setOption({
-      title: { text: "成绩趋势" },
-      tooltip: { trigger: "axis" },
-      xAxis: {
-        type: "category",
-        data: studentAnalysis.value.trend.map((item) => item.date),
-      },
-      yAxis: { type: "value", min: 60 },
-      series: [
-        {
-          name: "成绩",
-          type: "line",
-          data: studentAnalysis.value.trend.map((item) => item.score),
-          smooth: true,
-          itemStyle: { color: "#1890ff" },
-          areaStyle: {
-            color: {
-              type: "linear",
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [
-                { offset: 0, color: "rgba(24,144,255,0.3)" },
-                { offset: 1, color: "rgba(24,144,255,0.1)" },
-              ],
-            },
-          },
-        },
-      ],
-    });
-  }
-
-  isAnalyzing.value = false;
-};
-
-// 查看学生详情
-const viewStudentDetails = (student: Student) => {
-  selectedStudent.value = student;
-  showStudentDetails.value = true;
-  generateStudentAnalysis(student);
-};
-
-// 获取当前选中班级的学生列表
-const currentClassStudents = computed(() => {
-  const currentClass = classes.value.find((c) => c.id === selectedClassId.value);
-  return currentClass ? currentClass.students : [];
-});
-
-// 监听班级选择的变化
-watch(selectedClassId, (newClassId) => {
-  reloadClassData(newClassId);
-});
-
-// 重新加载班级数据
-const reloadClassData = (classId: string) => {
-  const currentClass = classes.value.find((c) => c.id === classId);
-  if (currentClass) {
-    tableData.value = currentClass.students;
-    updateCharts();
-    generateAIAnalysis();
-  } else {
-    tableData.value = [];
-    questions.value = [];
-    showAIAnalysis.value = false;
-  }
-};
-
-// 初始化时加载默认班级的数据
+// 页面加载时初始化表格数据
 onMounted(() => {
-  reloadClassData(selectedClassId.value);
+  tableData.value = currentClassStudents.value;
+  updateCharts();
+  generateClassAnalysis(); // 生成班级整体分析
+});
+
+// 监听班级变化时更新表格数据
+watch(selectedClassId, () => {
+  tableData.value = currentClassStudents.value;
+  updateCharts();
+  generateClassAnalysis(); // 更新班级整体分析
 });
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .analysis-container {
-  .mb-4 {
-    margin-bottom: 1rem;
+  padding: 20px;
+  background-color: #f4f7fa;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.main-row {
+  display: flex;
+  gap: 10px;
+}
+
+.el-col {
+  flex: 1;
+}
+
+.upload-card, .add-question-card, .add-student-card, .table-card, .ai-class-analysis-card {
+  margin-bottom: 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.el-card {
+  background-color: #fff;
+  padding: 16px;
+}
+
+.el-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.class-select {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.input-field {
+  margin-bottom: 12px;
+}
+
+.add-btn {
+  margin-top: 12px;
+}
+
+.table-card {
+  padding: 12px;
+}
+
+.el-table th {
+  background-color: #f7f8fa;
+  color: #333;
+  font-weight: 600;
+}
+
+.el-table .cell {
+  padding: 10px;
+  font-size: 14px;
+}
+
+.el-table-row:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+.student-name-with-avatar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.student-avatar {
+  border-radius: 50%;
+}
+
+.student-name {
+  font-size: 14px;
+  color: #333;
+}
+
+/* AI 分析结果样式 */
+.ai-analysis-content {
+  padding: 20px;
+}
+
+.analysis-section {
+  margin-bottom: 20px;
+}
+
+.analysis-section h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.analysis-section p, .analysis-section ul {
+  font-size: 14px;
+  color: #555;
+}
+
+.analysis-section ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+@media (max-width: 768px) {
+  .main-row {
+    flex-direction: column;
   }
-
-  .mt-4 {
-    margin-top: 1rem;
-  }
-
-  .upload-card {
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .upload-area {
-      text-align: center;
-      padding: 20px;
-
-      .upload-tip {
-        color: #909399;
-        font-size: 14px;
-        margin-top: 10px;
-      }
-    }
-  }
-
-  .student-list-card {
-    .student-list {
-      .student-item {
-        display: flex;
-        align-items: center;
-        padding: 8px;
-        cursor: pointer;
-        border-radius: 4px;
-        transition: background-color 0.3s;
-
-        &:hover {
-          background-color: #f5f7fa;
-        }
-
-        .student-name {
-          margin-left: 12px;
-          flex: 1;
-        }
-      }
-    }
-  }
-
-  .stat-row {
-    margin-bottom: 20px;
-
-    .stat-card {
-      .stat-item {
-        display: flex;
-        align-items: center;
-        padding: 20px;
-
-        .stat-icon {
-          font-size: 48px;
-          color: #1890ff;
-          margin-right: 20px;
-        }
-
-        .stat-info {
-          .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #1890ff;
-          }
-
-          .stat-label {
-            color: #666;
-            margin-top: 5px;
-          }
-        }
-      }
-    }
-  }
-
-  .chart-row {
-    margin-bottom: 20px;
-
-    .chart-card {
-      height: 100%;
-    }
-  }
-
-  .student-info-card {
-    .student-profile {
-      text-align: center;
-      padding: 20px;
-
-      h3 {
-        margin: 12px 0 4px;
-        color: #1f2937;
-      }
-
-      p {
-        color: #6b7280;
-        margin: 0 0 16px;
-      }
-
-      .student-stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
-        margin-top: 20px;
-
-        .stat-item {
-          text-align: center;
-          padding: 8px;
-          background: #f8fafc;
-          border-radius: 8px;
-
-          .label {
-            color: #6b7280;
-            font-size: 12px;
-          }
-
-          .value {
-            color: #1890ff;
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 4px;
-          }
-        }
-      }
-    }
-  }
-
-  .analysis-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-
-    li {
-      display: flex;
-      align-items: center;
-      margin-bottom: 12px;
-      color: #4b5563;
-
-      .el-icon {
-        margin-right: 8px;
-      }
-
-      .success-icon {
-        color: #67c23a;
-      }
-
-      .warning-icon {
-        color: #e6a23c;
-      }
-    }
-  }
-
-  .recommendation-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-
-    li {
-      display: flex;
-      align-items: center;
-      margin-bottom: 12px;
-      color: #4b5563;
-
-      .el-icon {
-        color: #1890ff;
-        margin-right: 8px;
-      }
-    }
+  .el-col {
+    width: 100%;
   }
 }
 </style>
