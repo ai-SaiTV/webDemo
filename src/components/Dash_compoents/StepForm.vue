@@ -23,7 +23,7 @@
     <div v-if="activeStep === 1" class="step-form">
       <el-form :model="form" label-position="top">
         <el-row :gutter="24" justify="center">
-          <el-form-item label="大纲内容">
+          <el-form-item label="🐔教学大纲生成结果">
             <div v-if = "!isForm1Editing">
               <div v-html="form1.requirements" class="markdown-content"></div>
             </div>
@@ -46,8 +46,18 @@
       <el-form :model="form" label-position="top">
         <el-row :gutter="24" justify="center">
           <el-form-item label="课堂设计">
-            <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
+            <div v-if = "!isForm1Editing">
+              <div v-html="form1.requirements" class="markdown-content"></div>
+            </div>
+            <div v-else>
+              <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
               class="custom-textarea"></textarea>
+            </div>
+            <div class="form-buttons">
+              <el-button type="primary" @click="isForm1Editing = !isForm1Editing">
+                {{ isForm1Editing ? '保存' : '编辑' }}
+              </el-button>
+            </div>
           </el-form-item>
         </el-row>
       </el-form>

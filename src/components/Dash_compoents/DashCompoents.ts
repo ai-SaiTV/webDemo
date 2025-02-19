@@ -235,7 +235,7 @@ const turnStep = async (step: number) => {
     } else if (step === 1) {      //课堂设计Res -->> 导图生成Pre
         await nextTick(() => {})
         if (DataThisSession.value?.resources?.class_design?.text) {
-            form1.value.requirements = DataThisSession.value.resources.class_design.text
+            form1.value.requirements = parseMarkdown(DataThisSession.value.resources.class_design.text).__html
         }
         return '1';
 
