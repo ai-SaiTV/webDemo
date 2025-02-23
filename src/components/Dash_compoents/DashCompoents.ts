@@ -1,4 +1,6 @@
-import { ref, computed, watch, nextTick } from 'vue';
+import { ref, nextTick } from '@vue/runtime-core';
+import { computed } from '@vue/runtime-core';
+import { watch } from '@vue/runtime-core';
 
 
 
@@ -28,6 +30,7 @@ export const isGenerating = ref(false);
 export const showResult = ref(false);
 export const isProcessing = ref(false);
 export const isZoomed = ref(false);
+export const isForm1Editing = ref(false);
 export const isHovering = ref(false);
 
 export const progressStatus = ref("active");
@@ -163,17 +166,22 @@ export const nextStep = async () => {
 
     // 闭包保存当前步骤
     const currentStep = activeStep.value;
-    stopPollingWatch = watch(() => isPolling.value, async (newPolling) => {
+    interface ProgressInterval {
+        elapsedTime: number;
+        progressRatio: number;
+    }
+
+    stopPollingWatch = watch(() => isPolling.value, async (newPolling: boolean) => {
         if (newPolling) {
             progress.value = 0;
             progressStatus.value = "active";
-            let startTime = Date.now();
-            const duration = 20000;
-            const targetProgress = 97;
+            let startTime: number = Date.now();
+            const duration: number = 20000;
+            const targetProgress: number = 97;
 
-            progressInterval = setInterval(() => {
-                const elapsedTime = Date.now() - startTime;
-                const progressRatio = elapsedTime / duration;
+            progressInterval = setInterval((): void => {
+                const elapsedTime: number = Date.now() - startTime;
+                const progressRatio: number = elapsedTime / duration;
                 progress.value = Math.min(targetProgress, progressRatio * targetProgress);
 
                 if (elapsedTime >= duration) {
@@ -186,7 +194,7 @@ export const nextStep = async () => {
             progressStatus.value = "success";
             await turnStep(currentStep);
 
-            setTimeout(() => {
+            setTimeout((): void => {
                 isProcessing.value = false;
                 progress.value = 0;
                 progressStatus.value = "active";
@@ -213,24 +221,26 @@ export const handleKeydown = (event: KeyboardEvent) => {
     }
 };
 
+import { parseMarkdown } from '../../utils/markdownUtils';
 
 
 const turnStep = async (step: number) => {
     if (step === 0) {         //教学大纲Res -->> 课堂设计Pre
-        await nextTick()
+        await nextTick(() => {})
         if (DataThisSession.value?.resources?.teaching_plan?.text) {
-            form1.value.requirements = DataThisSession.value.resources.teaching_plan.text
+
+            form1.value.requirements = parseMarkdown(DataThisSession.value.resources.teaching_plan.text).__html
         }
         return '0'
     } else if (step === 1) {      //课堂设计Res -->> 导图生成Pre
-        await nextTick()
+        await nextTick(() => {})
         if (DataThisSession.value?.resources?.class_design?.text) {
-            form1.value.requirements = DataThisSession.value.resources.class_design.text
+            form1.value.requirements = parseMarkdown(DataThisSession.value.resources.class_design.text).__html
         }
         return '1';
 
     } else if (step === 2) {
-        await nextTick()
+        await nextTick(() => {})
         if (DataThisSession.value?.resources?.tp_MindMap?.url) {
             Mindimgsrc.value = DataThisSession.value.resources.tp_MindMap.url
         }

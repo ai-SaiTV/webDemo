@@ -290,7 +290,11 @@ const classes = ref<Class[]>([
   },
 ]);
 
-const aiAnalysisResult = ref({
+const aiAnalysisResult = ref<{
+  overallAnalysis: string;
+  recommendations: string[];
+  keyPoints: { question: string; averageScore: number; correctRate: number }[];
+}>({
   overallAnalysis: "",
   recommendations: [],
   keyPoints: [],
@@ -467,7 +471,7 @@ const generateAIAnalysis = async () => {
     }))
     .sort((a, b) => a.correctRate - b.correctRate)
     .slice(0, 3) // 提取正确率最低的3道题目
-    .map((q) => `${q.question}的平均得分为${q.averageScore.toFixed(2)}分，正确率为${q.correctRate.toFixed(1)}%。`);
+    // .map((q) => `${q.question}的平均得分为${q.averageScore.toFixed(2)}分，正确率为${q.correctRate.toFixed(1)}%。`);
 
   // 教学建议：针对这些题目提出建议
   const recommendations = [
@@ -476,11 +480,16 @@ const generateAIAnalysis = async () => {
     `鼓励学生在课后多做类似的练习题，提高解题能力和应试技巧。`,
   ];
 
+  // aiAnalysisResult.value = {
+  //   overallAnalysis,
+  //   keyPoints,
+  //   recommendations,
+  // };
   aiAnalysisResult.value = {
     overallAnalysis,
     keyPoints,
     recommendations,
-  };
+  }
 
   isAnalyzing.value = false;
 };

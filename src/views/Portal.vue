@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Menu, User, UserFilled, Calendar } from '@element-plus/icons-vue';
+import { Collection, User, UserFilled, Calendar } from '@element-plus/icons-vue';
 import 'element-plus/es/components/icon/style/css';
 
 interface CourseClass {
@@ -103,7 +103,7 @@ const handleCreateClass = () => {
           <p><el-icon><User /></el-icon> {{ classItem.teacher }}</p>
           <p><el-icon><UserFilled /></el-icon> {{ classItem.students }} 名学生</p>
           <p><el-icon><Calendar /></el-icon> 创建于 {{ classItem.createdAt }}</p>
-          <p><el-icon><Menu /></el-icon> {{ classItem.bookname }}</p>
+          <p><el-icon><Collection /></el-icon> {{ classItem.bookname }}</p>
         </div>
       </div>
     </div>

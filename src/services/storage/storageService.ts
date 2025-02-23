@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref } from '@vue/runtime-core'
 import type { StorageData } from '@/types/storageData'
 
 export class StorageService {
