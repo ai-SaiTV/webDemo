@@ -161,7 +161,7 @@
                   </div>
                   <div class="stat-item">
                     <div class="label">平均分</div>
-                    <div class="value">{{ selectedStudent?.average || 0 }}</div>
+                    <div class="value">{{ selectedStudent?.total.toFixed(2) || 0 }}</div>
                   </div>
                   <div class="stat-item">
                     <div class="label">排名</div>
@@ -171,7 +171,7 @@
               </div>
             </el-card>
           </el-col>
-
+          
           <!-- 成绩趋势 -->
           <el-col :span="16">
             <el-card class="trend-card">
@@ -290,11 +290,7 @@ const classes = ref<Class[]>([
   },
 ]);
 
-const aiAnalysisResult = ref<{
-  overallAnalysis: string;
-  recommendations: string[];
-  keyPoints: { question: string; averageScore: number; correctRate: number }[];
-}>({
+const aiAnalysisResult = ref({
   overallAnalysis: "",
   recommendations: [],
   keyPoints: [],
@@ -459,7 +455,7 @@ const generateAIAnalysis = async () => {
 
   // 整体分析
   const totalStudents = tableData.value.length;
-  const classAverageScore = questions.value.reduce((sum, q) => sum + q.averageScore, 0) / questions.value.length;
+  const classAverageScore = questions.value.reduce((sum, q) => sum + q.averageScore, 0) ;
   const overallAnalysis = `本次考试共有${totalStudents}名学生参加，平均得分为${classAverageScore.toFixed(2)}分。`;
 
   // 关键发现：找出正确率最低的3道题目
@@ -471,25 +467,20 @@ const generateAIAnalysis = async () => {
     }))
     .sort((a, b) => a.correctRate - b.correctRate)
     .slice(0, 3) // 提取正确率最低的3道题目
-    // .map((q) => `${q.question}的平均得分为${q.averageScore.toFixed(2)}分，正确率为${q.correctRate.toFixed(1)}%。`);
+    .map((q) => `${q.question}的平均得分为${q.averageScore.toFixed(2)}分，正确率为${q.correctRate.toFixed(1)}%。`);
 
   // 教学建议：针对这些题目提出建议
   const recommendations = [
-    `针对正确率较低的题目（如${keyPoints.map((q) => q.question).join(", ")}），建议加强相关知识点的讲解和练习。`,
+    `针对正确率较低的题目，建议加强相关知识点的讲解和练习。`,
     `对于整体得分较低的学生，建议进行一对一辅导，帮助他们巩固基础知识。`,
     `鼓励学生在课后多做类似的练习题，提高解题能力和应试技巧。`,
   ];
 
-  // aiAnalysisResult.value = {
-  //   overallAnalysis,
-  //   keyPoints,
-  //   recommendations,
-  // };
   aiAnalysisResult.value = {
     overallAnalysis,
     keyPoints,
     recommendations,
-  }
+  };
 
   isAnalyzing.value = false;
 };
