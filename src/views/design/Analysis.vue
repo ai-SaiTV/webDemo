@@ -234,7 +234,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed } from "@vue/runtime-core";
 import * as echarts from "echarts";
 import * as XLSX from "xlsx";
 import { ElMessage } from "element-plus";
