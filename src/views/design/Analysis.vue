@@ -290,7 +290,11 @@ const classes = ref<Class[]>([
   },
 ]);
 
-const aiAnalysisResult = ref({
+const aiAnalysisResult = ref<{
+  overallAnalysis: string;
+  recommendations: string[];
+  keyPoints: string[];
+}>({
   overallAnalysis: "",
   recommendations: [],
   keyPoints: [],

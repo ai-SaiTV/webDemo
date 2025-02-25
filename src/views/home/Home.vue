@@ -3,6 +3,9 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+const AboutUs=() =>{
+      window.open('https://github.com/ai-SaiTV', '_blank');
+    }
 const handleEnterSystem = () => {
   router.push('/portal')
 }
@@ -17,7 +20,7 @@ const handleEnterSystem = () => {
       </div>
       <div class="nav-links">
         <a href="#features">产品特性</a>
-        <a href="#about">关于我们</a>
+        <a href="#about" @click="AboutUs">关于我们</a>
         <el-button type="primary" @click="handleEnterSystem">立即使用</el-button>
       </div>
     </nav>
