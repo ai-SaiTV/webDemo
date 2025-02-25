@@ -12,7 +12,7 @@ const handleMenuSelect = (index: string) => {
       router.push('/dashboard')
       break
     case '2':
-      // 教学资源页面待开发
+      router.push('/materials')
       break
     case '3':
       router.push('/analysis')
