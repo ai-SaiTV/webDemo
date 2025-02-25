@@ -5,7 +5,7 @@ import Dashboard from '../views/design/Dashboard.vue'
 import Analysis from '../views/design/Analysis.vue'
 import CourseManagement from '../views/design/CourseManagement.vue'
 import AppLayout from '../components/AppLayout.vue'
-
+import TeachingMaterials from '@/views/design/TeachingMaterials.vue'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -32,6 +32,10 @@ const router = createRouter({
         {
           path: 'course',
           component: CourseManagement
+        },
+        {
+          path: 'materials',
+          component: TeachingMaterials
         }
       ]
     }

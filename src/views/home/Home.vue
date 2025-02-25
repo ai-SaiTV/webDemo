@@ -5,10 +5,10 @@ const router = useRouter()
 
 const AboutUs=() =>{
       window.open('https://github.com/ai-SaiTV', '_blank');
-    }
+    };
 const handleEnterSystem = () => {
   router.push('/portal')
-}
+};
 </script>
 
 <template>
