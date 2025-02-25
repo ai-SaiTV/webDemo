@@ -21,6 +21,7 @@
 
 import { ref,watch } from '@vue/runtime-core';
 import { storageService } from '@/services/storage/storageService';
+import { analysisRes } from '@/types/analysisRes';
 export const showResult = ref(false);
 
 //api import
@@ -28,6 +29,8 @@ import { config } from '@/config/config';
 import { useChat } from '@/composables/useChat';
 import { useChatPolling } from '@/composables/useChatPolling';
 import { Message } from 'postcss';
+import { sessionId } from '../Dash_compoents/DashCompoents';
+import { analysisResService, analysisService } from '@/services/storage/analysisResService';
 
 
 interface ChatConfig {
@@ -39,13 +42,15 @@ interface ChatConfig {
 export const chatConfig = ref<ChatConfig>({
 apiKey: config.apiKey,
 botId: [
-    '7449786123129847845',    //教案
-    '7472417501348069414',    //课堂设计
-    '7463464443028963340',    //思维导图
+    '7449786123129847845',    //0教案
+    '7472417501348069414',    //1课堂设计
+    '7463464443028963340',    //2思维导图
 
-    '7470802643641008180',      //练习题
-    '7470499360309723155',       //课件
-    '7471291204710219812'        //视频
+    '7470802643641008180',      //3练习题
+    '7470499360309723155',       //4课件
+    '7471291204710219812',        //5视频
+
+    '7475365585602773055',   //6学情分析
     ],  
 message: ''
 })
@@ -148,6 +153,7 @@ export const handleSubmit = async (sessionId: string, step: number) => {
 };
 
 
+
 export const handleSubmitParallel = async (sessionId: string, botIndices: number[]) => {
     if (sessionId === "-1") return null;
 
@@ -227,5 +233,81 @@ export const handleSubmitParallel = async (sessionId: string, botIndices: number
     } catch (err) {
         console.error('Parallel submission error:', err);
         return null;
+    }
+};
+
+
+
+export const handleSubmit_analysis = async (sessionId: string, botid: number) => {
+    if (sessionId) {
+        // 保存用户消息
+        await analysisService.updateMessages(sessionId, {
+            role: 'user',
+            content: chatConfig.value.message
+        });
+
+        if (!chatConfig.value.apiKey || !chatConfig.value.message) {
+            console.log('chatConfig not complete');
+            return;
+        }
+
+        try {
+            const initialResponse = await sendMessage(
+                chatConfig.value.apiKey, 
+                chatConfig.value.botId[botid], 
+                chatConfig.value.message
+            );
+            await startPolling(chatConfig.value.apiKey, initialResponse);
+
+            // 清理之前的 watcher
+            if (unwatch) {
+                unwatch();
+                unwatch = null;
+            }
+
+            const currentStep = botid; // 通过闭包捕获当前 step
+            unwatch = watch(() => chatMessages.value, async (newMessages) => {
+                if (newMessages?.data) {
+                    console.log('newMessages:', newMessages)
+                    interface ChatMessage {
+                        type?: string;
+                        content_type?: string;
+                        role?: string;
+                        content?: string;
+                    }
+                    
+                    const lastMessage: ChatMessage = newMessages.data.find((msg: ChatMessage) => 
+                        (msg.type === 'answer' && msg.content_type === 'text')) || newMessages.data[0];
+                    if (lastMessage.role === 'assistant') {
+                        await analysisService.updateMessages(sessionId, {
+                            role: 'assistant',
+                            content: lastMessage.content || ''
+                        });
+
+                        switch (currentStep) { // 使用闭包中的 currentStep
+                            case 6:
+                                await analysisService.updateAnalysisRes(sessionId, {
+                                    text: lastMessage.content || '',
+                                });
+                                break;
+                            
+                            default:
+                                break;
+                        }
+
+                        // 处理完成后，停止本次 watcher
+                        if (unwatch) {
+                            unwatch();
+                            unwatch = null;
+                        }
+                    }
+                }
+            }, { deep: true });
+
+            return analysisService.getSessionData(sessionId) || null;
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
     }
 };

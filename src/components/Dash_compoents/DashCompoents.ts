@@ -16,7 +16,6 @@ import {
 
 import { storageService } from '@/services/storage/storageService';
 import type { StorageData } from '@/types/storageData'
-import { fa } from 'element-plus/es/locales.mjs';
 // import { tr } from 'element-plus/es/locales.mjs';
 
 
@@ -113,7 +112,7 @@ export const generatedContent = ref({
             title: '提高练习',
             count: 5,
             difficulty: '中等',
-            preview: '1. 小明吃了一个苹果的3/4，小红吃了...'
+            preview: '1. 小明吃了一个苹果的3/4,小红吃了...'
         }
     ],
     mindMap: {

@@ -79,10 +79,7 @@
         <template #header>
           <div class="card-header">
             <span>成绩明细</span>
-            <el-button type="primary" @click="generateAIAnalysis">
-              <el-icon><Connection /></el-icon>
-              AI分析
-            </el-button>
+            
           </div>
         </template>
         <el-table :data="tableData" style="width: 100%" max-height="400">
@@ -110,9 +107,13 @@
       <el-card v-if="showAIAnalysis" class="ai-analysis-card">
         <template #header>
           <div class="card-header">
-            <span>AI学情分析</span>
+            <span> AI学情分析 </span>
             <el-tag type="success">智能分析报告</el-tag>
           </div>
+          <el-button type="primary" @click="generateAIAnalysis" >
+              <el-icon><Connection /></el-icon>
+              AI分析
+            </el-button>
         </template>
         <div v-loading="isAnalyzing" class="ai-analysis-content">
           <div class="analysis-section">
@@ -238,6 +239,8 @@ import { ref, onMounted, watch, computed } from "@vue/runtime-core";
 import * as echarts from "echarts";
 import * as XLSX from "xlsx";
 import { ElMessage } from "element-plus";
+
+
 
 interface Student {
   id: string;
@@ -445,12 +448,26 @@ const updateCharts = () => {
   }
 };
 
+
+let stopPollingWatch: (() => void) | null = null;
+let isUpdatingStep = false; // 状态锁
+
+//api------------------------------------------------------------->>
+
+//api
+import { chatConfig, handleSubmit_analysis,isPolling } from "@/components/api_compoents/api_handler.ts";
+import { analysisService } from "@/services/storage/analysisResService";
+import type { analysisRes } from "@/types/analysisRes";
+
+
+const DataThisSession = ref< analysisRes | null>(null);  // 会话数据
+const sessionId = ref("");
+
+
 // 生成AI分析
 const generateAIAnalysis = async () => {
-  isAnalyzing.value = true;
-  showAIAnalysis.value = true;
-
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  
+  
 
   // 计算题目正确率和平均分
   questions.value.forEach((q) => {
@@ -474,11 +491,44 @@ const generateAIAnalysis = async () => {
     .map((q) => `${q.question}的平均得分为${q.averageScore.toFixed(2)}分，正确率为${q.correctRate.toFixed(1)}%。`);
 
   // 教学建议：针对这些题目提出建议
-  const recommendations = [
-    `针对正确率较低的题目，建议加强相关知识点的讲解和练习。`,
-    `对于整体得分较低的学生，建议进行一对一辅导，帮助他们巩固基础知识。`,
-    `鼓励学生在课后多做类似的练习题，提高解题能力和应试技巧。`,
+  const recommendations = ['',
   ];
+
+    //api
+  if (stopPollingWatch) {
+        stopPollingWatch();
+        stopPollingWatch = null;
+    }
+
+    if (DataThisSession.value === null) {
+        sessionId.value = await analysisService.createSession();
+    }
+
+    isAnalyzing.value = true;
+    showAIAnalysis.value = true;
+
+    
+    chatConfig.value.message = overallAnalysis;
+
+    const result = await handleSubmit_analysis(sessionId.value, 6);
+    DataThisSession.value = result || null;
+    recommendations.push(DataThisSession.value?.analysis || "无建议");
+
+    stopPollingWatch = watch(() => isPolling.value, async (newPolling: boolean) => {
+        if (newPolling) {
+            setTimeout((): void => {
+                isAnalyzing.value = false;
+                // 安全递增步骤
+                // 清理监听器并释放锁
+                if (stopPollingWatch) {
+                    stopPollingWatch();
+                    stopPollingWatch = null;
+                }
+                isUpdatingStep = false;
+            }, 500);
+        }
+    }, { immediate: true });
+  
 
   aiAnalysisResult.value = {
     overallAnalysis,

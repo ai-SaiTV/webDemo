@@ -25,7 +25,6 @@ export class StorageService {
       }
     }
 
-
     this.data.value.push(newSession)
     await this.saveToFile()
     return newSession.id
