@@ -46,7 +46,7 @@
 
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from '@vue/runtime-core';
 const plan_Num = ref(12)
 const resource_Num = ref(25)
 const applause_rate = ref("98%")

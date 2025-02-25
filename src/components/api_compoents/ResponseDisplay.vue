@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ChatResponse, ChatMessagesResponse } from '@/types/api';
 import ChatMessage from './ChatMessage.vue';
-import { computed } from 'vue';
+import { computed } from '@vue/runtime-core';
 
 const props = defineProps<{
   response: ChatResponse | null;

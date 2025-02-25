@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref } from '@vue/runtime-core'
 import { Menu as IconMenu, Document, Collection, TrendCharts, Calendar } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 

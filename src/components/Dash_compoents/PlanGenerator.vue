@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from '@vue/runtime-core';
 import StepProgress from './StepProgress.vue';
 
 // 组件的属性

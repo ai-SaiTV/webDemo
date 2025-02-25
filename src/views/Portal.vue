@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref } from '@vue/runtime-core'
 import { useRouter } from 'vue-router'
 import { Collection, User, UserFilled, Calendar } from '@element-plus/icons-vue';
 import 'element-plus/es/components/icon/style/css';

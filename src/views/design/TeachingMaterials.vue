@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from '@vue/runtime-core';
 
 interface Book {
     id: number;
