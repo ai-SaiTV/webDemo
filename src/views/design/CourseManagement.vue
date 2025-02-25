@@ -1,83 +1,63 @@
-<script setup lang="ts">
-import { ref } from '@vue/runtime-core'
-
-interface Course {
-  id: string
-  name: string
-  grade: string
-  subject: string
-  schedule: string
-  students: number
-}
-
-const courses = ref<Course[]>([
-  {
-    id: '1',
-    name: '语文基础课程',
-    grade: '一年级',
-    subject: '语文',
-    schedule: '周一 08:00-09:30',
-    students: 30
-  },
-  {
-    id: '2',
-    name: '数学提高班',
-    grade: '一年级',
-    subject: '数学',
-    schedule: '周二 10:00-11:30',
-    students: 25
-  }
-])
-
-const dialogVisible = ref(false)
-const form = ref({
-  name: '',
-  grade: '',
-  subject: '',
-  schedule: '',
-  students: 0
-})
-
-const handleAdd = () => {
-  dialogVisible.value = true
-}
-
-const handleSubmit = () => {
-  courses.value.push({
-    id: String(courses.value.length + 1),
-    ...form.value
-  })
-  dialogVisible.value = false
-  form.value = {
-    name: '',
-    grade: '',
-    subject: '',
-    schedule: '',
-    students: 0
-  }
-}
-</script>
-
 <template>
   <div class="course-container">
-    <el-card>
-      <template #header>
-        <div class="card-header">
-          <span>课程管理</span>
-          <el-button type="primary" @click="handleAdd">添加课程</el-button>
-        </div>
-      </template>
+    <div class="plan-header">
+      <h2>课程管理</h2>
+      <p class="subtitle">高效管理课程信息，提升教学安排效率</p>
+    </div>
 
-      <el-table :data="courses" style="width: 100%">
+    <el-card class="main-card">
+      <div class="filter-form">
+        <el-form inline>
+          <el-form-item label="年级">
+            <el-select
+              v-model="filters.grade"
+              placeholder="全部"
+              clearable
+              style="width: 120px"
+            >
+              <el-option
+                v-for="grade in uniqueGrades"
+                :key="grade"
+                :label="grade"
+                :value="grade"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="科目">
+            <el-select
+              v-model="filters.subject"
+              placeholder="全部"
+              clearable
+              style="width: 120px"
+            >
+              <el-option
+                v-for="subject in uniqueSubjects"
+                :key="subject"
+                :label="subject"
+                :value="subject"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="上课时间">
+            <el-input v-model="filters.schedule" placeholder="输入时间" style="width: 180px" />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="resetFilters">显示全部</el-button>
+            <el-button type="primary" @click="handleAdd">添加课程</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+
+      <el-table :data="filteredCourses" style="width: 100%">
         <el-table-column prop="name" label="课程名称" />
         <el-table-column prop="grade" label="年级" />
         <el-table-column prop="subject" label="科目" />
         <el-table-column prop="schedule" label="上课时间" />
         <el-table-column prop="students" label="学生人数" />
         <el-table-column label="操作" width="200">
-          <template #default>
-            <el-button type="primary" link>编辑</el-button>
-            <el-button type="danger" link>删除</el-button>
+          <template #default="scope">
+            <el-button type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
+            <el-button type="danger" link @click="handleDelete(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -85,7 +65,7 @@ const handleSubmit = () => {
 
     <el-dialog
       v-model="dialogVisible"
-      title="添加课程"
+      :title="isEditing ? '编辑课程' : '添加课程'"
       width="500px"
     >
       <el-form :model="form" label-width="100px">
@@ -93,17 +73,23 @@ const handleSubmit = () => {
           <el-input v-model="form.name" />
         </el-form-item>
         <el-form-item label="年级">
-          <el-select v-model="form.grade" placeholder="选择年级">
-            <el-option label="一年级" value="一年级" />
-            <el-option label="二年级" value="二年级" />
-            <el-option label="三年级" value="三年级" />
+          <el-select v-model="form.grade" placeholder="选择年级" style="width: 120px">
+            <el-option
+              v-for="grade in allGrades"
+              :key="grade"
+              :label="grade"
+              :value="grade"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="科目">
-          <el-select v-model="form.subject" placeholder="选择科目">
-            <el-option label="语文" value="语文" />
-            <el-option label="数学" value="数学" />
-            <el-option label="英语" value="英语" />
+          <el-select v-model="form.subject" placeholder="选择科目" style="width: 120px">
+            <el-option
+              v-for="subject in allSubjects"
+              :key="subject"
+              :label="subject"
+              :value="subject"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="上课时间">
@@ -116,23 +102,180 @@ const handleSubmit = () => {
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="handleSubmit">确定</el-button>
+          <el-button type="primary" @click="handleSubmit">
+            {{ isEditing ? '更新' : '确定' }}
+          </el-button>
         </span>
       </template>
     </el-dialog>
   </div>
 </template>
 
-<style scoped lang="scss">
-.course-container {
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+<script setup lang="ts">
+import { ref, computed } from '@vue/runtime-core';
+
+interface Course {
+  id: string;
+  name: string;
+  grade: string;
+  subject: string;
+  schedule: string;
+  students: number;
 }
 
-.dialog-footer {
-  margin-top: 20px;
+const courses = ref<Course[]>([
+  {
+    id: '1',
+    name: '语文基础课程',
+    grade: '一年级',
+    subject: '语文',
+    schedule: '周一 08:00-09:30',
+    students: 30,
+  },
+  {
+    id: '2',
+    name: '数学提高班',
+    grade: '二年级',
+    subject: '数学',
+    schedule: '周二 10:00-11:30',
+    students: 25,
+  },
+  {
+    id: '3',
+    name: '英语语法训练',
+    grade: '三年级',
+    subject: '英语',
+    schedule: '周三 15:00-16:30',
+    students: 25,
+  },
+  {
+    id: '4',
+    name: '科学兴趣班',
+    grade: '四年级',
+    subject: '科学',
+    schedule: '周五 13:30-15:00',
+    students: 25,
+  },
+]);
+
+const uniqueGrades = computed(() => [...new Set(courses.value.map(course => course.grade))].sort());
+const uniqueSubjects = computed(() => [...new Set(courses.value.map(course => course.subject))].sort());
+
+const allGrades = ref(['一年级', '二年级', '三年级', '四年级']);
+const allSubjects = ref(['语文', '数学', '英语', '科学', '艺术']);
+
+const filters = ref({
+  grade: '',
+  subject: '',
+  schedule: '',
+});
+
+const filteredCourses = computed(() =>
+  courses.value.filter(course => {
+    const gradeMatch = filters.value.grade ? course.grade.includes(filters.value.grade) : true;
+    const subjectMatch = filters.value.subject ? course.subject.includes(filters.value.subject) : true;
+    const scheduleMatch = filters.value.schedule ? course.schedule.includes(filters.value.schedule) : true;
+    return gradeMatch && subjectMatch && scheduleMatch;
+  })
+);
+
+const resetFilters = () => {
+  filters.value = {
+    grade: '',
+    subject: '',
+    schedule: '',
+  };
+};
+
+const dialogVisible = ref(false);
+const form = ref<Course>({
+  id: '',
+  name: '',
+  grade: '',
+  subject: '',
+  schedule: '',
+  students: 0,
+});
+const isEditing = ref(false);
+
+const handleAdd = () => {
+  dialogVisible.value = true;
+  isEditing.value = false;
+  form.value = {
+    id: '',
+    name: '',
+    grade: '',
+    subject: '',
+    schedule: '',
+    students: 0,
+  };
+};
+
+const handleSubmit = () => {
+  const newCourse: Course = {
+    id: form.value.id || String(courses.value.length + 1),
+    name: form.value.name,
+    grade: form.value.grade,
+    subject: form.value.subject,
+    schedule: form.value.schedule,
+    students: form.value.students,
+  };
+
+  if (form.value.id) {
+    const index = courses.value.findIndex(course => course.id === form.value.id);
+    if (index !== -1) {
+      courses.value[index] = newCourse;
+    }
+  } else {
+    courses.value.push(newCourse);
+  }
+
+  dialogVisible.value = false;
+  form.value = {
+    id: '',
+    name: '',
+    grade: '',
+    subject: '',
+    schedule: '',
+    students: 0,
+  };
+};
+
+const handleEdit = (course: Course) => {
+  dialogVisible.value = true;
+  isEditing.value = true;
+  form.value = { ...course };
+};
+
+const handleDelete = (id: string) => {
+  const index = courses.value.findIndex(course => course.id === id);
+  if (index !== -1) {
+    courses.value.splice(index, 1);
+  }
+};
+</script>
+
+<style scoped>
+.course-container {
+  .plan-header {
+    text-align: center;
+    background: linear-gradient(to right, #25ade7, #09e6ab);
+    color: white;
+    padding: 1rem 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .subtitle {
+    color: #ffffff;
+    font-size: 1rem;
+  }
+
+  .main-card {
+    padding: 1rem;
+  }
+
+  .dialog-footer {
+    margin-top: 20px;
+  }
 }
 </style>
