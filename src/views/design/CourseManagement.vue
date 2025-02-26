@@ -189,6 +189,8 @@ const courses = ref<Course[]>([
     subject: '英语',
     schedule: '周三 15:00-16:30',
     students: 25,
+    teacher: '王老师',
+    lessonPlanCount: 3,
   },
   {
     id: '4',
@@ -197,6 +199,8 @@ const courses = ref<Course[]>([
     subject: '科学',
     schedule: '周五 13:30-15:00',
     students: 25,
+    teacher: '赵老师',
+    lessonPlanCount: 5,
   },
   // Add other courses as needed...
 ]);
