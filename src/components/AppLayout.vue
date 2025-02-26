@@ -22,6 +22,20 @@ const handleMenuSelect = (index: string) => {
       break
   }
 }
+
+const isAnimating = ref(false);
+
+const handleCollapse = () => {
+  isAnimating.value = true;
+  setTimeout(() => {
+    isAnimating.value = false;
+  }, 300); // 动画时长为 300ms
+};
+
+const toggleCollapse = () => {
+  isCollapse.value = !isCollapse.value;
+  handleCollapse();
+};
 </script>
 
 <template>
@@ -29,7 +43,7 @@ const handleMenuSelect = (index: string) => {
     <el-aside :width="isCollapse ? '64px' : '200px'" class="aside">
       <div class="logo">
         <img src="/vite.svg" alt="Logo" class="logo-img" />
-        <span v-show="!isCollapse">智慧备课平台</span>
+        <span v-show="!isCollapse && !isAnimating">智慧备课平台</span>
       </div>
       <el-menu
         :collapse="isCollapse"
@@ -63,7 +77,7 @@ const handleMenuSelect = (index: string) => {
         <el-button
           type="text"
           class="collapse-btn"
-          @click="isCollapse = !isCollapse"
+          @click="toggleCollapse"
         >
           <el-icon><IconMenu /></el-icon>
         </el-button>
@@ -144,6 +158,11 @@ const handleMenuSelect = (index: string) => {
   .main {
     background-color: #f0f2f5;
     padding: 20px;
+  }
+
+  .aside {
+  background-color: #001529;
+  transition: width 0.3s ease;
   }
 }
 </style>
