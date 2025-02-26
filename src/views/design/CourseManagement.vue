@@ -111,38 +111,41 @@
       </template>
     </el-dialog>
 
-    <!-- Preview Class Details Dialog -->
+    <!-- 班级详情 -->
     <el-dialog
       v-model="previewDialogVisible"
-      title="班级详情"
+      title="📖 班级详情"
       width="600px"
+      class="preview-dialog"
     >
-      <el-form :model="previewForm" label-width="100px">
-        <el-form-item label="课程名称">
-          <el-input v-model="previewForm.name" disabled />
-        </el-form-item>
-        <el-form-item label="年级">
-          <el-input v-model="previewForm.grade" disabled />
-        </el-form-item>
-        <el-form-item label="科目">
-          <el-input v-model="previewForm.subject" disabled />
-        </el-form-item>
-        <el-form-item label="班级人数">
-          <el-input-number v-model="previewForm.students" disabled />
-        </el-form-item>
-        <el-form-item label="教师名称">
-          <el-input v-model="previewForm.teacher" disabled />
-        </el-form-item>
-        <el-form-item label="教案生成次数">
-          <el-input-number v-model="previewForm.lessonPlanCount" disabled />
-        </el-form-item>
-      </el-form>
+      <el-card class="preview-card">
+        <el-descriptions title="课程信息" border column="2">
+          <el-descriptions-item label="📚 课程名称">
+            <strong class="text-primary">{{ previewForm.name }}</strong>
+          </el-descriptions-item>
+          <el-descriptions-item label="🏫 年级">
+            <span class="text-gray">{{ previewForm.grade }}</span>
+          </el-descriptions-item>
+          <el-descriptions-item label="📖 科目">
+            <span class="text-gray">{{ previewForm.subject }}</span>
+          </el-descriptions-item>
+          <el-descriptions-item label="👨‍🎓 班级人数">
+            <el-tag type="success">{{ previewForm.students }}</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item label="👨‍🏫 教师">
+            <span class="text-gray">{{ previewForm.teacher || '未分配' }}</span>
+          </el-descriptions-item>
+          <el-descriptions-item label="📄 生成教案次数">
+            <el-tag type="warning">{{ previewForm.lessonPlanCount }}</el-tag>
+          </el-descriptions-item>
+        </el-descriptions>
+      </el-card>
+
       <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="previewDialogVisible = false">关闭</el-button>
-        </span>
+        <el-button type="primary" @click="previewDialogVisible = false">关闭</el-button>
       </template>
     </el-dialog>
+
   </div>
 </template>
 
@@ -335,4 +338,21 @@ const handlePreview = (course: Course) => {
     margin-top: 20px;
   }
 }
+
+.preview-dialog {
+  border-radius: 10px;
+}
+.preview-card {
+  background: #f9fafb;
+  padding: 20px;
+  border-radius: 10px;
+}
+.text-primary {
+  color: #409eff;
+  font-weight: bold;
+}
+.text-gray {
+  color: #606266;
+}
+
 </style>
