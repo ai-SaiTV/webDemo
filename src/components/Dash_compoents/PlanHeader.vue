@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import { ref, computed,defineProps } from 'vue';
+import { defineProps } from 'vue';
 const props = defineProps({
   header: {
     type: String,

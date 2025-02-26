@@ -1,6 +1,8 @@
 <script lang="ts">
 import { defineComponent } from '@vue/runtime-core';
-import PlanHeader from '@/components/Dash_compoents/PlanHeader.vue';
+import zh2vo from '@/assets/zh2vo.png';
+import zh3vo from '@/assets/zh3vo.png';
+import zh4vo from '@/assets/zh4vo.png';
 interface Book {
     id: number;
     title: string;
@@ -18,32 +20,32 @@ export default defineComponent({
             books: [
                 {
                     id: 1,
-                    title: 'Vue.js 实战',
-                    author: 'John Doe',
+                    title: '二年级上册教师用书',
+                    author: '人民教育出版社',
                     isbn: '123-456-789',
                     owner: '张三',
                     description: '一本关于 Vue.js 的教程。',
-                    image: 'https://example.com/vue-book.jpg',
+                    image: zh2vo,
                     showDetails: false
                 },
                 {
                     id: 2,
-                    title: '深入浅出 Node.js',
-                    author: 'Jane Smith',
+                    title: '三年级上册教师用书',
+                    author: '人民教育出版社',
                     isbn: '987-654-321',
                     owner: '李四',
                     description: '一本关于 Node.js 的深入解析书籍。',
-                    image: 'https://example.com/node-book.jpg',
+                    image: zh3vo,
                     showDetails: false
                 },
                 {
                     id: 3,
-                    title: '前端工程化',
-                    author: 'Alice',
+                    title: '四年级上册教师用书',
+                    author: '人民教育出版社',
                     isbn: '555-444-333',
                     owner: '王五',
                     description: '前端开发的最佳实践。',
-                    image: 'https://example.com/frontend-book.jpg',
+                    image: zh4vo,
                     showDetails: false
                 }
             ] as Book[]
@@ -64,9 +66,11 @@ export default defineComponent({
 
 <template>
     <div>
-        <header>教学资源</header>
-        
-
+        <!-- <header>教学资源</header> -->
+        <div class="plan-header">
+            <h2> 教学资源 </h2>
+            <p class="subtitle">针对具体教学需求，辅助生成专业教案</p>
+        </div>
         <div class="container">
             <div class="book-list">
                 <div v-for="book in books" :key="book.id" class="book-item" :data-id="book.id">
@@ -86,6 +90,7 @@ export default defineComponent({
             </div>
         </div>
     </div>
+
 </template>
 
 
@@ -97,15 +102,22 @@ body {
     color: #333;
 }
 
-header {
-    background: linear-gradient(135deg, #1890ff 0%, #8000ff 100%);
-    color: #fff;
-    padding: 20px;
-    text-align: center;
-    font-size: 2rem;
-    font-weight: 600;
-    border-radius: 8px;
-    text-transform: uppercase;
+
+.plan-header {
+  background: linear-gradient(135deg, #1890ff 0%, #8000ff 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+
+  h2 {
+    margin: 0;
+    font-size: 1.75rem;
+  }
+
+  .subtitle {
+    margin: 0.5rem 0 0;
+    opacity: 0.9;
+  }
 }
 
 .subtitle {
