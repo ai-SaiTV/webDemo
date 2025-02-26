@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from '@vue/runtime-core';
-
+import PlanHeader from '@/components/Dash_compoents/PlanHeader.vue';
 interface Book {
     id: number;
     title: string;
@@ -64,7 +64,9 @@ export default defineComponent({
 
 <template>
     <div>
-        <header>图书信息</header>
+        <header>教学资源</header>
+        
+
         <div class="container">
             <div class="book-list">
                 <div v-for="book in books" :key="book.id" class="book-item" :data-id="book.id">
@@ -102,7 +104,13 @@ header {
     text-align: center;
     font-size: 2rem;
     font-weight: 600;
+    border-radius: 8px;
     text-transform: uppercase;
+}
+
+.subtitle {
+    margin: 0.5rem 0 0;
+    opacity: 0.9;
 }
 
 .container {

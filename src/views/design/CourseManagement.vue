@@ -158,7 +158,7 @@ const courses = ref<Course[]>([
   },
 ]);
 
-const uniqueGrades = computed(() => [...new Set(courses.value.map(course => course.grade))].sort());
+const uniqueGrades = computed(() => [...new Set(courses.value.map(course => course.grade))]);
 const uniqueSubjects = computed(() => [...new Set(courses.value.map(course => course.subject))].sort());
 
 const allGrades = ref(['一年级', '二年级', '三年级', '四年级']);
@@ -263,6 +263,7 @@ const handleDelete = (id: string) => {
     color: white;
     padding: 1rem 0;
     margin-bottom: 1.5rem;
+    border-radius: 8px;
   }
 
   .subtitle {

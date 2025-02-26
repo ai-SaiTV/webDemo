@@ -1,12 +1,22 @@
 <template>
   <div class="plan-header">
-    <h2>教案生成</h2>
-    <p class="subtitle">智能分析教学需求，快速生成专业教案</p>
+    <h2>{{ header }}</h2>
+    <p class="subtitle">{{ subheader }}</p>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed,defineProps } from 'vue';
+const props = defineProps({
+  header: {
+    type: String,
+    default: '教案生成',
+  },
+  subheader: {
+    type: String,
+    default: '智能分析教学需求，快速生成专业教案',
+  },
+  });
 </script>
 <style scoped lang="scss">
 .plan-header {
