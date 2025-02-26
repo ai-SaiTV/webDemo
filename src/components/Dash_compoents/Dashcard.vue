@@ -7,22 +7,7 @@
         </div>
       </template>
       <div class="stat-grid">
-        <div class="stat-item">
-          <div class="stat-value">{{ plan_Num }}</div>
-          <div class="stat-label">已创建教案</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-value">{{ resource_Num }}</div>
-          <div class="stat-label">收藏资源</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-value">{{ applause_rate }}</div>
-          <div class="stat-label">好评率</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-value">{{ time_sum }}</div>
-          <div class="stat-label">课时总数</div>
-        </div>
+        {{DataThis}}
       </div>
     </el-card>
 
@@ -55,6 +40,7 @@ const time_sum = ref(45)
 defineProps({
   showResult:Boolean,
 })
+
 </script>
 
 <style scoped lang="scss">

@@ -304,11 +304,11 @@ const classes = ref<Class[]>([
 
 const aiAnalysisResult = ref<{
   overallAnalysis: string;
-  recommendations: string[];
+  recommendations: string;
   keyPoints: string[];
 }>({
   overallAnalysis: "",
-  recommendations: [],
+  recommendations: "",
   keyPoints: [],
 });
 
@@ -470,7 +470,7 @@ import type { analysisRes } from "@/types/analysisRes";
 
 import { parseMarkdown } from '../../utils/markdownUtils';
 
-const DataThisSession = ref< analysisRes | null>(null);  // 会话数据
+const DataThisSession_als = ref< analysisRes | null>(null);  // 会话数据
 const sessionId = ref("");
 
 
@@ -501,7 +501,7 @@ const generateAIAnalysis = async () => {
     .map((q) => `${q.question}的平均得分为${q.averageScore.toFixed(2)}分，正确率为${q.correctRate.toFixed(1)}%。`);
 
   // 教学建议：针对这些题目提出建议
-  const recommendations = [""];
+  const recommendations = ref("");
 
     //api
   if (stopPollingWatch) {
@@ -509,7 +509,7 @@ const generateAIAnalysis = async () => {
         stopPollingWatch = null;
     }
 
-    if (DataThisSession.value === null) {
+    if (DataThisSession_als.value === null) {
         sessionId.value = await analysisService.createSession();
     }
 
@@ -520,8 +520,11 @@ const generateAIAnalysis = async () => {
     chatConfig.value.message = overallAnalysis;
 
     const result = await handleSubmit_analysis(sessionId.value, 6);
-    DataThisSession.value = result || null;
+
+    console.log("await finished! ",result);
+    DataThisSession_als.value = result || null;
     const html_res = parseMarkdown(result?.analysis || "");
+    recommendations.value = html_res.__html || "无建议";
     
 
     stopPollingWatch = watch(() => isPolling.value, async (newPolling: boolean) => {
@@ -536,7 +539,7 @@ const generateAIAnalysis = async () => {
                 }
                 isUpdatingStep = false;
             }, 500);
-            recommendations.push(html_res.__html || "无建议");
+            
         }
     }, { immediate: true });
   
@@ -544,7 +547,7 @@ const generateAIAnalysis = async () => {
   aiAnalysisResult.value = {
     overallAnalysis,
     keyPoints,
-    recommendations,
+    recommendations: recommendations.value,
   };
 
   isAnalyzing.value = false;
