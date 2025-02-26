@@ -29,7 +29,7 @@ const handleCollapse = () => {
   isAnimating.value = true;
   setTimeout(() => {
     isAnimating.value = false;
-  }, 300); // 动画时长为 300ms
+  }, 300);
 };
 
 const toggleCollapse = () => {
