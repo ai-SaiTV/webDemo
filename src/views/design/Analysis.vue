@@ -104,7 +104,7 @@
       </el-card>
 
       <!-- AI分析结果 -->
-      <el-card v-if="showAIAnalysis" class="ai-analysis-card">
+      <el-card class="ai-analysis-card">
         <template #header>
           <div class="card-header">
             <span> AI学情分析 </span>
@@ -130,11 +130,15 @@
           </div>
           <div class="analysis-section">
             <h4>教学建议</h4>
-            <ul>
+            <!-- <ul>
               <li v-for="(rec, index) in aiAnalysisResult.recommendations" :key="index">
                 {{ rec }}
               </li>
-            </ul>
+            </ul> -->
+            <div class="markdown-container">
+              <!-- 渲染 Markdown 内容 -->
+              <div v-html="aiAnalysisResult.recommendations" class="markdown-content"></div>
+            </div>
           </div>
         </div>
       </el-card>
@@ -222,12 +226,17 @@
               <span>学习建议</span>
             </div>
           </template>
-          <ul class="recommendation-list">
-            <li v-for="(rec, index) in studentAnalysis.recommendations" :key="index">
+          <div class="markdown-container">
+              <!-- 渲染 Markdown 内容 -->
+              <div v-html="studentAnalysis.recommendations" class="markdown-content"></div>
+          </div>
+          <!-- <ul class="recommendation-list">
+            <!-- <li v-for="(rec, index) in studentAnalysis.recommendations" :key="index">
               <el-icon><Star /></el-icon>
               {{ rec }}
-            </li>
-          </ul>
+            </li> -->
+            
+          <!-- </ul> -->
         </el-card>
       </div>
     </el-dialog>
@@ -392,7 +401,7 @@ const processExcelData = (data: any[]) => {
 
   // 更新图表和分析
   updateCharts();
-  generateAIAnalysis();
+  // generateAIAnalysis();
 };
 
 // 更新图表
@@ -459,6 +468,7 @@ import { chatConfig, handleSubmit_analysis,isPolling } from "@/components/api_co
 import { analysisService } from "@/services/storage/analysisResService";
 import type { analysisRes } from "@/types/analysisRes";
 
+import { parseMarkdown } from '../../utils/markdownUtils';
 
 const DataThisSession = ref< analysisRes | null>(null);  // 会话数据
 const sessionId = ref("");
@@ -491,8 +501,7 @@ const generateAIAnalysis = async () => {
     .map((q) => `${q.question}的平均得分为${q.averageScore.toFixed(2)}分，正确率为${q.correctRate.toFixed(1)}%。`);
 
   // 教学建议：针对这些题目提出建议
-  const recommendations = ['',
-  ];
+  const recommendations = [""];
 
     //api
   if (stopPollingWatch) {
@@ -512,7 +521,8 @@ const generateAIAnalysis = async () => {
 
     const result = await handleSubmit_analysis(sessionId.value, 6);
     DataThisSession.value = result || null;
-    recommendations.push(DataThisSession.value?.analysis || "无建议");
+    const html_res = parseMarkdown(result?.analysis || "");
+    
 
     stopPollingWatch = watch(() => isPolling.value, async (newPolling: boolean) => {
         if (newPolling) {
@@ -526,6 +536,7 @@ const generateAIAnalysis = async () => {
                 }
                 isUpdatingStep = false;
             }, 500);
+            recommendations.push(html_res.__html || "无建议");
         }
     }, { immediate: true });
   
@@ -538,6 +549,10 @@ const generateAIAnalysis = async () => {
 
   isAnalyzing.value = false;
 };
+
+const markdownContent = ref(`
+## 暂无
+`);
 
 // 生成学生个人分析
 const generateStudentAnalysis = async (student: Student) => {
@@ -643,7 +658,7 @@ const reloadClassData = (classId: string) => {
   if (currentClass) {
     tableData.value = currentClass.students;
     updateCharts();
-    generateAIAnalysis();
+    // generateAIAnalysis();
   } else {
     tableData.value = [];
     questions.value = [];

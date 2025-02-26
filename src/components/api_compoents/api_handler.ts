@@ -238,46 +238,58 @@ export const handleSubmitParallel = async (sessionId: string, botIndices: number
 
 
 
-export const handleSubmit_analysis = async (sessionId: string, botid: number) => {
-    if (sessionId) {
-        // 保存用户消息
-        await analysisService.updateMessages(sessionId, {
-            role: 'user',
-            content: chatConfig.value.message
-        });
+export const handleSubmit_analysis = async (sessionId: string, botid: number): Promise<analysisRes | null> => {
+    if (!sessionId) {
+        console.log('Invalid sessionId');
+        return null;
+    }
 
-        if (!chatConfig.value.apiKey || !chatConfig.value.message) {
-            console.log('chatConfig not complete');
-            return;
+    // 保存用户消息
+    await analysisService.updateMessages(sessionId, {
+        role: 'user',
+        content: chatConfig.value.message
+    });
+
+    if (!chatConfig.value.apiKey || !chatConfig.value.message) {
+        console.log('chatConfig not complete');
+        return null;
+    } else {
+        console.log("chatMessage: ", chatConfig.value.message);
+    }
+
+    try {
+        const initialResponse = await sendMessage(
+            chatConfig.value.apiKey, 
+            chatConfig.value.botId[botid], 
+            chatConfig.value.message
+        );
+
+        await startPolling(chatConfig.value.apiKey, initialResponse);
+
+        // 清理之前的 watcher
+        if (unwatch) {
+            unwatch();
+            unwatch = null;
         }
 
-        try {
-            const initialResponse = await sendMessage(
-                chatConfig.value.apiKey, 
-                chatConfig.value.botId[botid], 
-                chatConfig.value.message
-            );
-            await startPolling(chatConfig.value.apiKey, initialResponse);
+        const currentStep = botid; // 通过闭包捕获当前 step
 
-            // 清理之前的 watcher
-            if (unwatch) {
-                unwatch();
-                unwatch = null;
-            }
-
-            const currentStep = botid; // 通过闭包捕获当前 step
+        // 创建一个 Promise 来封装监听过程
+        const waitForAnalysisCompletion = new Promise<void>((resolve) => {
             unwatch = watch(() => chatMessages.value, async (newMessages) => {
                 if (newMessages?.data) {
-                    console.log('newMessages:', newMessages)
+                    console.log('newMessages:', newMessages);
+
                     interface ChatMessage {
                         type?: string;
                         content_type?: string;
                         role?: string;
                         content?: string;
                     }
-                    
+
                     const lastMessage: ChatMessage = newMessages.data.find((msg: ChatMessage) => 
                         (msg.type === 'answer' && msg.content_type === 'text')) || newMessages.data[0];
+
                     if (lastMessage.role === 'assistant') {
                         await analysisService.updateMessages(sessionId, {
                             role: 'assistant',
@@ -290,24 +302,28 @@ export const handleSubmit_analysis = async (sessionId: string, botid: number) =>
                                     text: lastMessage.content || '',
                                 });
                                 break;
-                            
                             default:
                                 break;
                         }
 
-                        // 处理完成后，停止本次 watcher
+                        // 处理完成后，停止本次 watcher 并解析 Promise
                         if (unwatch) {
                             unwatch();
                             unwatch = null;
                         }
+                        resolve();
                     }
                 }
             }, { deep: true });
+        });
 
-            return analysisService.getSessionData(sessionId) || null;
-        } catch (err) {
-            console.error(err);
-            return null;
-        }
+        // 等待监听过程完成
+        await waitForAnalysisCompletion;
+
+        // 返回最终的会话数据
+        return analysisService.getSessionData(sessionId) || null;
+    } catch (err) {
+        console.error(err);
+        return null;
     }
 };
