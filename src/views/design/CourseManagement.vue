@@ -54,18 +54,17 @@
         <el-table-column prop="subject" label="科目" />
         <el-table-column prop="schedule" label="上课时间" />
         <el-table-column prop="students" label="学生人数" />
-        <el-table-column label="操作" width="200">
+        <el-table-column label="操作" width="250">
           <template #default="scope">
             <el-button type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
             <el-button type="danger" link @click="handleDelete(scope.row.id)">删除</el-button>
-            <el-button type=""> 
-
-            </el-button>
+            <el-button type="success" link @click="handlePreview(scope.row)">预览班级详情</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
 
+    <!-- Add/Edit Course Dialog -->
     <el-dialog
       v-model="dialogVisible"
       :title="isEditing ? '编辑课程' : '添加课程'"
@@ -111,8 +110,42 @@
         </span>
       </template>
     </el-dialog>
+
+    <!-- Preview Class Details Dialog -->
+    <el-dialog
+      v-model="previewDialogVisible"
+      title="班级详情"
+      width="600px"
+    >
+      <el-form :model="previewForm" label-width="100px">
+        <el-form-item label="课程名称">
+          <el-input v-model="previewForm.name" disabled />
+        </el-form-item>
+        <el-form-item label="年级">
+          <el-input v-model="previewForm.grade" disabled />
+        </el-form-item>
+        <el-form-item label="科目">
+          <el-input v-model="previewForm.subject" disabled />
+        </el-form-item>
+        <el-form-item label="班级人数">
+          <el-input-number v-model="previewForm.students" disabled />
+        </el-form-item>
+        <el-form-item label="教师名称">
+          <el-input v-model="previewForm.teacher" disabled />
+        </el-form-item>
+        <el-form-item label="教案生成次数">
+          <el-input-number v-model="previewForm.lessonPlanCount" disabled />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="previewDialogVisible = false">关闭</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref, computed } from '@vue/runtime-core';
@@ -124,6 +157,8 @@ interface Course {
   subject: string;
   schedule: string;
   students: number;
+  teacher?: string; // New field for teacher name
+  lessonPlanCount?: number; // New field for lesson plan generation count
 }
 
 const courses = ref<Course[]>([
@@ -134,6 +169,8 @@ const courses = ref<Course[]>([
     subject: '语文',
     schedule: '周一 08:00-09:30',
     students: 30,
+    teacher: '张老师',
+    lessonPlanCount: 5,
   },
   {
     id: '2',
@@ -142,6 +179,8 @@ const courses = ref<Course[]>([
     subject: '数学',
     schedule: '周二 10:00-11:30',
     students: 25,
+    teacher: '李老师',
+    lessonPlanCount: 3,
   },
   {
     id: '3',
@@ -159,6 +198,7 @@ const courses = ref<Course[]>([
     schedule: '周五 13:30-15:00',
     students: 25,
   },
+  // Add other courses as needed...
 ]);
 
 const uniqueGrades = computed(() => [...new Set(courses.value.map(course => course.grade))]);
@@ -191,6 +231,7 @@ const resetFilters = () => {
 };
 
 const dialogVisible = ref(false);
+const previewDialogVisible = ref(false); // New dialog for preview
 const form = ref<Course>({
   id: '',
   name: '',
@@ -199,6 +240,7 @@ const form = ref<Course>({
   schedule: '',
   students: 0,
 });
+const previewForm = ref<Course>({ ...form.value, teacher: '', lessonPlanCount: 0 }); // Preview form
 const isEditing = ref(false);
 
 const handleAdd = () => {
@@ -222,6 +264,8 @@ const handleSubmit = () => {
     subject: form.value.subject,
     schedule: form.value.schedule,
     students: form.value.students,
+    teacher: form.value.teacher, // Add teacher to new course
+    lessonPlanCount: form.value.lessonPlanCount || 0, // Add lesson plan count
   };
 
   if (form.value.id) {
@@ -255,6 +299,11 @@ const handleDelete = (id: string) => {
   if (index !== -1) {
     courses.value.splice(index, 1);
   }
+};
+
+const handlePreview = (course: Course) => {
+  previewForm.value = { ...course };
+  previewDialogVisible.value = true;
 };
 </script>
 
