@@ -23,7 +23,7 @@ const courseClasses = ref<CourseClass[]>([
     name: '一年级一班',
     grade: '一年级',
     subject: '语文',
-    students: 45,
+    students: 30,
     teacher: '张老师',
     createdAt: '2024-03-15',
     bookname: '人教版语文下册（24版）',
@@ -33,11 +33,32 @@ const courseClasses = ref<CourseClass[]>([
     name: '二年级三班',
     grade: '二年级',
     subject: '数学',
-    students: 42,
+    students: 25,
     teacher: '李老师',
     createdAt: '2024-03-14',
     bookname: '人教版数学下册（24版）',
+  },
+  {
+    id: '3',
+    name: '三年级一班',
+    grade: '三年级',
+    subject: '数学',
+    students: 25,
+    teacher: '王老师',
+    createdAt: '2024-03-14',
+    bookname: '人教版英语下册（24版）',
+  },
+  {
+    id: '4',
+    name: '四年级二班',
+    grade: '四年级',
+    subject: '科学',
+    students: 25,
+    teacher: '赵老师',
+    createdAt: '2024-03-14',
+    bookname: '人教版科学下册（24版）',
   }
+
 ])
 
 const form = ref({
@@ -123,6 +144,7 @@ const handleCreateClass = () => {
             <el-option label="一年级" value="一年级" />
             <el-option label="二年级" value="二年级" />
             <el-option label="三年级" value="三年级" />
+            <el-option label="四年级" value="四年级" />
           </el-select>
         </el-form-item>
         <el-form-item label="科目">
@@ -130,6 +152,7 @@ const handleCreateClass = () => {
             <el-option label="语文" value="语文" />
             <el-option label="数学" value="数学" />
             <el-option label="英语" value="英语" />
+            <el-option label="科学" value="科学" />
           </el-select>
         </el-form-item>
         <el-form-item label="学生人数">

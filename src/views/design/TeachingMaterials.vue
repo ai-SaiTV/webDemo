@@ -4,6 +4,8 @@ import zh2vo from '@/assets/zh2vo.png';
 import zh3vo from '@/assets/zh3vo.png';
 import zh4vo from '@/assets/zh4vo.png';
 import zh5vo from '@/assets/zh5vo.png';
+import { ElMessageBox, ElMessage } from 'element-plus';
+
 interface Book {
     id: number;
     title: string;
@@ -69,7 +71,18 @@ export default defineComponent({
             book.showDetails = !book.showDetails;
         },
         deleteBook(book: Book) {
-            this.books = this.books.filter((b: Book) => b.id !== book.id);
+            ElMessageBox.confirm(`确定要删除书籍《${book.title}》吗？`, '提示', {
+                type: 'warning',
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            })
+            .then(() => {
+                this.books = this.books.filter((b) => b.id !== book.id);
+                ElMessage.success('删除成功');
+            })
+            .catch(() => {
+                ElMessage.info('已取消删除');
+            });
         },
         openModal(book: Book) {
             this.selectedBook = book;

@@ -58,6 +58,9 @@
           <template #default="scope">
             <el-button type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
             <el-button type="danger" link @click="handleDelete(scope.row.id)">删除</el-button>
+            <el-button type=""> 
+
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
