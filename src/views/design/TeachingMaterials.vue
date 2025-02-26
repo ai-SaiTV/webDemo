@@ -3,6 +3,7 @@ import { defineComponent } from '@vue/runtime-core';
 import zh2vo from '@/assets/zh2vo.png';
 import zh3vo from '@/assets/zh3vo.png';
 import zh4vo from '@/assets/zh4vo.png';
+import zh5vo from '@/assets/zh5vo.png';
 interface Book {
     id: number;
     title: string;
@@ -24,7 +25,7 @@ export default defineComponent({
                     author: '人民教育出版社',
                     isbn: '123-456-789',
                     owner: '张三',
-                    description: '一本关于 Vue.js 的教程。',
+                    description: '一本关于二年级语文上册的教师用书。',
                     image: zh2vo,
                     showDetails: false
                 },
@@ -34,7 +35,7 @@ export default defineComponent({
                     author: '人民教育出版社',
                     isbn: '987-654-321',
                     owner: '李四',
-                    description: '一本关于 Node.js 的深入解析书籍。',
+                    description: '一本关于三年级语文上册的教师用书。',
                     image: zh3vo,
                     showDetails: false
                 },
@@ -44,11 +45,23 @@ export default defineComponent({
                     author: '人民教育出版社',
                     isbn: '555-444-333',
                     owner: '王五',
-                    description: '前端开发的最佳实践。',
+                    description: '一本关于四年级语文上册的教师用书。',
                     image: zh4vo,
                     showDetails: false
+                },
+                {
+                    id: 4,
+                    title: '五年级上册教师用书',
+                    author: '人民教育出版社',
+                    isbn: '555-444-333',
+                    owner: '赵六',
+                    description: '一本关于五年级语文上册的教师用书。',
+                    image: zh5vo,
+                    showDetails: false
                 }
-            ] as Book[]
+            ] as Book[],
+            isModalVisible: false,
+            selectedBook: {} as Book
         };
     },
     methods: {
@@ -57,6 +70,13 @@ export default defineComponent({
         },
         deleteBook(book: Book) {
             this.books = this.books.filter((b: Book) => b.id !== book.id);
+        },
+        openModal(book: Book) {
+            this.selectedBook = book;
+            this.isModalVisible = true;
+        },
+        closeModal() {
+            this.isModalVisible = false;
         }
     }
 });
@@ -79,14 +99,20 @@ export default defineComponent({
                         <h3>{{ book.title }}</h3>
                         <p><strong>作者：</strong>{{ book.author }}</p>
                     </div>
-                    <button class="more-details" @click="toggleDetails(book)">更多详情</button>
-                    <div v-if="book.showDetails" class="more-info">
-                        <p><strong>ISBN：</strong>{{ book.isbn }}</p>
-                        <p><strong>所有者：</strong>{{ book.owner }}</p>
-                        <p><strong>描述：</strong>{{ book.description || '暂无描述' }}</p>
-                    </div>
+                    <button class="more-details" @click="openModal(book)">更多详情</button>
                     <button class="delete-button" @click="deleteBook(book)">删除</button>
+                    </div>
                 </div>
+            </div>
+
+         <!-- 弹出窗口 -->
+         <div v-if="isModalVisible" class="modal-overlay">
+            <div class="modal-content">
+                <h3>{{ selectedBook.title }}</h3>
+                <p><strong>ISBN：</strong>{{ selectedBook.isbn }}</p>
+                <p><strong>所有者：</strong>{{ selectedBook.owner }}</p>
+                <p><strong>描述：</strong>{{ selectedBook.description || '暂无描述' }}</p>
+                <button @click="closeModal">关闭</button>
             </div>
         </div>
     </div>
@@ -105,7 +131,7 @@ body {
 
 .plan-header {
   background: linear-gradient(135deg, #1890ff 0%, #8000ff 100%);
-  color: white;
+  color: #fff;
   padding: 20px;
   border-radius: 8px;
 
@@ -129,6 +155,7 @@ body {
     margin: 20px auto;
     padding: 0 20px;
     max-width: 1200px;
+    gap: 20px;
 }
 
 .book-list {
@@ -146,9 +173,10 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     overflow: hidden;
     display: flex;
+    justify-content: flex-start;
+    align-items: center;
     flex-direction: column;
-    justify-content: space-between;
-    height: 500px;
+    min-height: 470px;
     position: relative;
 }
 
@@ -160,9 +188,14 @@ body {
 .book-header {
     background: linear-gradient(135deg, #1890ff 0%, #8000ff 100%);
     /* 从蓝色渐变到紫色 */
-    color: white;
+    color: #fff;
     padding: 1.5rem;
     border-radius: 8px 8px 0 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column; /* Arrange title and description vertically */
+    justify-content: center; /* Vertically center content inside the header */
+    text-align: center;
 }
 
 .book-header h3 {
@@ -176,8 +209,8 @@ body {
 }
 
 .book-item img {
-    width: 100%;
-    height: 200px;
+    width: 259px;
+    height: 370px;
     object-fit: cover;
     border-radius: 8px;
     margin-bottom: 15px;
@@ -188,10 +221,11 @@ body {
     margin-top: 15px;
     padding: 10px 20px;
     font-size: 1rem;
-    color: white;
+    color: #fff;
     border: none;
     border-radius: 30px;
     cursor: pointer;
+    width: 100%;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
@@ -220,6 +254,45 @@ body {
     font-size: 0.9rem;
 }
 
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.modal-content h3 {
+    margin-bottom: 20px;
+}
+
+.modal-content button {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-content button:hover {
+    background-color: #0056b3;
+}
+
 @media (max-width: 768px) {
     .book-list {
         gap: 15px;
@@ -235,4 +308,5 @@ body {
         font-size: 0.9rem;
     }
 }
+
 </style>
