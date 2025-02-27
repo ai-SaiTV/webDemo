@@ -1,5 +1,9 @@
 <template>
   <div class="analysis-container">
+    <div class="plan-header">
+            <h2> 学情分析 </h2>
+            <p class="subtitle">准确分析学生情况，智能生成教学建议</p>
+        </div>
     <!-- 班级选择和上传区域 -->
     <el-row :gutter="20" class="mb-4">
       <el-col :span="16">
@@ -684,6 +688,24 @@ onMounted(() => {
   .mt-4 {
     margin-top: 1rem;
   }
+
+  .plan-header {
+  background: linear-gradient(135deg, #27dbe8 0%, #d7f38b 100%);
+  color: #fff;
+  padding: 20px;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+}
+
+.plan-header h2 {
+    margin: 0;
+    font-size: 1.75rem;
+}
+
+.subtitle {
+    margin: 0.5rem 0 0;
+    opacity: 0.9;
+}
 
   .upload-card {
     .card-header {

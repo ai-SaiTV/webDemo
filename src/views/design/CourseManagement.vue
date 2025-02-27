@@ -317,17 +317,22 @@ const handlePreview = (course: Course) => {
 <style scoped>
 .course-container {
   .plan-header {
-    text-align: center;
+    
     background: linear-gradient(to right, #25ade7, #09e6ab);
     color: white;
-    padding: 1rem 0;
+    padding: 20px;
     margin-bottom: 1.5rem;
     border-radius: 8px;
   }
 
+  .plan-header h2 {
+    margin: 0;
+    font-size: 1.75rem;
+  }
+
   .subtitle {
-    color: #ffffff;
-    font-size: 1rem;
+    margin: 0.5rem 0 0;
+    opacity: 0.9;
   }
 
   .main-card {
