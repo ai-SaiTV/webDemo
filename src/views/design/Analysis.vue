@@ -553,9 +553,9 @@ const generateAIAnalysis = async () => {
   isAnalyzing.value = false;
 };
 
-const markdownContent = ref(`
-## 暂无
-`);
+// const markdownContent = ref(`
+// ## 暂无
+// `);
 
 // 生成学生个人分析
 const generateStudentAnalysis = async (student: Student) => {

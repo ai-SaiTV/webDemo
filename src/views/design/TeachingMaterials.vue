@@ -11,7 +11,7 @@ interface Book {
     title: string;
     author: string;
     isbn: string;
-    owner: string;
+    teacher: string;
     description: string | null;
     image: string | null;
     showDetails: boolean;
@@ -26,7 +26,7 @@ export default defineComponent({
                     title: '二年级上册教师用书',
                     author: '人民教育出版社',
                     isbn: '123-456-789',
-                    owner: '张三',
+                    teacher: '张三',
                     description: '一本关于二年级语文上册的教师用书。',
                     image: zh2vo,
                     showDetails: false
@@ -36,7 +36,7 @@ export default defineComponent({
                     title: '三年级上册教师用书',
                     author: '人民教育出版社',
                     isbn: '987-654-321',
-                    owner: '李四',
+                    teacher: '李四',
                     description: '一本关于三年级语文上册的教师用书。',
                     image: zh3vo,
                     showDetails: false
@@ -46,7 +46,7 @@ export default defineComponent({
                     title: '四年级上册教师用书',
                     author: '人民教育出版社',
                     isbn: '555-444-333',
-                    owner: '王五',
+                    teacher: '王五',
                     description: '一本关于四年级语文上册的教师用书。',
                     image: zh4vo,
                     showDetails: false
@@ -56,7 +56,7 @@ export default defineComponent({
                     title: '五年级上册教师用书',
                     author: '人民教育出版社',
                     isbn: '555-444-333',
-                    owner: '赵六',
+                    teacher: '赵六',
                     description: '一本关于五年级语文上册的教师用书。',
                     image: zh5vo,
                     showDetails: false
@@ -123,7 +123,7 @@ export default defineComponent({
             <div class="modal-content">
                 <h3>{{ selectedBook.title }}</h3>
                 <p><strong>ISBN：</strong>{{ selectedBook.isbn }}</p>
-                <p><strong>所有者：</strong>{{ selectedBook.owner }}</p>
+                <p><strong>任课教师：</strong>{{ selectedBook.teacher }}</p>
                 <p><strong>描述：</strong>{{ selectedBook.description || '暂无描述' }}</p>
                 <button @click="closeModal">关闭</button>
             </div>
@@ -222,7 +222,7 @@ body {
 }
 
 .book-item img {
-    width: 259px;
+    width: 235px;
     height: 370px;
     object-fit: cover;
     border-radius: 8px;
