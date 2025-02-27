@@ -1,10 +1,10 @@
 <script lang="ts">
 import { defineComponent } from '@vue/runtime-core';
-import zh2vo from '@/assets/zh2vo.png';
-import zh3vo from '@/assets/zh3vo.png';
-import zh4vo from '@/assets/zh4vo.png';
-import zh5vo from '@/assets/zh5vo.png';
 import { ElMessageBox, ElMessage } from 'element-plus';
+import zh2vo from '@/assets/zh2vo.png'; // 原有封面图片示例
+import zh3vo from '@/assets/zh3vo.png'; // 原有封面图片示例
+import zh4vo from '@/assets/zh4vo.png'; // 原有封面图片示例
+import zh5vo from '@/assets/zh5vo.png'; // 原有封面图片示例
 
 interface Book {
     id: number;
@@ -14,6 +14,7 @@ interface Book {
     owner: string;
     description: string | null;
     image: string | null;
+    pdf: string | null;
     showDetails: boolean;
 }
 
@@ -29,6 +30,7 @@ export default defineComponent({
                     owner: '张三',
                     description: '一本关于二年级语文上册的教师用书。',
                     image: zh2vo,
+                    pdf: '', 
                     showDetails: false
                 },
                 {
@@ -39,6 +41,7 @@ export default defineComponent({
                     owner: '李四',
                     description: '一本关于三年级语文上册的教师用书。',
                     image: zh3vo,
+                    pdf: '', 
                     showDetails: false
                 },
                 {
@@ -49,6 +52,7 @@ export default defineComponent({
                     owner: '王五',
                     description: '一本关于四年级语文上册的教师用书。',
                     image: zh4vo,
+                    pdf: '', 
                     showDetails: false
                 },
                 {
@@ -59,11 +63,22 @@ export default defineComponent({
                     owner: '赵六',
                     description: '一本关于五年级语文上册的教师用书。',
                     image: zh5vo,
+                    pdf: '', 
                     showDetails: false
                 }
             ] as Book[],
             isModalVisible: false,
-            selectedBook: {} as Book
+            selectedBook: {} as Book,
+            newBook: {
+                title: '',
+                author: '',
+                isbn: '',
+                owner: '',
+                description: '',
+                image: null as File | null,
+                pdf: null as File | null
+            },
+            isAddBookModalVisible: false, // 新增书籍的弹窗显示状态
         };
     },
     methods: {
@@ -90,20 +105,55 @@ export default defineComponent({
         },
         closeModal() {
             this.isModalVisible = false;
+        },
+        openAddBookModal() {
+            this.isAddBookModalVisible = true;
+        },
+        closeAddBookModal() {
+            this.isAddBookModalVisible = false;
+        },
+        handleImageUpload(event: Event) {
+            const input = event.target as HTMLInputElement;
+            if (input.files && input.files[0]) {
+                this.newBook.image = input.files[0];
+            }
+        },
+        handlePdfUpload(event: Event) {
+            const input = event.target as HTMLInputElement;
+            if (input.files && input.files[0]) {
+                this.newBook.pdf = input.files[0];
+            }
+        },
+        addNewBook() {
+            const newBook: Book = {
+                id: Date.now(),  // 使用时间戳生成唯一ID
+                title: this.newBook.title,
+                author: this.newBook.author,
+                isbn: this.newBook.isbn,
+                owner: this.newBook.owner,
+                description: this.newBook.description,
+                image: this.newBook.image ? URL.createObjectURL(this.newBook.image!) : '', // 生成图片预览URL
+                pdf: this.newBook.pdf ? URL.createObjectURL(this.newBook.pdf!) : '', // 生成PDF预览URL
+                showDetails: false,
+            };
+            this.books.push(newBook);
+            ElMessage.success('新增书籍成功');
+            this.closeAddBookModal(); // 添加书籍后关闭弹窗
         }
     }
 });
 </script>
 
-
-
 <template>
     <div>
-        <!-- <header>教学资源</header> -->
         <div class="plan-header">
             <h2> 教学资源 </h2>
             <p class="subtitle">针对具体教学需求，辅助生成专业教案</p>
         </div>
+        
+        <!-- 按钮：打开新增教材的模态框 -->
+        <button @click="openAddBookModal" class="add-book-btn">新增教材</button>
+
         <div class="container">
             <div class="book-list">
                 <div v-for="book in books" :key="book.id" class="book-item" :data-id="book.id">
@@ -114,24 +164,64 @@ export default defineComponent({
                     </div>
                     <button class="more-details" @click="openModal(book)">更多详情</button>
                     <button class="delete-button" @click="deleteBook(book)">删除</button>
-                    </div>
                 </div>
             </div>
+        </div>
 
-         <!-- 弹出窗口 -->
-         <div v-if="isModalVisible" class="modal-overlay">
+        <!-- 新增书籍的模态框 -->
+        <div v-if="isAddBookModalVisible" class="modal-overlay">
+            <div class="modal-content">
+                <h3>添加新教材</h3>
+                <form @submit.prevent="addNewBook">
+                    <div class="input-group">
+                        <label for="title">书名：</label>
+                        <input type="text" v-model="newBook.title" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="author">作者：</label>
+                        <input type="text" v-model="newBook.author" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="isbn">ISBN：</label>
+                        <input type="text" v-model="newBook.isbn" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="owner">所有者：</label>
+                        <input type="text" v-model="newBook.owner" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="description">描述：</label>
+                        <textarea v-model="newBook.description"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label for="image">封面图片：</label>
+                        <input type="file" @change="handleImageUpload" accept="image/*" />
+                    </div>
+                    <div class="input-group">
+                        <label for="pdf">教材PDF：</label>
+                        <input type="file" @change="handlePdfUpload" accept="application/pdf" />
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="submit-btn">提交</button>
+                        <button @click="closeAddBookModal" class="cancel-btn">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 书籍详情模态框 -->
+        <div v-if="isModalVisible" class="modal-overlay">
             <div class="modal-content">
                 <h3>{{ selectedBook.title }}</h3>
                 <p><strong>ISBN：</strong>{{ selectedBook.isbn }}</p>
                 <p><strong>所有者：</strong>{{ selectedBook.owner }}</p>
                 <p><strong>描述：</strong>{{ selectedBook.description || '暂无描述' }}</p>
+                <a v-if="selectedBook.pdf" :href="selectedBook.pdf" target="_blank">教材预览</a>
                 <button @click="closeModal">关闭</button>
             </div>
         </div>
     </div>
-
 </template>
-
 
 <style scoped>
 body {
@@ -321,5 +411,84 @@ body {
         font-size: 0.9rem;
     }
 }
+.add-book-btn {
+    background-color: #4582de;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.add-book-btn:hover {
+    background-color: #ef6917;
+}
+
+/* 新增书籍模态框样式 */
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.input-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.input-group input,
+.input-group textarea {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.input-group textarea {
+    height: 100px;
+    resize: none;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.submit-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background-color: #45a049;
+}
+
+.cancel-btn {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    background-color: #e53935;
+}
+
 
 </style>
