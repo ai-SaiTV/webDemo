@@ -5,6 +5,14 @@ import zh2vo from '@/assets/zh2vo.png'; // 原有封面图片示例
 import zh3vo from '@/assets/zh3vo.png'; // 原有封面图片示例
 import zh4vo from '@/assets/zh4vo.png'; // 原有封面图片示例
 import zh5vo from '@/assets/zh5vo.png'; // 原有封面图片示例
+import Doc2 from '@/assets/Doc2.pdf';
+import Doc3 from '@/assets/Doc3.pdf';
+import Doc4 from '@/assets/Doc4.pdf';
+import Doc5 from '@/assets/Doc5.pdf';
+
+
+
+
 
 interface Book {
     id: number;
@@ -30,7 +38,7 @@ export default defineComponent({
                     owner: '张三',
                     description: '一本关于二年级语文上册的教师用书。',
                     image: zh2vo,
-                    pdf: '', 
+                    pdf: Doc2, 
                     showDetails: false
                 },
                 {
@@ -41,7 +49,7 @@ export default defineComponent({
                     owner: '李四',
                     description: '一本关于三年级语文上册的教师用书。',
                     image: zh3vo,
-                    pdf: '', 
+                    pdf: Doc3, 
                     showDetails: false
                 },
                 {
@@ -52,7 +60,7 @@ export default defineComponent({
                     owner: '王五',
                     description: '一本关于四年级语文上册的教师用书。',
                     image: zh4vo,
-                    pdf: '', 
+                    pdf: Doc4, 
                     showDetails: false
                 },
                 {
@@ -63,7 +71,7 @@ export default defineComponent({
                     owner: '赵六',
                     description: '一本关于五年级语文上册的教师用书。',
                     image: zh5vo,
-                    pdf: '', 
+                    pdf: Doc5, 
                     showDetails: false
                 }
             ] as Book[],
@@ -150,12 +158,17 @@ export default defineComponent({
             <h2> 教学资源 </h2>
             <p class="subtitle">针对具体教学需求，辅助生成专业教案</p>
         </div>
-        
-        <!-- 按钮：打开新增教材的模态框 -->
-        <button @click="openAddBookModal" class="add-book-btn">新增教材</button>
 
         <div class="container">
             <div class="book-list">
+                <!-- 新增书籍卡片 -->
+                <div class="book-item add-book-card" @click="openAddBookModal">
+                    <i class="el-icon-plus"></i> <!-- 加号图标 -->
+                    <h3>新增教材</h3>
+                    <p>点击添加新书籍</p>
+                </div>
+
+                <!-- 原有书籍列表 -->
                 <div v-for="book in books" :key="book.id" class="book-item" :data-id="book.id">
                     <div class="book-header">
                         <img :src="book.image || 'default.jpg'" :alt="book.title" />
@@ -216,12 +229,14 @@ export default defineComponent({
                 <p><strong>ISBN：</strong>{{ selectedBook.isbn }}</p>
                 <p><strong>所有者：</strong>{{ selectedBook.owner }}</p>
                 <p><strong>描述：</strong>{{ selectedBook.description || '暂无描述' }}</p>
-                <a v-if="selectedBook.pdf" :href="selectedBook.pdf" target="_blank">教材预览</a>
+                <a v-if="selectedBook.pdf" :href="selectedBook.pdf" target="_blank">查看教材PDF</a><br>
                 <button @click="closeModal">关闭</button>
             </div>
         </div>
     </div>
 </template>
+
+
 
 <style scoped>
 body {
@@ -231,22 +246,16 @@ body {
     color: #333;
 }
 
-
 .plan-header {
   background: linear-gradient(135deg, #1890ff 0%, #8000ff 100%);
   color: #fff;
   padding: 20px;
   border-radius: 8px;
+}
 
-  h2 {
+.plan-header h2 {
     margin: 0;
     font-size: 1.75rem;
-  }
-
-  .subtitle {
-    margin: 0.5rem 0 0;
-    opacity: 0.9;
-  }
 }
 
 .subtitle {
@@ -290,14 +299,13 @@ body {
 
 .book-header {
     background: linear-gradient(135deg, #1890ff 0%, #8000ff 100%);
-    /* 从蓝色渐变到紫色 */
     color: #fff;
     padding: 1.5rem;
     border-radius: 8px 8px 0 0;
     width: 100%;
     display: flex;
-    flex-direction: column; /* Arrange title and description vertically */
-    justify-content: center; /* Vertically center content inside the header */
+    flex-direction: column;
+    justify-content: center;
     text-align: center;
 }
 
@@ -347,14 +355,6 @@ body {
 
 .delete-button:hover {
     background: linear-gradient(145deg, #e60000, #cc0000);
-}
-
-.more-info {
-    display: none;
-    margin-top: 10px;
-    text-align: left;
-    color: #555;
-    font-size: 0.9rem;
 }
 
 .modal-overlay {
@@ -411,19 +411,44 @@ body {
         font-size: 0.9rem;
     }
 }
-.add-book-btn {
-    background-color: #4582de;
-    color: white;
-    padding: 10px 20px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
+
+/* 新增书籍卡片样式 */
+.add-book-card {
+    background-color: #f4f7f6;
+    border: 2px dashed #dcdfe6; /* 加边框并设置为虚线 */
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
     cursor: pointer;
-    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 200px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.add-book-btn:hover {
-    background-color: #ef6917;
+.add-book-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.add-book-card h3 {
+    font-size: 1.4rem;
+    margin-top: 10px;
+    color: #2c3e50;
+}
+
+.add-book-card p {
+    font-size: 1rem;
+    opacity: 0.8;
+    color: #7f8c8d;
+}
+
+.add-book-card i {
+    font-size: 36px; /* 加号图标的大小 */
+    color: #7f8c8d;
+    margin-bottom: 10px;
 }
 
 /* 新增书籍模态框样式 */
@@ -436,7 +461,6 @@ body {
 .input-group {
     display: flex;
     flex-direction: column;
-    
 }
 
 .input-group label {
@@ -489,6 +513,4 @@ body {
 .cancel-btn:hover {
     background-color: #e53935;
 }
-
-
 </style>
