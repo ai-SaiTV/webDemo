@@ -458,18 +458,18 @@ const updateCharts = () => {
       tooltip: { trigger: "axis" },
       legend: { data: ["平均得分"] },
       xAxis: {
-        type: "category",
-        data: questions.value.map((q) => `题目${q.id}`),
-      },
+            type: "category",
+            data: questions.value.map((q) => `题目${q.id}`),
+        },
       yAxis: { type: "value" },
       series: [
-        {
-          name: "平均得分",
-          type: "line",
-          data: questions.value.map((q) => q.averageScore.toFixed(2)),
-        },
+          {
+                name: "平均得分",
+                type: "line",
+                data: questions.value.map((q) => q.averageScore.toFixed(2)),
+          },
       ],
-    });
+    }, true); // 添加 notMerge 参数
   }
 };
 
