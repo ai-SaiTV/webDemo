@@ -1,10 +1,10 @@
 <script lang="ts">
 import { defineComponent } from '@vue/runtime-core';
 import { ElMessageBox, ElMessage } from 'element-plus';
-import zh2vo from '@/assets/zh2vo.png'; 
-import zh3vo from '@/assets/zh3vo.png'; 
-import zh4vo from '@/assets/zh4vo.png'; 
-import zh5vo from '@/assets/zh5vo.png'; 
+import zh2vo from '@/assets/zh2vo.png';
+import zh3vo from '@/assets/zh3vo.png';
+import zh4vo from '@/assets/zh4vo.png';
+import zh5vo from '@/assets/zh5vo.png';
 import Doc2 from '@/assets/Doc2.pdf';
 import Doc3 from '@/assets/Doc3.pdf';
 import Doc4 from '@/assets/Doc4.pdf';
@@ -38,7 +38,7 @@ export default defineComponent({
                     owner: '张三',
                     description: '一本关于二年级语文上册的教师用书。',
                     image: zh2vo,
-                    pdf: Doc2, 
+                    pdf: Doc2,
                     showDetails: false
                 },
                 {
@@ -49,7 +49,7 @@ export default defineComponent({
                     owner: '李四',
                     description: '一本关于三年级语文上册的教师用书。',
                     image: zh3vo,
-                    pdf: Doc3, 
+                    pdf: Doc3,
                     showDetails: false
                 },
                 {
@@ -60,7 +60,7 @@ export default defineComponent({
                     owner: '王五',
                     description: '一本关于四年级语文上册的教师用书。',
                     image: zh4vo,
-                    pdf: Doc4, 
+                    pdf: Doc4,
                     showDetails: false
                 },
                 {
@@ -71,7 +71,7 @@ export default defineComponent({
                     owner: '赵六',
                     description: '一本关于五年级语文上册的教师用书。',
                     image: zh5vo,
-                    pdf: Doc5, 
+                    pdf: Doc5,
                     showDetails: false
                 }
             ] as Book[],
@@ -84,7 +84,7 @@ export default defineComponent({
                 owner: '',
                 description: '',
                 image: null as File | null,
-                pdf: null as File | null
+                pdf: null as File | string | null
             },
             isAddBookModalVisible: false,
         };
@@ -99,13 +99,13 @@ export default defineComponent({
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
             })
-            .then(() => {
-                this.books = this.books.filter((b) => b.id !== book.id);
-                ElMessage.success('删除成功');
-            })
-            .catch(() => {
-                ElMessage.info('已取消删除');
-            });
+                .then(() => {
+                    this.books = this.books.filter((b) => b.id !== book.id);
+                    ElMessage.success('删除成功');
+                })
+                .catch(() => {
+                    ElMessage.info('已取消删除');
+                });
         },
         openModal(book: Book) {
             this.selectedBook = book;
@@ -126,27 +126,29 @@ export default defineComponent({
                 this.newBook.image = input.files[0];
             }
         },
-        handlePdfUpload(event: Event) {
-            const input = event.target as HTMLInputElement;
-            if (input.files && input.files[0]) {
-                this.newBook.pdf = input.files[0];
-            }
-        },
         addNewBook() {
             const newBook: Book = {
-                id: Date.now(),  // 使用时间戳生成唯一ID
+                id: Date.now(),
                 title: this.newBook.title,
                 author: this.newBook.author,
                 isbn: this.newBook.isbn,
                 owner: this.newBook.owner,
                 description: this.newBook.description,
                 image: this.newBook.image ? URL.createObjectURL(this.newBook.image!) : '',
-                pdf: this.newBook.pdf ? URL.createObjectURL(this.newBook.pdf!) : '',
+                pdf: this.newBook.pdf ? (typeof this.newBook.pdf === 'string' ? this.newBook.pdf : URL.createObjectURL(this.newBook.pdf)) : '',
                 showDetails: false,
             };
             this.books.push(newBook);
             ElMessage.success('新增书籍成功');
-            this.closeAddBookModal(); // 添加书籍后关闭弹窗
+            this.closeAddBookModal();
+        },
+        handlePdfUpload(event: Event) {
+            const file = (event.target as HTMLInputElement).files?.[0];
+            if (file && file.type === 'application/pdf') {
+                this.newBook.pdf = URL.createObjectURL(file);
+            } else {
+                ElMessage.error('请上传PDF文件');
+            }
         }
     }
 });
@@ -164,7 +166,9 @@ export default defineComponent({
                 <!-- 新增书籍卡片 -->
                 <div class="book-item add-book-card" @click="openAddBookModal">
                     <!-- <i class="el-icon-plus"></i>  -->
-                    <el-icon class="add-icon"><Plus /></el-icon><!-- 加号图标 -->
+                    <el-icon class="add-icon">
+                        <Plus />
+                    </el-icon><!-- 加号图标 -->
                     <h3>新增教材</h3>
                     <p>点击添加新书籍</p>
                 </div>
@@ -230,7 +234,9 @@ export default defineComponent({
                 <p><strong>ISBN：</strong>{{ selectedBook.isbn }}</p>
                 <p><strong>所有者：</strong>{{ selectedBook.owner }}</p>
                 <p><strong>描述：</strong>{{ selectedBook.description || '暂无描述' }}</p>
-                <a v-if="selectedBook.pdf" :href="selectedBook.pdf" target="_blank">查看教材PDF</a><br>
+                <div v-if="selectedBook.pdf" class="pdf-container">
+                    <iframe :src="selectedBook.pdf" class="pdf-viewer" frameborder="0"></iframe>
+                </div>
                 <button @click="closeModal">关闭</button>
             </div>
         </div>
@@ -248,10 +254,10 @@ body {
 }
 
 .plan-header {
-  background: linear-gradient(135deg, #1890ff 0%, #8000ff 100%);
-  color: #fff;
-  padding: 20px;
-  border-radius: 8px;
+    background: linear-gradient(135deg, #1890ff 0%, #8000ff 100%);
+    color: #fff;
+    padding: 20px;
+    border-radius: 8px;
 }
 
 .plan-header h2 {
@@ -375,9 +381,15 @@ body {
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
-    width: 400px;
+    width: 80%;
+    /* Adjust width to fit content nicely */
+    max-width: 900px;
+    /* Limit the maximum width */
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
     text-align: center;
+    position: relative;
+    overflow: hidden;
+    /* Prevent iframe overflow */
 }
 
 .modal-content h3 {
@@ -395,6 +407,23 @@ body {
 
 .modal-content button:hover {
     background-color: #0056b3;
+}
+
+.pdf-container {
+    margin: 20px 0;
+    width: 100%;
+    height: 500px;
+    /* Set fixed height for PDF viewer */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pdf-viewer {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
 }
 
 @media (max-width: 768px) {
@@ -416,7 +445,8 @@ body {
 /* 新增书籍卡片样式 */
 .add-book-card {
     background-color: #f4f7f6;
-    border: 2px dashed #dcdfe6; /* 加边框并设置为虚线 */
+    border: 2px dashed #dcdfe6;
+    /* 加边框并设置为虚线 */
     border-radius: 12px;
     padding: 20px;
     text-align: center;
@@ -447,7 +477,7 @@ body {
 }
 
 .add-book-card i {
-    font-size: 36px; 
+    font-size: 36px;
     color: #7f8c8d;
     margin-bottom: 10px;
 }
