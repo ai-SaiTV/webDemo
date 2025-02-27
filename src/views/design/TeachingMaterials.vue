@@ -446,7 +446,7 @@ body {
 }
 
 .add-book-card i {
-    font-size: 36px; /* 加号图标的大小 */
+    font-size: 36px; 
     color: #7f8c8d;
     margin-bottom: 10px;
 }
