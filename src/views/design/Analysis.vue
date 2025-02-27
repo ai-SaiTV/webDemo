@@ -299,9 +299,21 @@ const classes = ref<Class[]>([
     students: [],
   },
   {
-    id: "1-2",
-    name: "一年级二班",
-    grade: "一年级",
+    id: "2-3",
+    name: "二年级三班",
+    grade: "二年级",
+    students: [],
+  },
+  {
+    id: "3-1",
+    name: "三年级一班",
+    grade: "三年级",
+    students: [],
+  },
+  {
+    id: "4-2",
+    name: "四年级二班",
+    grade: "四年级",
     students: [],
   },
 ]);
