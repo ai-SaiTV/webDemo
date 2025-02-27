@@ -1,7 +1,7 @@
 <template>
   <div class="course-container">
     <div class="plan-header">
-      <h2>课程管理</h2>
+      <h2> 课程管理 </h2>
       <p class="subtitle">高效管理课程信息，提升教学安排效率</p>
     </div>
 
@@ -9,33 +9,13 @@
       <div class="filter-form">
         <el-form inline>
           <el-form-item label="年级">
-            <el-select
-              v-model="filters.grade"
-              placeholder="全部"
-              clearable
-              style="width: 120px"
-            >
-              <el-option
-                v-for="grade in uniqueGrades"
-                :key="grade"
-                :label="grade"
-                :value="grade"
-              />
+            <el-select v-model="filters.grade" placeholder="全部" clearable style="width: 120px">
+              <el-option v-for="grade in uniqueGrades" :key="grade" :label="grade" :value="grade" />
             </el-select>
           </el-form-item>
           <el-form-item label="科目">
-            <el-select
-              v-model="filters.subject"
-              placeholder="全部"
-              clearable
-              style="width: 120px"
-            >
-              <el-option
-                v-for="subject in uniqueSubjects"
-                :key="subject"
-                :label="subject"
-                :value="subject"
-              />
+            <el-select v-model="filters.subject" placeholder="全部" clearable style="width: 120px">
+              <el-option v-for="subject in uniqueSubjects" :key="subject" :label="subject" :value="subject" />
             </el-select>
           </el-form-item>
           <el-form-item label="上课时间">
@@ -65,33 +45,19 @@
     </el-card>
 
     <!-- Add/Edit Course Dialog -->
-    <el-dialog
-      v-model="dialogVisible"
-      :title="isEditing ? '编辑课程' : '添加课程'"
-      width="500px"
-    >
+    <el-dialog v-model="dialogVisible" :title="isEditing ? '编辑课程' : '添加课程'" width="500px">
       <el-form :model="form" label-width="100px">
         <el-form-item label="课程名称">
           <el-input v-model="form.name" />
         </el-form-item>
         <el-form-item label="年级">
           <el-select v-model="form.grade" placeholder="选择年级" style="width: 120px">
-            <el-option
-              v-for="grade in allGrades"
-              :key="grade"
-              :label="grade"
-              :value="grade"
-            />
+            <el-option v-for="grade in allGrades" :key="grade" :label="grade" :value="grade" />
           </el-select>
         </el-form-item>
         <el-form-item label="科目">
           <el-select v-model="form.subject" placeholder="选择科目" style="width: 120px">
-            <el-option
-              v-for="subject in allSubjects"
-              :key="subject"
-              :label="subject"
-              :value="subject"
-            />
+            <el-option v-for="subject in allSubjects" :key="subject" :label="subject" :value="subject" />
           </el-select>
         </el-form-item>
         <el-form-item label="上课时间">
@@ -112,12 +78,7 @@
     </el-dialog>
 
     <!-- 班级详情 -->
-    <el-dialog
-      v-model="previewDialogVisible"
-      title="📖 班级详情"
-      width="600px"
-      class="preview-dialog"
-    >
+    <el-dialog v-model="previewDialogVisible" title="📖 班级详情" width="600px" class="preview-dialog">
       <el-card class="preview-card">
         <el-descriptions title="课程信息" border column="2">
           <el-descriptions-item label="📚 课程名称">
@@ -317,17 +278,15 @@ const handlePreview = (course: Course) => {
 <style scoped>
 .course-container {
   .plan-header {
-    text-align: center;
     background: linear-gradient(to right, #25ade7, #09e6ab);
-    color: white;
-    padding: 1rem 0;
-    margin-bottom: 1.5rem;
+    color: #fff;
+    padding: 20px;
     border-radius: 8px;
   }
 
   .subtitle {
-    color: #ffffff;
-    font-size: 1rem;
+    margin: 0.5rem 0 0;
+    opacity: 0.9;
   }
 
   .main-card {
@@ -342,17 +301,19 @@ const handlePreview = (course: Course) => {
 .preview-dialog {
   border-radius: 10px;
 }
+
 .preview-card {
   background: #f9fafb;
   padding: 20px;
   border-radius: 10px;
 }
+
 .text-primary {
   color: #409eff;
   font-weight: bold;
 }
+
 .text-gray {
   color: #606266;
 }
-
 </style>

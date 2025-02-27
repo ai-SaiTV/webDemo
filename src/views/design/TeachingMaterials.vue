@@ -1,10 +1,10 @@
 <script lang="ts">
 import { defineComponent } from '@vue/runtime-core';
 import { ElMessageBox, ElMessage } from 'element-plus';
-import zh2vo from '@/assets/zh2vo.png'; // 原有封面图片示例
-import zh3vo from '@/assets/zh3vo.png'; // 原有封面图片示例
-import zh4vo from '@/assets/zh4vo.png'; // 原有封面图片示例
-import zh5vo from '@/assets/zh5vo.png'; // 原有封面图片示例
+import zh2vo from '@/assets/zh2vo.png'; 
+import zh3vo from '@/assets/zh3vo.png'; 
+import zh4vo from '@/assets/zh4vo.png'; 
+import zh5vo from '@/assets/zh5vo.png'; 
 import Doc2 from '@/assets/Doc2.pdf';
 import Doc3 from '@/assets/Doc3.pdf';
 import Doc4 from '@/assets/Doc4.pdf';
@@ -86,7 +86,7 @@ export default defineComponent({
                 image: null as File | null,
                 pdf: null as File | null
             },
-            isAddBookModalVisible: false, // 新增书籍的弹窗显示状态
+            isAddBookModalVisible: false,
         };
     },
     methods: {
@@ -140,8 +140,8 @@ export default defineComponent({
                 isbn: this.newBook.isbn,
                 owner: this.newBook.owner,
                 description: this.newBook.description,
-                image: this.newBook.image ? URL.createObjectURL(this.newBook.image!) : '', // 生成图片预览URL
-                pdf: this.newBook.pdf ? URL.createObjectURL(this.newBook.pdf!) : '', // 生成PDF预览URL
+                image: this.newBook.image ? URL.createObjectURL(this.newBook.image!) : '',
+                pdf: this.newBook.pdf ? URL.createObjectURL(this.newBook.pdf!) : '',
                 showDetails: false,
             };
             this.books.push(newBook);
@@ -163,7 +163,8 @@ export default defineComponent({
             <div class="book-list">
                 <!-- 新增书籍卡片 -->
                 <div class="book-item add-book-card" @click="openAddBookModal">
-                    <i class="el-icon-plus"></i> <!-- 加号图标 -->
+                    <!-- <i class="el-icon-plus"></i>  -->
+                    <el-icon class="add-icon"><Plus /></el-icon><!-- 加号图标 -->
                     <h3>新增教材</h3>
                     <p>点击添加新书籍</p>
                 </div>
