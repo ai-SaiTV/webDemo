@@ -284,6 +284,11 @@ const handlePreview = (course: Course) => {
     border-radius: 8px;
   }
 
+  .plan-header h2 {
+    margin: 0;
+    font-size: 1.75rem;
+  }
+
   .subtitle {
     margin: 0.5rem 0 0;
     opacity: 0.9;

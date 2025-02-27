@@ -10,10 +10,6 @@ import Doc3 from '@/assets/Doc3.pdf';
 import Doc4 from '@/assets/Doc4.pdf';
 import Doc5 from '@/assets/Doc5.pdf';
 
-
-
-
-
 interface Book {
     id: number;
     title: string;
