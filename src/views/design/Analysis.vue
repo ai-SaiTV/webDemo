@@ -475,7 +475,7 @@ const updateCharts = () => {
 
 
 let stopPollingWatch: (() => void) | null = null;
-let isUpdatingStep = false; // 状态锁
+let isUpdatingStep = ref(false); // 状态锁
 
 //api------------------------------------------------------------->>
 
@@ -553,7 +553,7 @@ const generateAIAnalysis = async () => {
                     stopPollingWatch();
                     stopPollingWatch = null;
                 }
-                isUpdatingStep = false;
+                isUpdatingStep.value = false;
             }, 500);
             
         }
