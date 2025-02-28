@@ -9,6 +9,10 @@ const AboutUs=() =>{
 const handleEnterSystem = () => {
   router.push('/portal')
 };
+const turninlogin = () => {
+  router.push('/login')
+};
+
 </script>
 
 <template>
@@ -30,7 +34,7 @@ const handleEnterSystem = () => {
       <p class="subtitle">让备课更高效，让教学更智慧</p>
       <div class="cta-buttons">
         <el-button type="primary" size="large" @click="handleEnterSystem">开始使用</el-button>
-        <el-button size="large">了解更多</el-button>
+        <el-button size="large" @click="turninlogin">了解更多</el-button>
       </div>
     </div>
 

@@ -6,12 +6,17 @@ import Analysis from '../views/design/Analysis.vue'
 import CourseManagement from '../views/design/CourseManagement.vue'
 import AppLayout from '../components/AppLayout.vue'
 import TeachingMaterials from '../views/design/TeachingMaterials.vue'
+import Login from '@/views/login/login.vue'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: '/',
       component: Home
+    },
+    {
+      path:'/login',
+      component: Login
     },
     {
       path: '/portal',
