@@ -190,7 +190,8 @@ const handleCreateClass = () => {
       color: #1890ff;
       margin: 0;
       background: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%);
-      -webkit-background-clip: text;
+      -webkit-background-clip: text;   // WebKit 引擎（如 Safari 和 Chrome）的特定实现
+      background-clip: text;           // 标准化实现
       -webkit-text-fill-color: transparent;
     }
 
