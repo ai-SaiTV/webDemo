@@ -1,8 +1,8 @@
 <template>
   <div class="course-container">
     <div class="plan-header">
-      <h2>班级详情</h2>
-      <p class="subtitle">高效管理班级信息，提升教学安排效率</p>
+      <h2>详情管理</h2>
+      <p class="subtitle">查看班级进度、教学内容和记录教学情况</p>
     </div>
 
     <el-card class="main-card">
@@ -37,36 +37,13 @@
           <h3>课程进度</h3>
           <el-card class="lesson-card">
             <el-table :data="selectedClassDetails.lessons" border>
-              <el-table-column label="课程标题" prop="title">
-                <template #default="scope">
-                  <span @click="editLessonField(scope.row, 'title')" style="cursor: pointer; color: blue;">
-                    {{ scope.row.title }}
-                  </span>
-                </template>
-              </el-table-column>
-              <el-table-column label="状态" prop="status">
-                <template #default="scope">
-                  <span @click="editLessonField(scope.row, 'status')" style="cursor: pointer; color: blue;">
-                    {{ scope.row.status }}
-                  </span>
-                </template>
-              </el-table-column>
-              <el-table-column label="上课日期" prop="date">
-                <template #default="scope">
-                  <span @click="editLessonField(scope.row, 'date')" style="cursor: pointer; color: blue;">
-                    {{ scope.row.date }}
-                  </span>
-                </template>
-              </el-table-column>
-              <el-table-column label="课程描述" prop="description">
-                <template #default="scope">
-                  <span @click="editLessonField(scope.row, 'description')" style="cursor: pointer; color: blue;">
-                    {{ scope.row.description }}
-                  </span>
-                </template>
-              </el-table-column>
+              <el-table-column label="课程标题" prop="title" />
+              <el-table-column label="状态" prop="status" />
+              <el-table-column label="上课日期" prop="date" />
+              <el-table-column label="课程描述" prop="description" />
               <el-table-column label="操作" width="180">
                 <template #default="scope">
+                  <el-button type="text" @click="editLesson(scope.row)">编辑</el-button>
                   <el-button type="text" @click="deleteLesson(scope.row)">删除</el-button>
                 </template>
               </el-table-column>
@@ -181,22 +158,22 @@ const courses = ref<Course[]>([
     lessonPlanCount: 5,
     lessons: [
       {
-        title: "第一章：认识字母",
+        title: "第一章：认识汉子",
         status: "已完成",
         date: "2025/02/20",
-        description: "学习并掌握英文字母的发音和书写。",
+        description: "学习并掌握汉字的读音和书写。",
       },
       {
         title: "第二章：基础语法",
         status: "进行中",
         date: "2025/02/25",
-        description: "学习英语基础语法结构。",
+        description: "学习汉字基础语法结构。",
       },
       {
         title: "第三章：口语表达",
         status: "已准备",
         date: "2025/03/01",
-        description: "进行口语练习，提升英语口语能力。",
+        description: "进行口语练习，提升语文口语能力。",
       },
     ],
     notes: [
@@ -312,29 +289,27 @@ const newLesson = ref<Lesson>({
 
 const addLesson = () => {
   if (selectedClassDetails.value && newLesson.value.title) {
+    const lessonDate = newLesson.value.date ? new Date(newLesson.value.date).toLocaleDateString() : "";
     selectedClassDetails.value.lessons.push({
       ...newLesson.value,
-      date: new Date(newLesson.value.date).toLocaleDateString(),
+      date: lessonDate,
     });
     newLesson.value = { title: "", status: "已完成", date: "", description: "" };
     showAddLessonDialog.value = false;
   }
 };
 
-// 编辑课程进度字段
-const editLessonField = (lesson: Lesson, field: keyof Lesson) => {
-  const currentValue = lesson[field];
-  ElMessageBox.prompt(`请输入新的${field === "title" ? "标题" : field === "status" ? "状态" : field === "date" ? "日期" : "描述"}`, "编辑课程进度", {
-    inputModel: currentValue,
+// 编辑课程进度
+const editLesson = (lesson: Lesson) => {
+  ElMessageBox.prompt("请输入新的课程标题", "编辑课程进度", {
+    inputModel: lesson.title,
     inputValidator: (value: string) => value.length > 0,
-    inputErrorMessage: `${field === "title" ? "标题" : field === "status" ? "状态" : field === "date" ? "日期" : "描述"}不能为空`,
-  })
-    .then(({ value: newValue }) => {
-      if (typeof newValue === "string") {
-        lesson[field] = newValue;
-      }
-    })
-    .catch(() => {}); // 捕获取消操作
+    inputErrorMessage: "课程标题不能为空",
+  }).then(({ value }) => {
+    if (typeof value === "string") {
+      lesson.title = value;
+    }
+  });
 };
 
 // 删除课程进度
@@ -356,8 +331,10 @@ const newNote = ref<Note>({
 
 const addNote = () => {
   if (selectedClassDetails.value && newNote.value.content) {
+    const noteDate = newNote.value.date ? new Date(newNote.value.date).toLocaleDateString() : new Date().toLocaleDateString();
     selectedClassDetails.value.notes.push({
       ...newNote.value,
+      date: noteDate,
     });
     newNote.value = { date: new Date().toLocaleDateString(), content: "" };
     showAddNoteDialog.value = false;
@@ -370,15 +347,12 @@ const editNote = (note: Note) => {
     inputModel: note.content,
     inputValidator: (value: string) => value.length > 0,
     inputErrorMessage: "记录内容不能为空",
-  })
-    .then(({ value: newContent }) => {
-      if (typeof newContent === "string") {
-        note.content = newContent;
-      }
-    })
-    .catch(() => {}); // 捕获取消操作
+  }).then(({ value }) => {
+    if (typeof value === "string") {
+      note.content = value;
+    }
+  });
 };
-
 // 删除教学记录
 const deleteNote = (note: Note) => {
   if (selectedClassDetails.value) {
