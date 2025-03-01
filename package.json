@@ -18,6 +18,7 @@
     "element-plus": "^2.9.3",
     "fs": "^0.0.1-security",
     "marked": "^15.0.7",
+    "noisejs": "^2.1.0",
     "pdf-vue3": "^1.0.12",
     "pinia": "^2.3.1",
     "quill": "^2.0.3",

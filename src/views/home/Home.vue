@@ -16,6 +16,7 @@ const turninlogin = () => {
 </script>
 
 <template>
+
   <div class="home-container">
     <nav class="navbar">
       <div class="logo">
