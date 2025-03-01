@@ -1,6 +1,11 @@
-<script setup lang="ts">
+<script>
 import { useRouter } from 'vue-router'
-
+// import AWaves from '@/components/AWaves.vue';
+// export default {
+//   components: {
+//     AWaves,
+//   },
+// };
 const router = useRouter()
 
 const AboutUs=() =>{

@@ -38,10 +38,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from '@vue/runtime-core';
 import { parseMarkdown } from '@/utils/markdownUtils';
-const plan_Num = ref(12)
-const resource_Num = ref(25)
-const applause_rate = ref("98%")
-const time_sum = ref(45)
+// const plan_Num = ref(12)
+// const resource_Num = ref(25)
+// const applause_rate = ref("98%")
+// const time_sum = ref(45)
 
 defineProps({
   showResult:Boolean,
