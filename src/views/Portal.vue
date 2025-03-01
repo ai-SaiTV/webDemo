@@ -180,19 +180,19 @@ const handleCreateClass = () => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-
+  
   .portal-header {
     text-align: center;
     margin-bottom: 3rem;
     
     h1 {
       font-size: 2.5rem;
-      color: #1890ff;
+      color: white;
       margin: 0;
       background: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%);
       -webkit-background-clip: text;   // WebKit 引擎（如 Safari 和 Chrome）的特定实现
       background-clip: text;           // 标准化实现
-      -webkit-text-fill-color: transparent;
+      -webkit-text-fill-color: white;
     }
 
     p {

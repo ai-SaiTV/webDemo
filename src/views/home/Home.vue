@@ -1,28 +1,38 @@
 <script>
 import { useRouter } from 'vue-router'
-// import AWaves from '@/components/AWaves.vue';
-// export default {
-//   components: {
-//     AWaves,
-//   },
-// };
-const router = useRouter()
+import AWaves from '@/components/AWaves.vue';
+export default {
+  components: {
+    AWaves,
+  },
 
-const AboutUs=() =>{
+  setup() {
+    const router = useRouter()
+
+    const AboutUs = () => {
       window.open('https://github.com/ai-SaiTV', '_blank');
     };
-const handleEnterSystem = () => {
-  router.push('/portal')
-};
-const turninlogin = () => {
-  router.push('/login')
-};
+    const handleEnterSystem = () => {
+      router.push('/portal')
+    };
+    const turninlogin = () => {
+      router.push('/login')
+    };
 
+    return {
+      AboutUs,
+      handleEnterSystem,
+      turninlogin,
+      AWaves
+    };
+  }
+};
 </script>
 
 <template>
 
   <div class="home-container">
+    <AWaves/>
     <nav class="navbar">
       <div class="logo">
         <img src="/vite.svg" alt="Logo" />
@@ -46,17 +56,23 @@ const turninlogin = () => {
 
     <div class="features-section" id="features">
       <div class="feature-card">
-        <el-icon class="feature-icon"><Document /></el-icon>
+        <el-icon class="feature-icon">
+          <Document />
+        </el-icon>
         <h3>智能生成</h3>
         <p>基于AI技术，快速生成专业教案</p>
       </div>
       <div class="feature-card">
-        <el-icon class="feature-icon"><TrendCharts /></el-icon>
+        <el-icon class="feature-icon">
+          <TrendCharts />
+        </el-icon>
         <h3>数据分析</h3>
         <p>深入分析学情，优化教学策略</p>
       </div>
       <div class="feature-card">
-        <el-icon class="feature-icon"><Collection /></el-icon>
+        <el-icon class="feature-icon">
+          <Collection />
+        </el-icon>
         <h3>资源管理</h3>
         <p>教学资源智能管理与推荐</p>
       </div>
@@ -69,6 +85,7 @@ const turninlogin = () => {
   min-height: 100vh;
   background: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%);
   color: white;
+  
 
   .navbar {
     display: flex;
@@ -124,24 +141,26 @@ const turninlogin = () => {
     align-items: center;
     text-align: center;
     padding: 0 2rem;
-
+    z-index: 2;
     h1 {
       font-size: 3.5rem;
       font-weight: bold;
       margin: 0;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 2;
     }
 
     .subtitle {
       font-size: 1.5rem;
       margin: 1.5rem 0 2.5rem;
       opacity: 0.9;
+      z-index: 2;
     }
 
     .cta-buttons {
       display: flex;
       gap: 1rem;
-
+      z-index: 2;
       .el-button {
         padding: 12px 32px;
         font-size: 1.1rem;
