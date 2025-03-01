@@ -18,7 +18,7 @@ interface Book {
     owner: string;
     description: string | null;
     image: string | null;
-    pdf: string | null;
+    pdf: string | null | undefined;
     showDetails: boolean;
 }
 
@@ -83,6 +83,7 @@ export default defineComponent({
                 pdf: null as File | string | null
             },
             isAddBookModalVisible: false,
+            isPDFVisible: false 
         };
     },
     methods: {
@@ -109,6 +110,7 @@ export default defineComponent({
         },
         closeModal() {
             this.isModalVisible = false;
+            this.isPDFVisible = false; // 关闭时隐藏PDF预览
         },
         openAddBookModal() {
             this.isAddBookModalVisible = true;
@@ -145,6 +147,9 @@ export default defineComponent({
             } else {
                 ElMessage.error('请上传PDF文件');
             }
+        },
+        previewPDF() {
+            this.isPDFVisible = true; // 显示PDF预览
         }
     }
 });
@@ -161,7 +166,6 @@ export default defineComponent({
             <div class="book-list">
                 <!-- 新增书籍卡片 -->
                 <div class="book-item add-book-card" @click="openAddBookModal">
-                    <!-- <i class="el-icon-plus"></i>  -->
                     <el-icon class="add-icon">
                         <Plus />
                     </el-icon><!-- 加号图标 -->
@@ -230,16 +234,17 @@ export default defineComponent({
                 <p><strong>ISBN：</strong>{{ selectedBook.isbn }}</p>
                 <p><strong>所有者：</strong>{{ selectedBook.owner }}</p>
                 <p><strong>描述：</strong>{{ selectedBook.description || '暂无描述' }}</p>
-                <div v-if="selectedBook.pdf" class="pdf-container">
-                    <iframe :src="selectedBook.pdf" class="pdf-viewer" frameborder="0"></iframe>
+                <div v-if="selectedBook.pdf">
+                    <button @click="previewPDF">教材预览</button>
                 </div>
+                <div v-if="isPDFVisible" class="pdf-container">
+                    <iframe v-if="selectedBook.pdf" :src="selectedBook.pdf" class="pdf-viewer" frameborder="0"></iframe>
+                </div><br>
                 <button @click="closeModal">关闭</button>
             </div>
         </div>
     </div>
 </template>
-
-
 
 <style scoped>
 body {
@@ -330,6 +335,22 @@ body {
     margin-bottom: 15px;
 }
 
+.pdf-container {
+    margin: 20px 0;
+    width: 100%;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pdf-viewer {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
 .more-details,
 .delete-button {
     margin-top: 15px;
@@ -378,14 +399,11 @@ body {
     padding: 20px;
     border-radius: 10px;
     width: 80%;
-    /* Adjust width to fit content nicely */
     max-width: 900px;
-    /* Limit the maximum width */
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
     text-align: center;
     position: relative;
     overflow: hidden;
-    /* Prevent iframe overflow */
 }
 
 .modal-content h3 {
