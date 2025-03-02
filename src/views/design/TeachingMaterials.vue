@@ -193,23 +193,23 @@ export default defineComponent({
                 <form @submit.prevent="addNewBook">
                     <div class="input-group">
                         <label for="title">书名：</label>
-                        <input type="text" v-model="newBook.title" required />
+                        <el-input type="text" v-model="newBook.title"/>
                     </div>
                     <div class="input-group">
                         <label for="author">作者：</label>
-                        <input type="text" v-model="newBook.author" required />
+                        <el-input type="text" v-model="newBook.author"/>
                     </div>
                     <div class="input-group">
                         <label for="isbn">ISBN：</label>
-                        <input type="text" v-model="newBook.isbn" required />
+                        <el-input type="text" v-model="newBook.isbn"/>
                     </div>
                     <div class="input-group">
                         <label for="owner">所有者：</label>
-                        <input type="text" v-model="newBook.owner" required />
+                        <el-input type="text" v-model="newBook.owner"/>
                     </div>
                     <div class="input-group">
                         <label for="description">描述：</label>
-                        <textarea v-model="newBook.description"></textarea>
+                        <textarea v-model="newBook.description" placeholder="在这里输入书籍的描述（可不填）"></textarea>
                     </div>
                     <div class="input-group">
                         <label for="image">封面图片：</label>
@@ -496,7 +496,6 @@ body {
     margin-bottom: 10px;
 }
 
-/* 新增书籍模态框样式 */
 .modal-content form {
     display: flex;
     flex-direction: column;
@@ -519,6 +518,7 @@ body {
     font-size: 1rem;
     border: 1px solid #ddd;
     border-radius: 5px;
+    background-color: white;
 }
 
 .input-group textarea {
