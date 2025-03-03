@@ -9,12 +9,8 @@
       <!-- 班级选择器 -->
       <div class="class-selector">
         <el-select v-model="selectedClassId" placeholder="请选择班级" @change="loadClassDetails" class="input-field">
-          <el-option
-            v-for="course in courses"
-            :key="course.id"
-            :label="`${course.grade} ${course.subject} - ${course.name}`"
-            :value="course.id"
-          />
+          <el-option v-for="course in courses" :key="course.id"
+            :label="`${course.grade} ${course.subject} - ${course.name}`" :value="course.id" />
         </el-select>
       </div>
 
@@ -22,7 +18,7 @@
       <div v-if="selectedClassDetails" class="class-details">
         <h3>班级详情</h3>
         <el-card class="details-card">
-          <el-table :data="[selectedClassDetails]" border>
+          <el-table :data="[selectedClassDetails]" :bordered="true">
             <el-table-column label="课程名称" prop="name" />
             <el-table-column label="年级" prop="grade" />
             <el-table-column label="科目" prop="subject" />
@@ -36,15 +32,16 @@
         <div class="lesson-progress">
           <h3>课程进度</h3>
           <el-card class="lesson-card">
-            <el-table :data="selectedClassDetails.lessons" border>
+            <el-table :data="selectedClassDetails.lessons" :bordered="true">
               <el-table-column label="课程标题" prop="title" />
               <el-table-column label="状态" prop="status" />
               <el-table-column label="上课日期" prop="date" />
               <el-table-column label="课程描述" prop="description" />
               <el-table-column label="操作" width="180">
                 <template #default="scope">
-                  <el-button type="text" @click="editLesson(scope.row)">编辑</el-button>
-                  <el-button type="text" @click="deleteLesson(scope.row)">删除</el-button>
+                  <el-button type="text" @click="editLesson(scope.row)" title="编辑课程">编辑</el-button>
+                  <el-button type="text" @click="deleteLesson(scope.row)" title="删除课程">删除</el-button>
+
                 </template>
               </el-table-column>
             </el-table>
@@ -56,13 +53,13 @@
         <div class="teacher-notes">
           <h3>教学记录</h3>
           <el-card class="note-card">
-            <el-table :data="selectedClassDetails.notes" border>
+            <el-table :data="selectedClassDetails.notes" :bordered="true">
               <el-table-column label="记录日期" prop="date" />
               <el-table-column label="记录内容" prop="content" />
               <el-table-column label="操作" width="180">
                 <template #default="scope">
-                  <el-button type="text" @click="editNote(scope.row)">编辑</el-button>
-                  <el-button type="text" @click="deleteNote(scope.row)">删除</el-button>
+                  <el-button type="text" @click="editNote(scope.row)" title="编辑课程">编辑</el-button>
+                  <el-button type="text" @click="deleteNote(scope.row)" title="删除课程">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -305,10 +302,8 @@ const editLesson = (lesson: Lesson) => {
     inputModel: lesson.title,
     inputValidator: (value: string) => value.length > 0,
     inputErrorMessage: "课程标题不能为空",
-  }).then(({ value }) => {
-    if (typeof value === "string") {
-      lesson.title = value;
-    }
+  }).then(({ value }: { value: string }) => {
+    lesson.title = value;
   });
 };
 
@@ -347,10 +342,8 @@ const editNote = (note: Note) => {
     inputModel: note.content,
     inputValidator: (value: string) => value.length > 0,
     inputErrorMessage: "记录内容不能为空",
-  }).then(({ value }) => {
-    if (typeof value === "string") {
-      note.content = value;
-    }
+  }).then(({ value }: { value: string }) => {
+    note.content = value;
   });
 };
 // 删除教学记录
