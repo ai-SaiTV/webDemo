@@ -23,7 +23,7 @@ defineProps({
   },
   transitionKey: {
     type: Number,
-    required: true
+    required: false
   }
 });
 

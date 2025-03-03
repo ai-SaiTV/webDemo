@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from '@vue/runtime-core';
-import FeatureImage from '@/components/FeatureImage.vue';
-import Particles from '@/components/Particles.vue';
-import FeatureContent from '@/components/FeatureContent.vue';
+import FeatureImage from '@/components/ani_compoents/FeatureImages.vue';
+import Particles from '@/components/ani_compoents/Particles.vue';
+import FeatureContent from '@/components/ani_compoents/FeatureContent.vue';
 import { Document, TrendCharts, Collection } from '@element-plus/icons-vue';
 
 
@@ -185,5 +185,5 @@ onMounted(() => {
 </template>
 
 <style scoped>
-@import '@/styles/IntrCard.scss';
+@import '@/components/ani_compoents/IntrCard.scss';
 </style>
