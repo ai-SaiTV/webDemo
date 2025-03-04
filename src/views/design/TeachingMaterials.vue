@@ -9,6 +9,7 @@ import Doc2 from '@/assets/Doc2.pdf';
 import Doc3 from '@/assets/Doc3.pdf';
 import Doc4 from '@/assets/Doc4.pdf';
 import Doc5 from '@/assets/Doc5.pdf';
+import Vid from '@/assets/田忌赛马.mp4';
 
 interface Book {
     id: number;
@@ -19,6 +20,7 @@ interface Book {
     description: string | null;
     image: string | null;
     pdf: string | null | undefined;
+    video: string | null | undefined; 
     showDetails: boolean;
 }
 
@@ -35,6 +37,7 @@ export default defineComponent({
                     description: '一本关于二年级语文上册的教师用书。',
                     image: zh2vo,
                     pdf: Doc2,
+                    video: Vid, 
                     showDetails: false
                 },
                 {
@@ -46,6 +49,7 @@ export default defineComponent({
                     description: '一本关于三年级语文上册的教师用书。',
                     image: zh3vo,
                     pdf: Doc3,
+                    video: Vid, 
                     showDetails: false
                 },
                 {
@@ -57,6 +61,7 @@ export default defineComponent({
                     description: '一本关于四年级语文上册的教师用书。',
                     image: zh4vo,
                     pdf: Doc4,
+                    video: Vid, 
                     showDetails: false
                 },
                 {
@@ -68,6 +73,7 @@ export default defineComponent({
                     description: '一本关于五年级语文上册的教师用书。',
                     image: zh5vo,
                     pdf: Doc5,
+                    video: Vid, 
                     showDetails: false
                 }
             ] as Book[],
@@ -80,10 +86,12 @@ export default defineComponent({
                 owner: '',
                 description: '',
                 image: null as File | null,
-                pdf: null as File | string | null
+                pdf: null as File | string | null,
+                video: null as File | string | null 
             },
             isAddBookModalVisible: false,
-            isPDFVisible: false 
+            isPDFVisible: false,
+            isVideoVisible: false 
         };
     },
     methods: {
@@ -110,7 +118,8 @@ export default defineComponent({
         },
         closeModal() {
             this.isModalVisible = false;
-            this.isPDFVisible = false; // 关闭时隐藏PDF预览
+            this.isPDFVisible = false; 
+            this.isVideoVisible = false; 
         },
         openAddBookModal() {
             this.isAddBookModalVisible = true;
@@ -124,6 +133,22 @@ export default defineComponent({
                 this.newBook.image = input.files[0];
             }
         },
+        handlePdfUpload(event: Event) {
+            const file = (event.target as HTMLInputElement).files?.[0];
+            if (file && file.type === 'application/pdf') {
+                this.newBook.pdf = URL.createObjectURL(file);
+            } else {
+                ElMessage.error('请上传PDF文件');
+            }
+        },
+        handleVideoUpload(event: Event) {
+            const file = (event.target as HTMLInputElement).files?.[0];
+            if (file && (file.type === 'video/mp4' || file.type === 'video/quicktime' || file.type === 'video/x-matroska')) {
+                this.newBook.video = URL.createObjectURL(file);
+            } else {
+                ElMessage.error('请上传视频文件');
+            }
+        },
         addNewBook() {
             const newBook: Book = {
                 id: Date.now(),
@@ -134,22 +159,21 @@ export default defineComponent({
                 description: this.newBook.description,
                 image: this.newBook.image ? URL.createObjectURL(this.newBook.image!) : '',
                 pdf: this.newBook.pdf ? (typeof this.newBook.pdf === 'string' ? this.newBook.pdf : URL.createObjectURL(this.newBook.pdf)) : '',
+                video: this.newBook.video ? (typeof this.newBook.video === 'string' ? this.newBook.video : URL.createObjectURL(this.newBook.video)) : '',
                 showDetails: false,
             };
             this.books.push(newBook);
             ElMessage.success('新增书籍成功');
             this.closeAddBookModal();
         },
-        handlePdfUpload(event: Event) {
-            const file = (event.target as HTMLInputElement).files?.[0];
-            if (file && file.type === 'application/pdf') {
-                this.newBook.pdf = URL.createObjectURL(file);
-            } else {
-                ElMessage.error('请上传PDF文件');
-            }
-        },
         previewPDF() {
-            this.isPDFVisible = true; // 显示PDF预览
+            this.isPDFVisible = true;
+        },
+        previewVideo() {
+            this.isVideoVisible = true; 
+        },
+        handleVideoError(event: Event) {
+            ElMessage.error('视频加载失败，请检查文件格式或网络连接');
         }
     }
 });
@@ -219,6 +243,10 @@ export default defineComponent({
                         <label for="pdf">教材PDF：</label>
                         <input type="file" @change="handlePdfUpload" accept="application/pdf" />
                     </div>
+                    <div class="input-group">
+                        <label for="video">教材视频：</label>
+                        <input type="file" @change="handleVideoUpload" accept="video/*" />
+                    </div>
                     <div class="button-group">
                         <button type="submit" class="submit-btn">提交</button>
                         <button @click="closeAddBookModal" class="cancel-btn">取消</button>
@@ -237,9 +265,15 @@ export default defineComponent({
                 <div v-if="selectedBook.pdf">
                     <button @click="previewPDF">教材预览</button>
                 </div>
+                <div v-if="selectedBook.video">
+                    <button @click="previewVideo">视频预览</button>
+                </div>
                 <div v-if="isPDFVisible" class="pdf-container">
                     <iframe v-if="selectedBook.pdf" :src="selectedBook.pdf" class="pdf-viewer" frameborder="0"></iframe>
-                </div><br>
+                </div>
+                <div v-if="isVideoVisible" class="video-container">
+                    <video v-if="selectedBook.video" :src="selectedBook.video" controls class="video-viewer" @error="handleVideoError"></video>
+                </div>
                 <button @click="closeModal">关闭</button>
             </div>
         </div>
@@ -351,6 +385,21 @@ body {
     display: block;
 }
 
+.video-container {
+    margin: 20px 0;
+    width: 100%;
+    height: 600px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.video-viewer {
+    width: 100%;
+    height: 100%; 
+    object-fit: contain; 
+}
+
 .more-details,
 .delete-button {
     margin-top: 15px;
@@ -399,7 +448,7 @@ body {
     padding: 20px;
     border-radius: 10px;
     width: 80%;
-    max-width: 900px;
+    max-width: 1000px;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
     text-align: center;
     position: relative;
@@ -421,23 +470,6 @@ body {
 
 .modal-content button:hover {
     background-color: #0056b3;
-}
-
-.pdf-container {
-    margin: 20px 0;
-    width: 100%;
-    height: 500px;
-    /* Set fixed height for PDF viewer */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.pdf-viewer {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
 }
 
 @media (max-width: 768px) {
@@ -519,9 +551,6 @@ body {
     border: 1px solid #ddd;
     border-radius: 5px;
     background-color: white;
-}
-
-.input-group textarea {
     height: 100px;
     resize: none;
 }
