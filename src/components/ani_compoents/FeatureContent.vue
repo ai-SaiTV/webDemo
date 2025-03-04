@@ -1,38 +1,31 @@
 <script setup lang="ts">
-import { PropType } from '@vue/runtime-core';
+import { computed } from '@vue/runtime-core';
 
-interface Feature {
+const props = defineProps<{
   title: string;
   subtitle: string;
   icon: any;
-}
+}>();
 
-
-defineProps({
-  feature: {
-    type: Object as PropType<Feature>,
-    required: true
-  }
-});
+const Icon = computed(() => props.icon);
 </script>
 
 <template>
   <div class="feature-content">
     <div class="feature-icon">
-      <component :is="feature.icon" />
+      <component :is="Icon" />
     </div>
-    <h1 class="main-title">{{ feature.title }}</h1>
-    <p class="subtitle">{{ feature.subtitle }}</p>
+    <h1 class="main-title">{{ title }}</h1>
+    <p class="subtitle">{{ subtitle }}</p>
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .feature-content {
   max-width: 800px;
   transition: all 0.5s ease;
   position: relative;
   z-index: 2;
-  text-align: center;
 }
 
 .feature-icon {
@@ -55,5 +48,15 @@ defineProps({
   max-width: 600px;
   margin: 0 auto;
   transition: all 0.5s ease;
+}
+
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 2.5rem;
+  }
+  
+  .subtitle {
+    font-size: 1.2rem;
+  }
 }
 </style>
