@@ -1,9 +1,9 @@
 <template>
   <div class="analysis-container">
     <div class="plan-header">
-            <h2> 学情分析 </h2>
-            <p class="subtitle">准确分析学生情况，智能生成教学建议</p>
-        </div>
+      <h2> 学情分析 </h2>
+      <p class="subtitle">准确分析学生情况，智能生成教学建议</p>
+    </div>
     <!-- 班级选择和上传区域 -->
     <el-row :gutter="20" class="mb-4">
       <el-col :span="16">
@@ -12,25 +12,16 @@
             <div class="card-header">
               <span>成绩单导入</span>
               <el-select v-model="selectedClassId" placeholder="选择班级" @change="reloadClassData">
-                <el-option
-                  v-for="class_ in classes"
-                  :key="class_.id"
-                  :label="class_.name"
-                  :value="class_.id"
-                />
+                <el-option v-for="class_ in classes" :key="class_.id" :label="class_.name" :value="class_.id" />
               </el-select>
             </div>
           </template>
           <div class="upload-area">
-            <input
-              ref="uploadRef"
-              type="file"
-              accept=".xlsx,.xls"
-              style="display: none"
-              @change="handleExcelUpload"
-            />
+            <input ref="uploadRef" type="file" accept=".xlsx,.xls" style="display: none" @change="handleExcelUpload" />
             <el-button type="primary" @click="uploadRef.click()">
-              <el-icon><Upload /></el-icon>
+              <el-icon>
+                <Upload />
+              </el-icon>
               上传成绩单
             </el-button>
             <p class="upload-tip">支持.xlsx或.xls格式，请确保第一列为学生姓名，后续列为题目分数</p>
@@ -46,12 +37,8 @@
           </template>
           <el-scrollbar height="200px">
             <div class="student-list">
-              <div
-                v-for="student in currentClassStudents"
-                :key="student.id"
-                class="student-item"
-                @click="viewStudentDetails(student)"
-              >
+              <div v-for="student in currentClassStudents" :key="student.id" class="student-item"
+                @click="viewStudentDetails(student)">
                 <el-avatar :size="32">{{ student.name.charAt(0) }}</el-avatar>
                 <span class="student-name">{{ student.name }}</span>
                 <el-button type="primary" link size="small">查看详情</el-button>
@@ -83,18 +70,13 @@
         <template #header>
           <div class="card-header">
             <span>成绩明细</span>
-            
+
           </div>
         </template>
         <el-table :data="tableData" style="width: 100%" max-height="400">
           <el-table-column prop="name" label="姓名" width="120" fixed />
-          <el-table-column
-            v-for="(_, index) in questions"
-            :key="index"
-            :prop="`scores[${index}]`"
-            :label="`题目${index + 1}`"
-            width="100"
-          />
+          <el-table-column v-for="(_, index) in questions" :key="index" :prop="`scores[${index}]`"
+            :label="`题目${index + 1}`" width="100" />
           <el-table-column prop="total" label="总分" width="100" fixed="right" />
           <el-table-column prop="rank" label="排名" width="80" fixed="right" />
           <el-table-column label="操作" width="120" fixed="right">
@@ -114,10 +96,12 @@
             <span> AI学情分析 </span>
             <el-tag type="success">智能分析报告</el-tag>
           </div>
-          <el-button type="primary" @click="generateAIAnalysis" >
-              <el-icon><Connection /></el-icon>
-              AI分析
-            </el-button>
+          <el-button type="primary" @click="generateAIAnalysis">
+            <el-icon>
+              <Connection />
+            </el-icon>
+            AI分析
+          </el-button>
         </template>
         <div v-loading="isAnalyzing" class="ai-analysis-content">
           <div class="analysis-section">
@@ -149,11 +133,7 @@
     </template>
 
     <!-- 学生详情对话框 -->
-    <el-dialog
-      v-model="showStudentDetails"
-      :title="`${selectedStudent?.name || ''} - 学生详情`"
-      width="80%"
-    >
+    <el-dialog v-model="showStudentDetails" :title="`${selectedStudent?.name || ''} - 学生详情`" width="80%">
       <div v-loading="isAnalyzing">
         <el-row :gutter="20">
           <!-- 基本信息 -->
@@ -180,7 +160,7 @@
               </div>
             </el-card>
           </el-col>
-          
+
           <!-- 成绩趋势 -->
           <el-col :span="16">
             <el-card class="trend-card">
@@ -200,7 +180,9 @@
               </template>
               <ul class="analysis-list">
                 <li v-for="(strength, index) in studentAnalysis.strengths" :key="index">
-                  <el-icon class="success-icon"><CircleCheckFilled /></el-icon>
+                  <el-icon class="success-icon">
+                    <CircleCheckFilled />
+                  </el-icon>
                   {{ strength }}
                 </li>
               </ul>
@@ -215,7 +197,9 @@
               </template>
               <ul class="analysis-list">
                 <li v-for="(weakness, index) in studentAnalysis.weaknesses" :key="index">
-                  <el-icon class="warning-icon"><Warning /></el-icon>
+                  <el-icon class="warning-icon">
+                    <Warning />
+                  </el-icon>
                   {{ weakness }}
                 </li>
               </ul>
@@ -231,15 +215,15 @@
             </div>
           </template>
           <div class="markdown-container">
-              <!-- 渲染 Markdown 内容 -->
-              <div v-html="studentAnalysis.recommendations" class="markdown-content"></div>
+            <!-- 渲染 Markdown 内容 -->
+            <div v-html="studentAnalysis.recommendations" class="markdown-content"></div>
           </div>
           <!-- <ul class="recommendation-list">
             <!-- <li v-for="(rec, index) in studentAnalysis.recommendations" :key="index">
               <el-icon><Star /></el-icon>
               {{ rec }}
             </li> -->
-            
+
           <!-- </ul> -->
         </el-card>
       </div>
@@ -458,16 +442,16 @@ const updateCharts = () => {
       tooltip: { trigger: "axis" },
       legend: { data: ["平均得分"] },
       xAxis: {
-            type: "category",
-            data: questions.value.map((q) => `题目${q.id}`),
-        },
+        type: "category",
+        data: questions.value.map((q) => `题目${q.id}`),
+      },
       yAxis: { type: "value" },
       series: [
-          {
-                name: "平均得分",
-                type: "line",
-                data: questions.value.map((q) => q.averageScore.toFixed(2)),
-          },
+        {
+          name: "平均得分",
+          type: "line",
+          data: questions.value.map((q) => q.averageScore.toFixed(2)),
+        },
       ],
     }, true); // 添加 notMerge 参数
   }
@@ -480,20 +464,20 @@ let isUpdatingStep = ref(false); // 状态锁
 //api------------------------------------------------------------->>
 
 //api
-import { chatConfig, handleSubmit_analysis,isPolling } from "@/components/api_compoents/api_handler.ts";
+import { chatConfig, handleSubmit_analysis, isPolling } from "@/components/api_compoents/api_handler.ts";
 import { analysisService } from "@/services/storage/analysisResService";
 import type { analysisRes } from "@/types/analysisRes";
 
 import { parseMarkdown } from '../../utils/markdownUtils';
 
-const DataThisSession_als = ref< analysisRes | null>(null);  // 会话数据
+const DataThisSession_als = ref<analysisRes | null>(null);  // 会话数据
 const sessionId = ref("");
 
 
 // 生成AI分析
 const generateAIAnalysis = async () => {
-  
-  
+
+
 
   // 计算题目正确率和平均分
   questions.value.forEach((q) => {
@@ -502,7 +486,7 @@ const generateAIAnalysis = async () => {
 
   // 整体分析
   const totalStudents = tableData.value.length;
-  const classAverageScore = questions.value.reduce((sum, q) => sum + q.averageScore, 0) ;
+  const classAverageScore = questions.value.reduce((sum, q) => sum + q.averageScore, 0);
   const overallAnalysis = `本次考试共有${totalStudents}名学生参加，平均得分为${classAverageScore.toFixed(2)}分。`;
 
   // 关键发现：找出正确率最低的3道题目
@@ -519,46 +503,46 @@ const generateAIAnalysis = async () => {
   // 教学建议：针对这些题目提出建议
   const recommendations = ref("");
 
-    //api
+  //api
   if (stopPollingWatch) {
-        stopPollingWatch();
-        stopPollingWatch = null;
-    }
+    stopPollingWatch();
+    stopPollingWatch = null;
+  }
 
-    if (DataThisSession_als.value === null) {
-        sessionId.value = await analysisService.createSession();
-    }
+  if (DataThisSession_als.value === null) {
+    sessionId.value = await analysisService.createSession();
+  }
 
-    isAnalyzing.value = true;
-    showAIAnalysis.value = true;
+  isAnalyzing.value = true;
+  showAIAnalysis.value = true;
 
-    
-    chatConfig.value.message = overallAnalysis;
 
-    const result = await handleSubmit_analysis(sessionId.value, 6);
+  chatConfig.value.message = overallAnalysis;
 
-    console.log("await finished! ",result);
-    DataThisSession_als.value = result || null;
-    const html_res = parseMarkdown(result?.analysis || "");
-    recommendations.value = html_res.__html || "无建议";
-    
+  const result = await handleSubmit_analysis(sessionId.value, 6);
 
-    stopPollingWatch = watch(() => isPolling.value, async (newPolling: boolean) => {
-        if (newPolling) {
-            setTimeout((): void => {
-                isAnalyzing.value = false;
-                // 安全递增步骤
-                // 清理监听器并释放锁
-                if (stopPollingWatch) {
-                    stopPollingWatch();
-                    stopPollingWatch = null;
-                }
-                isUpdatingStep.value = false;
-            }, 500);
-            
+  console.log("await finished! ", result);
+  DataThisSession_als.value = result || null;
+  const html_res = parseMarkdown(result?.analysis || "");
+  recommendations.value = html_res.__html || "无建议";
+
+
+  stopPollingWatch = watch(() => isPolling.value, async (newPolling: boolean) => {
+    if (newPolling) {
+      setTimeout((): void => {
+        isAnalyzing.value = false;
+        // 安全递增步骤
+        // 清理监听器并释放锁
+        if (stopPollingWatch) {
+          stopPollingWatch();
+          stopPollingWatch = null;
         }
-    }, { immediate: true });
-  
+        isUpdatingStep.value = false;
+      }, 500);
+
+    }
+  }, { immediate: true });
+
 
   aiAnalysisResult.value = {
     overallAnalysis,
@@ -694,30 +678,39 @@ onMounted(() => {
 <style scoped lang="scss">
 .analysis-container {
   .mb-4 {
-    margin-bottom: 1rem;
+    display: flex;
+    align-items: stretch; // 让子元素撑满容器
   }
 
   .mt-4 {
     margin-top: 1rem;
   }
 
-  .plan-header {
-  background: linear-gradient(135deg, #27dbe8 0%, #d7f38b 100%);
-  color: #fff;
-  padding: 20px;
-  margin-bottom: 1.5rem;
-  border-radius: 8px;
-}
+  .upload-card,
+  .student-list-card {
+    display: flex;
+    flex-direction: column;
+    flex: 1; // 让两个卡片等高
+    height: 90%; // 确保高度一致
+  }
 
-.plan-header h2 {
+  .plan-header {
+    background: linear-gradient(135deg, #27dbe8 0%, #d7f38b 100%);
+    color: #fff;
+    padding: 20px;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+  }
+
+  .plan-header h2 {
     margin: 0;
     font-size: 1.75rem;
-}
+  }
 
-.subtitle {
+  .subtitle {
     margin: 0.5rem 0 0;
     opacity: 0.9;
-}
+  }
 
   .upload-card {
     .card-header {
@@ -727,13 +720,16 @@ onMounted(() => {
     }
 
     .upload-area {
-      text-align: center;
-      padding: 20px;
+      flex: 1; // 让上传区域填充剩余空间
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
 
       .upload-tip {
         color: #909399;
         font-size: 14px;
-        margin-top: 10px;
+        margin-top: 30px;
       }
     }
   }
@@ -755,6 +751,10 @@ onMounted(() => {
         .student-name {
           margin-left: 12px;
           flex: 1;
+        }
+
+        .el-scrollbar {
+          flex: 1; // 让滚动区域填充整个卡片
         }
       }
     }
