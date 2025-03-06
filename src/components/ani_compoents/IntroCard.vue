@@ -1,32 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from '@vue/runtime-core';
-import FeatureImage from '@/components/ani_compoents/FeatureImages.vue';
-import Particles from '@/components/ani_compoents/Particles.vue';
-import FeatureContent from '@/components/ani_compoents/FeatureContent.vue';
+import { ref, onMounted } from '@vue/runtime-core';
 import { Document, TrendCharts, Collection } from '@element-plus/icons-vue';
+import RadiatingLines from './RadiatingLines.vue';
+import ContentFrame from './ContentFrame.vue';
 
-
-interface Image {
-  id: number;
-  x: number;
-  y: number;
-  scale: number;
-  opacity: number;
-  rotation: number;
-}
-
-interface Feature {
-  title: string;
-  subtitle: string;
-  icon: any;
-  images: { id: number; position: { x: number; y: number } }[];
-}
-
-
-const currentFeature = ref<number>(0);
-
-
-const features: Feature[] = [
+const currentFeature = ref(0);
+const features = [
   {
     title: '智能生成',
     subtitle: '基于AI技术，快速生成专业教案',
@@ -62,128 +41,79 @@ const features: Feature[] = [
   }
 ];
 
-
-const featureImages = reactive<{
-  current: Image[];
-  previous: Image[];
-}>({
-  current: features[0].images.map((img) => ({
-    id: img.id,
-    x: img.position.x,
-    y: img.position.y,
-    scale: 1,
-    opacity: 1,
-    rotation: Math.random() * 20 - 10
-  })),
-  previous: []
-});
-
-
-const particles = reactive<{ items: Image[] }>({
-  items: Array.from({ length: 8 }, (_, i) => ({
-    id: i,
-    x: 0,
-    y: 0,
-    scale: 1,
-    opacity: 1,
-    rotation: Math.random() * 360
-  }))
-});
-
-
+// Handle scroll event
 const handleScroll = (event: WheelEvent) => {
-  const prevFeatureIndex = currentFeature.value;
-
-  if (event.deltaY > 0 && currentFeature.value < features.length - 1) {
-    currentFeature.value++;
-  } else if (event.deltaY < 0 && currentFeature.value > 0) {
-    currentFeature.value--;
+  
+  if (event.deltaY > 0) {
+    // Scrolling down
+    if (currentFeature.value < features.length - 1) {
+      currentFeature.value++;
+    }
   } else {
-    return;
+    // Scrolling up
+    if (currentFeature.value > 0) {
+      currentFeature.value--;
+    }
   }
-  animateFeatureTransition(prevFeatureIndex);
 };
-
-
-const animateFeatureTransition = (prevFeatureIndex: number) => {
-
-    featureImages.previous = [...featureImages.current];
-
-  featureImages.previous.forEach((img) => {
-    img.opacity = 0;
-    img.scale = 0.2;
-  });
-
-  featureImages.current = features[currentFeature.value].images.map((img) => ({
-    id: img.id,
-    x: 0,
-    y: 0,
-    scale: 0,
-    opacity: 0,
-    rotation: Math.random() * 20 - 10
-  }));
-
-  setTimeout(() => {
-    featureImages.current.forEach((img, index) => {
-      img.x = features[currentFeature.value].images[index].position.x;
-      img.y = features[currentFeature.value].images[index].position.y;
-      img.scale = 1;
-      img.opacity = 1;
-    });
-  }, 50);
-
-  animateParticles();
-};
-
-
-const animateParticles = () => {
-  particles.items.forEach((particle, index) => {
-    particle.x = 0;
-    particle.y = 0;
-    particle.scale = 1;
-    particle.opacity = 1;
-
-    setTimeout(() => {
-      const angle = (index / particles.items.length) * Math.PI * 2;
-      const distance = 100 + Math.random() * 200;
-      particle.x = Math.cos(angle) * distance;
-      particle.y = Math.sin(angle) * distance;
-      particle.scale = 0.2 + Math.random() * 0.3;
-      particle.opacity = 0;
-    }, 50);
-  });
-};
-
 
 onMounted(() => {
   window.addEventListener('wheel', handleScroll);
-
-  setTimeout(() => {
-    featureImages.current.forEach((img, index) => {
-      img.x = features[currentFeature.value].images[index].position.x;
-      img.y = features[currentFeature.value].images[index].position.y;
-      img.scale = 1;
-      img.opacity = 1;
-    });
-  }, 500);
 });
 </script>
 
 <template>
   <div class="app-container">
-    <div class="radiating-lines"></div>
-
+    <!-- Radiating lines background -->
+    <RadiatingLines />
+    
     <div class="hero-section">
-      <div class="content-frame">
-        <FeatureImage :images="featureImages.current" />
-        <FeatureImage :images="featureImages.previous" :is-fading="true" />
-        <Particles :particles="particles.items" :icon="features[currentFeature].icon" />
-        <FeatureContent :feature="features[currentFeature]" />
-      </div>
+      <!-- Rectangular frame around content -->
+      <ContentFrame 
+        :features="features" 
+        :currentFeature="currentFeature"
+      />
     </div>
   </div>
 </template>
 
-<style scoped>
-@import '@/components/ani_compoents/IntrCard.scss';
+<style lang="scss" scoped>
+.app-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #1a2a6c, #1890ff, #36cfc9);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+  overflow: hidden;
+  position: relative;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  width: 100%;
+  text-align: center;
+  padding: 0 2rem;
+  transition: all 0.5s ease;
+  position: relative;
+  z-index: 1;
+}
 </style>
