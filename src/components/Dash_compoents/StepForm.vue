@@ -23,7 +23,7 @@
     <div v-if="activeStep === 1" class="step-form">
       <el-form :model="form" label-position="top">
         <el-row :gutter="24" justify="center">
-          <el-form-item label="🐔教学大纲生成结果">
+          <el-form-item label=" ">
             <div v-if = "!isForm1Editing">
               <div v-html="form1.requirements" class="markdown-content"></div>
             </div>
@@ -41,11 +41,11 @@
       </el-form>
     </div>
 
-    <!-- 步骤3：导图生成 -->
+    <!-- 步骤3：课程设计 -->
     <div v-if="activeStep === 2" class="step-form">
       <el-form :model="form" label-position="top">
         <el-row :gutter="24" justify="center">
-          <el-form-item label="课堂设计">
+          <el-form-item label=" ">
             <div v-if = "!isForm1Editing">
               <div v-html="form1.requirements" class="markdown-content"></div>
             </div>
@@ -67,13 +67,18 @@
       <el-form :model="form1" label-position="top">
         <el-row :gutter="24" justify="center">
           <el-col :span="12">
-            <el-form-item label="大纲内容">
-              <textarea v-model="form1.requirements" rows="35" placeholder="请输入具体的教学要求和注意事项..."
-                class="custom-textarea"></textarea>
+            <el-form-item label=" ">
+              <div v-if = "!isForm1Editing">
+              <div v-html="form1.requirements" class="markdown-content"></div>
+            </div>
+            <div v-else>
+              <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
+              class="custom-textarea"></textarea>
+            </div>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="思维导图（单击放大）">
+            <el-form-item label="课堂流程思维导图（单击放大）">
               <img :src="Mindimgsrc" alt="思维导图" :style="imageStyle" @click="toggleImageSize"
                 @mouseenter="isHovering = true" @mouseleave="isHovering = false" @wheel="onWheel" />
             </el-form-item>
