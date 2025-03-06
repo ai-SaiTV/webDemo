@@ -1,6 +1,6 @@
 <template>
   <div class="result-header">
-    <h2>{{ generatedContent.lessonPlan.title }} - 教案生成结果</h2>
+    <h2>生成结果展示</h2>
     <el-button @click="handleBackToEdit">返回编辑</el-button>
   </div>
 </template>

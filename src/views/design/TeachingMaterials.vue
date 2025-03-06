@@ -289,7 +289,7 @@ body {
 }
 
 .plan-header {
-    background: linear-gradient(135deg, #1890ff 0%, #8000ff 100%);
+    background: linear-gradient(135deg, #6629ff 0%, #a5c5ff 100%);
     color: #fff;
     padding: 20px;
     border-radius: 8px;
@@ -340,7 +340,7 @@ body {
 }
 
 .book-header {
-    background: linear-gradient(135deg, #1890ff 0%, #8000ff 100%);
+    background: linear-gradient(135deg, #a5c5ff  0%, #6200ff 100%);
     color: #fff;
     padding: 1.5rem;
     border-radius: 8px 8px 0 0;
