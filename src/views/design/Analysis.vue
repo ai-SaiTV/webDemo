@@ -103,32 +103,44 @@
             AI分析
           </el-button>
         </template>
-        <div v-loading="isAnalyzing" class="ai-analysis-content">
-          <div class="analysis-section">
-            <h4>整体分析</h4>
-            <p>{{ aiAnalysisResult.overallAnalysis }}</p>
-          </div>
-          <div class="analysis-section">
-            <h4>关键发现</h4>
-            <ul>
-              <li v-for="(point, index) in aiAnalysisResult.keyPoints" :key="index">
-                {{ point }}
-              </li>
-            </ul>
-          </div>
-          <div class="analysis-section">
-            <h4>教学建议</h4>
-            <!-- <ul>
-              <li v-for="(rec, index) in aiAnalysisResult.recommendations" :key="index">
-                {{ rec }}
-              </li>
-            </ul> -->
-            <div class="markdown-container">
-              <!-- 渲染 Markdown 内容 -->
-              <div v-html="aiAnalysisResult.recommendations" class="markdown-content"></div>
-            </div>
-          </div>
-        </div>
+        <div  v-loading="isAnalyzing" class="ai-analysis-content">
+			<!-- {{ aiAnalysisResult.recommendations === ' ' }} -->
+			<div v-if="!(aiAnalysisResult.recommendations === ' ') ">
+
+				<div class="analysis-section">
+					<h4>整体分析</h4>
+					<p>{{ aiAnalysisResult.overallAnalysis }}</p>
+				</div>
+			
+				<div class="analysis-section">
+					<h4>关键发现</h4>
+					<ul>
+					<li v-for="(point, index) in aiAnalysisResult.keyPoints" :key="index">
+						{{ point }}
+					</li>
+					</ul>
+				</div>
+				<div class="analysis-section">
+					<h4>教学建议</h4>
+					<!-- <ul>
+					<li v-for="(rec, index) in aiAnalysisResult.recommendations" :key="index">
+						{{ rec }}
+					</li>
+					</ul> -->
+					<div class="markdown-container">
+					<!-- 渲染 Markdown 内容 -->
+					<div v-html="aiAnalysisResult.recommendations" class="markdown-content"></div>
+					</div>
+				</div>
+			</div>
+
+			<div v-else>
+				暂无学情分析
+			</div>
+
+		</div>
+
+        
       </el-card>
     </template>
 
@@ -308,7 +320,7 @@ const aiAnalysisResult = ref<{
   keyPoints: string[];
 }>({
   overallAnalysis: "",
-  recommendations: "",
+  recommendations: " ",
   keyPoints: [],
 });
 
@@ -596,7 +608,7 @@ const generateStudentAnalysis = async (student: Student) => {
       { date: "2024-02", score: 88 },
       { date: "2024-03", score: 92 },
     ],
-    recommendations,
+    recommendations: [],
   };
 
   if (studentPerformanceChartRef.value) {
