@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 步骤1：大纲生成 -->
+    <!-- 步骤1：to大纲生成 -->
     <div v-if="activeStep === 0" class="step-form">
       <el-form :model="form" label-position="top">
         <el-row :gutter="20" justify="center">
@@ -19,7 +19,7 @@
       </el-form>
     </div>
 
-    <!-- 步骤2：课堂设计 -->
+    <!-- 步骤2：to课堂设计 -->
     <div v-if="activeStep === 1" class="step-form">
       <el-form :model="form" label-position="top">
         <el-row :gutter="24" justify="center">
@@ -47,7 +47,7 @@
       </el-form>
     </div>
 
-    <!-- 步骤3：课程设计 -->
+    <!-- 步骤3：to思维导图 -->
     <div v-if="activeStep === 2" class="step-form">
       <el-form :model="form" label-position="top">
         <el-row :gutter="24" justify="center">
@@ -103,7 +103,7 @@
     <div v-if="activeStep === 4" class="generation-step">
       <el-result icon="success" title="准备就绪" sub-title="已收集所有必要信息，点击下方按钮开始生成教案">
         <template #extra>
-          <el-button type="primary" size="large" :loading="isGenerating" @click="generatePlan">
+          <el-button type="primary" size="large" :loading="isGenerating" @click="generateResource">
             {{ isGenerating ? '正在生成...' : '开始生成' }}
           </el-button>
         </template>
@@ -121,7 +121,7 @@ import {
   response, chatMessages, handleSubmit, isPolling, chatConfig
 } from '@/components/api_compoents/api_handler';
 
-import { generatePlan, isForm1Editing } from './DashCompoents';
+import { generateResource, isForm1Editing } from './DashCompoents';
 
 
 

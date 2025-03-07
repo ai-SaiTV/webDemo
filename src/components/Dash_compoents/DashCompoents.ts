@@ -258,9 +258,12 @@ export const prevStep = () => {
     }
 };
 
-export const generatePlan = async () => {
+export const generateResource = async () => {
     isGenerating.value = true;
     try {
+
+        chatConfig.value.message = DataThisSession.value?.resources?.teaching_plan?.text || '';   //Message为 教学大纲
+        // console.log('DashCompoents 266:', chatConfig.value.message);
 
         isProcessing.value = true;
         console.log('开始生成资源:', sessionId.value);
