@@ -69,7 +69,6 @@ const Pp_Html = ref('');
 
 onMounted(() => {
   Pp_Html.value = parseMarkdown(Generate_Prompt.value).__html;
-  console.log(Pp_Html.value);
 });
 
 

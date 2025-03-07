@@ -38,6 +38,7 @@
             </div>
             <div class="form-buttons">
               <el-button type="primary" @click="isForm1Editing = !isForm1Editing" >
+                <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
                 {{ isForm1Editing ? '保存' : '优化' }}
               </el-button>
             </div>
@@ -61,7 +62,10 @@
             </div>
             <div class="form-buttons">
               <el-button type="primary" @click="isForm1Editing = !isForm1Editing">
+                <!-- FlashIcon -->
+                <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
                 <span class="gradient-text">{{ isForm1Editing ? '保存' : '优化' }}</span>
+
               </el-button>
             </div>
           </el-form-item>
@@ -113,7 +117,7 @@
 </template>
 <script setup>
 
-
+import flash from '@/assets/icons/dashBoard/flash.png'
 
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import ResponseDisplay from '@/components/api_compoents/ResponseDisplay.vue';
