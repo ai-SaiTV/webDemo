@@ -37,8 +37,8 @@
               ></textarea>
             </div>
             <div class="form-buttons">
-              <el-button type="primary" @click="isForm1Editing = !isForm1Editing">
-                {{ isForm1Editing ? '保存' : '编辑' }}
+              <el-button type="primary" @click="isForm1Editing = !isForm1Editing" >
+                {{ isForm1Editing ? '保存' : '优化' }}
               </el-button>
             </div>
           </el-form-item>
@@ -61,7 +61,7 @@
             </div>
             <div class="form-buttons">
               <el-button type="primary" @click="isForm1Editing = !isForm1Editing">
-                {{ isForm1Editing ? '保存' : '编辑' }}
+                <span class="gradient-text">{{ isForm1Editing ? '保存' : '优化' }}</span>
               </el-button>
             </div>
           </el-form-item>
@@ -279,4 +279,6 @@ img:hover {
   transform: scale(1.05);
   /* 放大一点用于提示 */
 }
+
+
 </style>

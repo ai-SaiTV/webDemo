@@ -20,7 +20,7 @@ interface Book {
     description: string | null;
     image: string | null;
     pdf: string | null | undefined;
-    video: string | null | undefined; 
+    video: string | null | undefined;
     showDetails: boolean;
 }
 
@@ -37,7 +37,7 @@ export default defineComponent({
                     description: '一本关于二年级语文上册的教师用书。',
                     image: zh2vo,
                     pdf: Doc2,
-                    video: Vid, 
+                    video: Vid,
                     showDetails: false
                 },
                 {
@@ -49,7 +49,7 @@ export default defineComponent({
                     description: '一本关于三年级语文上册的教师用书。',
                     image: zh3vo,
                     pdf: Doc3,
-                    video: Vid, 
+                    video: Vid,
                     showDetails: false
                 },
                 {
@@ -61,7 +61,7 @@ export default defineComponent({
                     description: '一本关于四年级语文上册的教师用书。',
                     image: zh4vo,
                     pdf: Doc4,
-                    video: Vid, 
+                    video: Vid,
                     showDetails: false
                 },
                 {
@@ -73,7 +73,7 @@ export default defineComponent({
                     description: '一本关于五年级语文上册的教师用书。',
                     image: zh5vo,
                     pdf: Doc5,
-                    video: Vid, 
+                    video: Vid,
                     showDetails: false
                 }
             ] as Book[],
@@ -87,11 +87,11 @@ export default defineComponent({
                 description: '',
                 image: null as File | null,
                 pdf: null as File | string | null,
-                video: null as File | string | null 
+                video: null as File | string | null
             },
             isAddBookModalVisible: false,
             isPDFVisible: false,
-            isVideoVisible: false 
+            isVideoVisible: false
         };
     },
     methods: {
@@ -118,8 +118,8 @@ export default defineComponent({
         },
         closeModal() {
             this.isModalVisible = false;
-            this.isPDFVisible = false; 
-            this.isVideoVisible = false; 
+            this.isPDFVisible = false;
+            this.isVideoVisible = false;
         },
         openAddBookModal() {
             this.isAddBookModalVisible = true;
@@ -170,9 +170,9 @@ export default defineComponent({
             this.isPDFVisible = true;
         },
         previewVideo() {
-            this.isVideoVisible = true; 
+            this.isVideoVisible = true;
         },
-        handleVideoError(event: Event) {
+        handleVideoError() {
             ElMessage.error('视频加载失败，请检查文件格式或网络连接');
         }
     }
@@ -217,19 +217,19 @@ export default defineComponent({
                 <form @submit.prevent="addNewBook">
                     <div class="input-group">
                         <label for="title">书名：</label>
-                        <el-input type="text" v-model="newBook.title"/>
+                        <el-input type="text" v-model="newBook.title" />
                     </div>
                     <div class="input-group">
                         <label for="author">作者：</label>
-                        <el-input type="text" v-model="newBook.author"/>
+                        <el-input type="text" v-model="newBook.author" />
                     </div>
                     <div class="input-group">
                         <label for="isbn">ISBN：</label>
-                        <el-input type="text" v-model="newBook.isbn"/>
+                        <el-input type="text" v-model="newBook.isbn" />
                     </div>
                     <div class="input-group">
                         <label for="owner">所有者：</label>
-                        <el-input type="text" v-model="newBook.owner"/>
+                        <el-input type="text" v-model="newBook.owner" />
                     </div>
                     <div class="input-group">
                         <label for="description">描述：</label>
@@ -262,17 +262,18 @@ export default defineComponent({
                 <p><strong>ISBN：</strong>{{ selectedBook.isbn }}</p>
                 <p><strong>所有者：</strong>{{ selectedBook.owner }}</p>
                 <p><strong>描述：</strong>{{ selectedBook.description || '暂无描述' }}</p>
-                <div v-if="selectedBook.pdf">
-                    <button @click="previewPDF">教材预览</button>
+                <div v-if="selectedBook.pdf || selectedBook.video" style="display: flex; gap: 10px;justify-content: center;margin: 10px 0;
+">
+                    <button v-if="selectedBook.pdf" @click="previewPDF">教材预览</button>
+                    <button v-if="selectedBook.video" @click="previewVideo">视频预览</button>
                 </div>
-                <div v-if="selectedBook.video">
-                    <button @click="previewVideo">视频预览</button>
-                </div>
+
                 <div v-if="isPDFVisible" class="pdf-container">
                     <iframe v-if="selectedBook.pdf" :src="selectedBook.pdf" class="pdf-viewer" frameborder="0"></iframe>
                 </div>
                 <div v-if="isVideoVisible" class="video-container">
-                    <video v-if="selectedBook.video" :src="selectedBook.video" controls class="video-viewer" @error="handleVideoError"></video>
+                    <video v-if="selectedBook.video" :src="selectedBook.video" controls class="video-viewer"
+                        @error="handleVideoError"></video>
                 </div>
                 <button @click="closeModal">关闭</button>
             </div>
@@ -340,7 +341,7 @@ body {
 }
 
 .book-header {
-    background: linear-gradient(135deg, #a5c5ff  0%, #6200ff 100%);
+    background: linear-gradient(135deg, #a5c5ff 0%, #6200ff 100%);
     color: #fff;
     padding: 1.5rem;
     border-radius: 8px 8px 0 0;
@@ -388,7 +389,7 @@ body {
 .video-container {
     margin: 20px 0;
     width: 100%;
-    height: 600px; 
+    height: 600px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -396,8 +397,8 @@ body {
 
 .video-viewer {
     width: 100%;
-    height: 100%; 
-    object-fit: contain; 
+    height: 100%;
+    object-fit: contain;
 }
 
 .more-details,
