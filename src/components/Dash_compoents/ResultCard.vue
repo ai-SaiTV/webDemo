@@ -5,10 +5,11 @@
       <el-card class="result-card">
         <template #header>
           <div class="card-header">
+            <h3>教学大纲</h3>
             <el-button type="primary" link @click="initializeData">查看详情</el-button>
             <div class="markdown-container">
               <!-- 渲染 Markdown 内容 -->
-              <div v-html="generatedContent.lessonPlan" class="markdown-content"></div>
+              <div v-html="generatedContent.lessonPlan" class="markdown-content" style="max-height: 950px; overflow-y: auto;"></div>
             </div>
           </div>
         </template>
@@ -20,7 +21,7 @@
       <el-card class="result-card">
         <template #header>
           <div class="card-header">
-            <h3>知识点思维导图</h3>
+            <h3>环节设计思维导图</h3>
             <el-button type="primary" link @click="previewMindMap">查看大图</el-button>
           </div>
         </template>

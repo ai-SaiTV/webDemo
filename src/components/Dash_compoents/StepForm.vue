@@ -5,7 +5,7 @@
       <el-form :model="form" label-position="top">
         <el-row :gutter="20" justify="center">
           <el-col :span="20">
-            <el-form-item label="输入课程名称">
+            <el-form-item label=" ">
               <span>&nbsp;</span>
               <el-input v-model="form.unit" placeholder="如：人教版小学语文五年级下册《田忌赛马》" 
               @keydown.enter.prevent="handleEnter"
@@ -23,13 +23,18 @@
     <div v-if="activeStep === 1" class="step-form">
       <el-form :model="form" label-position="top">
         <el-row :gutter="24" justify="center">
+
           <el-form-item label=" ">
-            <div v-if = "!isForm1Editing">
-              <div v-html="form1.requirements" class="markdown-content"></div>
+            <div v-if="!isForm1Editing">
+              <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;"></div>
             </div>
             <div v-else>
-              <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
-              class="custom-textarea"></textarea>
+              <textarea
+                v-model="form1.requirements"
+                rows="10"
+                placeholder="请输入具体的教学要求和注意事项..."
+                class="custom-textarea"
+              ></textarea>
             </div>
             <div class="form-buttons">
               <el-button type="primary" @click="isForm1Editing = !isForm1Editing">
@@ -37,6 +42,7 @@
               </el-button>
             </div>
           </el-form-item>
+
         </el-row>
       </el-form>
     </div>
@@ -47,7 +53,7 @@
         <el-row :gutter="24" justify="center">
           <el-form-item label=" ">
             <div v-if = "!isForm1Editing">
-              <div v-html="form1.requirements" class="markdown-content"></div>
+              <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;"></div>
             </div>
             <div v-else>
               <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
@@ -69,7 +75,7 @@
           <el-col :span="12">
             <el-form-item label=" ">
               <div v-if = "!isForm1Editing">
-              <div v-html="form1.requirements" class="markdown-content"></div>
+              <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;"></div>
             </div>
             <div v-else>
               <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
