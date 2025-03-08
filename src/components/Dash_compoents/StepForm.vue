@@ -37,10 +37,30 @@
               ></textarea>
             </div>
             <div class="form-buttons">
-              <el-button type="primary" @click="isForm1Editing = !isForm1Editing" >
+
+              <el-button type="primary" @click="isForm1Editing = !isForm1Editing; dialogVisible = true;" >
                 <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
-                {{ isForm1Editing ? '保存' : '优化' }}
+                {{ isForm1Editing  ? '保存' : '优化' }}
               </el-button>
+
+              <el-dialog
+                v-model="dialogVisible"
+                title="优化建议"
+                width="30%"
+                :before-close="handleClose"
+              >
+                <el-input
+                  v-model="optimizationSuggestion"
+                  type="textarea"
+                  :rows="4"
+                  placeholder="请输入优化建议..."
+                />
+                <template #footer>
+                  <el-button @click="dialogVisible = false">取消</el-button>
+                  <el-button type="primary" @click="submitSuggestion">提交</el-button>
+                </template>
+              </el-dialog>
+
             </div>
           </el-form-item>
 
@@ -67,6 +87,27 @@
                 <span class="gradient-text">{{ isForm1Editing ? '保存' : '优化' }}</span>
 
               </el-button>
+
+              <el-dialog
+                v-model="dialogVisible"
+                title="优化建议"
+                width="30%"
+                :before-close="handleClose"
+              >
+                <el-input
+                  v-model="optimizationSuggestion"
+                  type="textarea"
+                  :rows="4"
+                  placeholder="请输入优化建议..."
+                />
+                <template #footer>
+                  <el-button @click="dialogVisible = false">取消</el-button>
+                  <el-button type="primary" @click="submitSuggestion">提交</el-button>
+                </template>
+              </el-dialog>
+
+
+
             </div>
           </el-form-item>
         </el-row>
@@ -200,6 +241,34 @@ const imageStyle = computed(() => ({
 //     emit('update:showResult', showResult.value);
 //   }, props.endWaitingTime);
 // };
+
+
+// 控制 Dialog 显示
+const dialogVisible = ref(false);
+
+// 存储用户输入的优化建议
+const optimizationSuggestion = ref('');
+
+// 打开 Dialog
+const openDialog = () => {
+  dialogVisible.value = true;
+};
+
+// 提交优化建议
+const submitSuggestion = () => {
+  console.log('优化建议：', optimizationSuggestion.value);
+  dialogVisible.value = false;
+  optimizationSuggestion.value = ''; // 清空输入
+};
+
+// 关闭 Dialog 前的回调
+const handleClose = (done) => {
+  done();
+};
+
+
+
+
 
 </script>
 
