@@ -226,17 +226,17 @@
               <span>学习建议</span>
             </div>
           </template>
-          <div class="markdown-container">
+          <!-- <div class="markdown-container"> -->
             <!-- 渲染 Markdown 内容 -->
-            <div v-html="studentAnalysis.recommendations" class="markdown-content"></div>
-          </div>
-          <!-- <ul class="recommendation-list">
-            <!-- <li v-for="(rec, index) in studentAnalysis.recommendations" :key="index">
+            <!-- <div v-html="studentAnalysis.recommendations" class="markdown-content"></div>
+          </div> -->
+          <ul class="recommendation-list">
+            <li v-for="(rec, index) in studentAnalysis.recommendations" :key="index">
               <el-icon><Star /></el-icon>
               {{ rec }}
-            </li> -->
+            </li>
 
-          <!-- </ul> -->
+          </ul>
         </el-card>
       </div>
     </el-dialog>
@@ -593,6 +593,9 @@ const generateStudentAnalysis = async (student: Student) => {
     .filter((q) => q.score < q.maxScore * 0.5)
     .map((q) => `${q.question}得分较低，为${q.score}分，需要加强练习。`);
 
+
+  
+
   // 学习建议：针对待提升的题目提出建议
   const recommendations = [
     `针对得分较低的题目，建议多做相关练习题，巩固知识点。`,
@@ -610,6 +613,8 @@ const generateStudentAnalysis = async (student: Student) => {
     ],
     recommendations: [],
   };
+
+  studentAnalysis.value.recommendations = recommendations;
 
   if (studentPerformanceChartRef.value) {
     const chart = echarts.init(studentPerformanceChartRef.value);
