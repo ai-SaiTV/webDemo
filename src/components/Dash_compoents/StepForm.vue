@@ -22,8 +22,34 @@
     <!-- 步骤2：to课堂设计 -->
     <div v-if="activeStep === 1" class="step-form">
       <el-form :model="form" label-position="top">
-        <el-row :gutter="24" justify="center">
+        <el-row :gutter="24" justify="center" class="scroll-container">
+          <div class="floating-button">
+            
+            <el-button type="primary" @click="handleNext">
+              <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
+              优化
+            </el-button>
 
+          </div>
+          <el-form-item label=" ">
+            <div v-if="!isForm1Editing">
+              <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;"></div>
+            </div>
+            <div v-else>
+              <textarea
+                v-model="form1.requirements"
+                rows="10"
+                placeholder="请输入具体的教学要求和注意事项..."
+                class="custom-textarea"
+              ></textarea>
+            </div>
+            <div class="form-buttons">
+              <!-- 其他按钮 -->
+            </div>
+          </el-form-item>
+        </el-row>
+        
+        <!-- <el-row :gutter="24" justify="center">
           <el-form-item label=" ">
             <div v-if="!isForm1Editing">
               <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;"></div>
@@ -42,29 +68,10 @@
                 <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
                 {{ isForm1Editing  ? '保存' : '优化' }}
               </el-button>
-
-              <el-dialog
-                v-model="dialogVisible"
-                title="优化建议"
-                width="30%"
-                :before-close="handleClose"
-              >
-                <el-input
-                  v-model="optimizationSuggestion"
-                  type="textarea"
-                  :rows="4"
-                  placeholder="请输入优化建议..."
-                />
-                <template #footer>
-                  <el-button @click="dialogVisible = false">取消</el-button>
-                  <el-button type="primary" @click="submitSuggestion">提交</el-button>
-                </template>
-              </el-dialog>
-
             </div>
           </el-form-item>
 
-        </el-row>
+        </el-row> -->
       </el-form>
     </div>
 
@@ -266,10 +273,6 @@ const handleClose = (done) => {
   done();
 };
 
-
-
-
-
 </script>
 
 <style scoped lang="scss">
@@ -351,6 +354,21 @@ img {
 img:hover {
   transform: scale(1.05);
   /* 放大一点用于提示 */
+}
+
+
+//优化按钮
+.scroll-container {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.floating-button {
+  position: absolute;
+  top: 40px;
+  right: 20px;
+  z-index: 10;
 }
 
 
