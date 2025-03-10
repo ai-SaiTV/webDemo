@@ -16,10 +16,11 @@ export const parseMarkdown = (content: string): MarkdownParserResult => {
     return { __html: DOMPurify.sanitize(rawHtml) }; // 净化 HTML
 };
 
+
 // utils/markdownUtils.ts
 export function parseMarkdownList_re(markdown: string): { type: string, title: string, url: string }[] {
   // 新正则表达式：匹配类型、名称、链接三部分
-  const regex = /- #(.*?)# \[(.*?)\]\((.*?)\)/g;
+  const regex = /- #(.*?)#\[(.*?)\]\((.*?)\)/g;
   const matches = [];
   let match;
 
