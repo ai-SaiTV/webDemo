@@ -130,7 +130,7 @@ let stopPollingWatch: (() => void) | null = null;
 let isUpdatingStep = false; // 状态锁
 let progressInterval: ReturnType<typeof setInterval> | null = null; // 用来保存定时器引用，便于清除
 export const nextStep = async () => {
-    if (activeStep.value == 1) activeStep.value = 4;
+    if (activeStep.value == 3) activeStep.value = 4;
     if (activeStep.value >= steps.length - 1 || isUpdatingStep) return;
     isUpdatingStep = true;
 

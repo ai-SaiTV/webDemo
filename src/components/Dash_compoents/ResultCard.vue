@@ -48,7 +48,7 @@
             <el-col v-for="(resource, index) in generatedContent.resources" :key="index" :span="12">
               <div class="resource-card">
                 <div class="resource-info">
-                  <a :href="resource.url" target="_blank" rel="noopener noreferrer">
+                  <a :href="resource.url" target="_blank" rel="noopener noreferrer" class = "resource-link">
                     <h4>{{ resource.title }}</h4>
                   </a>
                   <el-tag size="small">{{ resource.type.toUpperCase() }}</el-tag>
@@ -263,6 +263,12 @@ onMounted(() => {
         }
       }
     }
+    
+  }
+
+  a.resource-link {
+          color: #4800ff;
+          font-size: 0.875rem;
   }
 
   .exercises {
