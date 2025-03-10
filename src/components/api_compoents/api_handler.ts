@@ -47,8 +47,10 @@ botId: [
     '7463464443028963340',    //2思维导图
 
     '7470802643641008180',      //3练习题
-    '7470499360309723155',       //4课件
-    '7471291204710219812',        //5视频
+    //'7470499360309723155',       //4课件
+    '7471291204710219812',       //5 资源集合
+
+    'null',        
 
     '7475365585602773055',   //6学情分析
     ],  
@@ -163,7 +165,6 @@ export const handleSubmitParallel = async (sessionId: string, botIndices: number
         const responses = {
             exercises: null as string | null,
             Courseware: null as string | null,
-            videos: null as string | null
         };
 
         // 每个 bot 的请求处理函数
@@ -190,9 +191,9 @@ export const handleSubmitParallel = async (sessionId: string, botIndices: number
                                 case 4:
                                     responses.Courseware = lastMessage.content;
                                     break;
-                                case 5:
-                                    responses.videos = lastMessage.content;
-                                    break;
+                                // case 5:
+                                //     responses.videos = lastMessage.content;
+                                //     break;
                             }
                             stopWatch();
                             resolve();
@@ -211,7 +212,7 @@ export const handleSubmitParallel = async (sessionId: string, botIndices: number
 
         await Promise.all(promises);
 
-        if (responses.exercises && responses.Courseware && responses.videos) {
+        if (responses.exercises && responses.Courseware) {
             await storageService.updateCourseware(sessionId, {
                 exercises: [{ 
                     name: `exercise-${Date.now()}`,
@@ -220,10 +221,6 @@ export const handleSubmitParallel = async (sessionId: string, botIndices: number
                 Courseware: [{ 
                     name: `courseware-${Date.now()}`,
                     url: responses.Courseware 
-                }],
-                videos: [{ 
-                    name: `video-${Date.now()}`,
-                    url: responses.videos 
                 }]
             });
 

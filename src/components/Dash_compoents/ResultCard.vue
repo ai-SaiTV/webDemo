@@ -104,7 +104,7 @@
 
 <script setup>
 import { defineProps, ref, computed, onMounted } from 'vue';
-import { parseMarkdown, parseMarkdownList } from '@/utils/markdownUtils.ts';
+import { parseMarkdown, parseMarkdownList_ex, parseMarkdownList_re } from '@/utils/markdownUtils.ts';
 import { sessionId, DataThisSession } from './DashCompoents.ts';
 import { storageService } from '@/services/storage/storageService';
 import PDF from "pdf-vue3";
@@ -130,15 +130,13 @@ const initializeData = async () => {
     // 获取思维导图
     const mindMap = DataThisSession.value.resources.tp_MindMap?.url || '';
 
-    // 获取课件资源
-    const courseware = DataThisSession.value.resources.courseware;
 
     // 解析资源列表
-    const resourcesMarkdown = DataThisSession.value.resources.courseware.videos[0].url || '';
-    const resources = parseMarkdownList(resourcesMarkdown);
+    const resourcesMarkdown = DataThisSession.value.resources.courseware.Courseware[0].url || '';
+    const resources = parseMarkdownList_re(resourcesMarkdown);
 
     const exercises = DataThisSession.value.resources.courseware.exercises[0].url || "";
-    const parsedExercise = parseMarkdownList(exercises);
+    const parsedExercise = parseMarkdownList_ex(exercises);
 
 
     // 更新组件数据

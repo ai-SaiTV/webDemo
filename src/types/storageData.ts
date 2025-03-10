@@ -26,11 +26,6 @@ export interface StorageData {
 
         // 3. 课程资源
         courseware: {
-            videos: {
-                name: string,
-                url: string
-            }[],
-
             Courseware: {
                 name: string,
                 url: string

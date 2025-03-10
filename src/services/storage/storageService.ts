@@ -16,7 +16,10 @@ export class StorageService {
         teaching_plan: { text: '' },
         class_design: { text: '' },
         tp_MindMap: { url: '' },
-        courseware: { videos: [], Courseware: [], exercises: [] }
+        courseware: {
+          Courseware: [],
+          exercises: []
+        }
       },
       metadata: {
         status: 'pending',
@@ -85,16 +88,12 @@ export class StorageService {
 
   // 更新课件资源
   async updateCourseware(sessionId: string, data: {
-    videos?: { name: string, url: string }[],
     Courseware?: { name: string, url: string }[],
     exercises?: { name: string, url: string }[]
   }) {
     console.log('更新课件资源:', sessionId, data)
     const session = this.data.value.find(s => s.id === sessionId)
     if (session) {
-      if (data.videos) {
-        session.resources.courseware.videos = data.videos
-      }
       if (data.Courseware) {
         session.resources.courseware.Courseware = data.Courseware
       }
