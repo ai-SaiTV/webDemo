@@ -17,14 +17,20 @@ export const parseMarkdown = (content: string): MarkdownParserResult => {
 };
 
 // utils/markdownUtils.ts
-export function parseMarkdownList(markdown: string): { title: string, url: string }[] {
-    const regex = /\- \[(.*?)\]\((.*?)\)/g;
-    const matches = [];
-    let match;
-  
-    while ((match = regex.exec(markdown)) !== null) {
-      matches.push({ title: match[1], url: match[2] });
-    }
-  
-    return matches;
-};
+export function parseMarkdownList(markdown: string): { type: string, title: string, url: string }[] {
+  // 新正则表达式：匹配类型、名称、链接三部分
+  const regex = /- #(.*?)# \[(.*?)\]\((.*?)\)/g;
+  const matches = [];
+  let match;
+
+  while ((match = regex.exec(markdown)) !== null) {
+      // 匹配组顺序：match[1]=类型，match[2]=名称，match[3]=链接
+      matches.push({
+          type: match[1],
+          title: match[2],
+          url: match[3]
+      });
+  }
+
+  return matches;
+}

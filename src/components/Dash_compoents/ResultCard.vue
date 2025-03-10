@@ -148,13 +148,13 @@ const initializeData = async () => {
         preview: mindMap
       },
       resources: resources.map(resource => ({
-        type: 'video',
+        type: resource.type,  // 资源类型
         title: resource.title,
         url: resource.url
       })),
       exercises: parsedExercise.map(exercise => ({
         title: exercise.title,
-        difficulty: '中等',
+        difficulty: '预备知识测验',
         preview: exercise.url,
         count: 5
       }))
