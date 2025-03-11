@@ -7,9 +7,7 @@
           <el-col :span="20">
             <el-form-item label=" ">
               <span>&nbsp;</span>
-              <el-input v-model="form.unit" placeholder="如：人教版小学语文五年级下册《田忌赛马》" 
-              @keydown.enter.prevent="handleEnter"
-              >
+              <el-input v-model="form.unit" placeholder="如：人教版小学语文五年级下册《田忌赛马》" @keydown.enter.prevent="handleEnter">
                 <template #prepend>我想生成一节</template>
                 <template #append>的教案</template>
               </el-input>
@@ -24,7 +22,7 @@
       <el-form :model="form" label-position="top">
         <el-row :gutter="24" justify="center" class="scroll-container">
           <div class="floating-button">
-            
+
             <el-button type="primary" @click="handleNext">
               <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
               优化
@@ -33,21 +31,18 @@
           </div>
           <el-form-item label=" ">
             <div v-if="!isForm1Editing">
-              <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;"></div>
+              <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;">
+              </div>
             </div>
             <div v-else>
-              <textarea
-                v-model="form1.requirements"
-                rows="10"
-                placeholder="请输入具体的教学要求和注意事项..."
-                class="custom-textarea"
-              ></textarea>
+              <textarea v-model="form1.requirements" rows="10" placeholder="请输入具体的教学要求和注意事项..."
+                class="custom-textarea"></textarea>
             </div>
             <div class="form-buttons">
             </div>
           </el-form-item>
         </el-row>
-        
+
         <!-- <el-row :gutter="24" justify="center">
           <el-form-item label=" ">
             <div v-if="!isForm1Editing">
@@ -80,24 +75,30 @@
 
         <el-row :gutter="24" justify="center" class="scroll-container">
           <div class="floating-button">
-            
+
             <el-button type="primary" @click="handleNext">
               <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
               优化
             </el-button>
 
           </div>
+          <el-dialog v-model="dialogVisible" title="优化提示" width="30%" center :close-on-click-modal="false">
+            <el-input v-model="inputText" type="textarea" :rows="4" placeholder="你希望如何编写或优化提示词" resize="none" />
+            <template #footer>
+              <div class="dialog-footer">
+                <el-button @click="handleCancel">取消</el-button>
+                <el-button type="primary" @click="handleConfirm">确认</el-button>
+              </div>
+            </template>
+          </el-dialog>
+
           <el-form-item label=" ">
             <div v-if="!isForm1Editing">
-              <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;"></div>
+              <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;">
+              </div>
             </div>
             <div v-else>
-              <textarea
-                v-model="form1.requirements"
-                rows="10"
-                placeholder="暂无"
-                class="custom-textarea"
-              ></textarea>
+              <textarea v-model="form1.requirements" rows="10" placeholder="暂无" class="custom-textarea"></textarea>
             </div>
             <div class="form-buttons">
             </div>
@@ -132,13 +133,14 @@
         <el-row :gutter="24" justify="center">
           <el-col :span="12">
             <el-form-item label=" ">
-              <div v-if = "!isForm1Editing">
-              <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;"></div>
-            </div>
-            <div v-else>
-              <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
-              class="custom-textarea"></textarea>
-            </div>
+              <div v-if="!isForm1Editing">
+                <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;">
+                </div>
+              </div>
+              <div v-else>
+                <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
+                  class="custom-textarea"></textarea>
+              </div>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -200,6 +202,7 @@ const props = defineProps({
 const showResult = ref(false);
 const isHovering = ref(false);
 const isProcessing = ref(false);
+
 const emit = defineEmits([
   'update:showResult',
   'update:isZoomed',
@@ -263,22 +266,28 @@ const dialogVisible = ref(false);
 const optimizationSuggestion = ref('');
 
 // 打开 Dialog
-const openDialog = () => {
+const handleNext = () => {
+  
   dialogVisible.value = true;
+  console.log('dialogVisible:', dialogVisible.value);
 };
 
 // 提交优化建议
-const submitSuggestion = () => {
+const handleConfirm = () => {
   console.log('优化建议：', optimizationSuggestion.value);
   dialogVisible.value = false;
   optimizationSuggestion.value = ''; // 清空输入
 };
 
+// 取消提交
+const handleCancel = () => {
+  dialogVisible.value = false;
+  optimizationSuggestion.value = ''; // 清空输入
+};
 // 关闭 Dialog 前的回调
 const handleClose = (done) => {
   done();
-};
-
+}
 </script>
 
 <style scoped lang="scss">
@@ -377,5 +386,17 @@ img:hover {
   z-index: 10;
 }
 
+.dialog-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+}
 
+:deep(.el-dialog) {
+  border-radius: 8px;
+}
+
+:deep(.el-dialog__body) {
+  padding: 20px;
+}
 </style>
