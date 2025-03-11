@@ -266,11 +266,6 @@ onMounted(() => {
     
   }
 
-  a.resource-link {
-          color: #4800ff;
-          font-size: 0.875rem;
-  }
-
   .exercises {
     .exercise-item {
       padding: 1rem;
