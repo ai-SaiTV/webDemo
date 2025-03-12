@@ -27,7 +27,7 @@
         </template>
         <div class="mind-map">
           <img :src="generatedContent.mindMap.preview" alt="思维导图"
-            @click="previewMindMap">
+            @click="previewMindMap" style="width: 100%; height: auto; display: block;">
         </div>
       </el-card>
     </el-col>
@@ -207,7 +207,7 @@ onMounted(() => {
 
   .result-card {
     height: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 200px;
 
     .card-header {
       display: flex;
@@ -220,6 +220,12 @@ onMounted(() => {
         color: #1f2937;
       }
     }
+    .mind-map {
+    img {
+      width: 50%;
+      height: 10%;
+    }
+  }
   }
 
   .lesson-plan {
@@ -306,10 +312,6 @@ onMounted(() => {
   }
   .mt-20 {
     margin-top: 20px;
-  }
-  .mind-map {
-    width: 100%;
-    cursor: pointer;
   }
 }
 
