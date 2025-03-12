@@ -12,7 +12,7 @@
             <div class="card-header">
               <div>成绩单导入</div>
               <el-select v-model="selectedClassId" placeholder="选择班级" @change="reloadClassData" style="width: 80%;">
-                <el-option v-for="class_ in classes" :key="class_.id" :label="class_.name" :value="class_.id" />
+                <el-option v-for="class_ in classes" :key="class_.id" :label="`${class_.name}`" :value="class_.id" />
               </el-select>
               <!-- <input ref="uploadMdRef" type="file" accept=".md" style="display: none" @change="handleExcelUpload" />
               <el-button type="primary" @click="uploadMdRef.click()">
@@ -292,16 +292,13 @@ const studentPerformanceChartRef = ref<HTMLElement>();
 const uploadExcelRef = ref();
 const uploadMdRef =ref()
 
-const markdownContent = ref<string | null>(null);
-const parsedMarkdown = ref<string | null>(null); 
-
 const tableData = ref<Student[]>([]);
 const questions = ref<Question[]>([]);
 const showAIAnalysis = ref(false);
 const isAnalyzing = ref(false);
 const showStudentDetails = ref(false);
 const selectedStudent = ref<Student | null>(null);
-const selectedClassId = ref("1-1");
+const selectedClassId = ref();
 
 const classes = ref<Class[]>([
   {
