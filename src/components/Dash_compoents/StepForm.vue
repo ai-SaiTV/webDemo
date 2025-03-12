@@ -32,27 +32,28 @@
             trigger="click"
             placement="bottom-end"  
             @visible-change="handleDropdownChange"
-          >
-            <el-button type="primary">
-              <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
-              优化
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu class="custom-dropdown">
-                <el-input 
-                  v-model="optimizationSuggestion" 
-                  type="textarea" 
-                  :rows="4" 
-                  placeholder="你希望如何编写或优化提示词"
-                  resize="none"
-                />
-                <div class="dropdown-footer">
-                  <el-button @click="handleCancel">取消</el-button>
-                  <el-button type="primary" @click="handleConfirm">确认</el-button>
-                </div>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+            >
+              <el-button type="primary">
+                <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
+                优化
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu class="custom-dropdown">
+                  <el-input 
+                    v-model="optimizationSuggestion" 
+                    type="textarea" 
+                    :rows="2" 
+                    placeholder="你希望如何修改教案🙊"
+                    resize="none"
+                    style="border: 15px;"
+                  />
+                  <div class="dropdown-footer">
+                    <!-- <el-button @click="handleCancel">取消</el-button> -->
+                    <el-button type="primary" @click="handleConfirm">确认</el-button>
+                  </div>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
 
           </div>
           <el-form-item label=" ">
@@ -102,25 +103,34 @@
         <el-row :gutter="24" justify="center" class="scroll-container">
           <div class="floating-button">
 
-            <el-button type="primary" @click="handleNext">
-              <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
-              优化
-            </el-button>
-            <el-dialog v-model="dialogVisible" 
-            :modal="false" 
-            :close-on-click-modal="false" 
-            :append-to-body="true" 
-            class="custom-dialog"
-            style="position: absolute; top: 0px; left: 0px;">
-              <el-input v-model="optimizationSuggestion" type="textarea" :rows="4" placeholder="你希望如何编写或优化提示词" resize="none" />
-              <template #footer>
-                <div class="dialog-footer">
-                  <el-button @click="handleCancel">取消</el-button>
-                  <el-button type="primary" @click="handleConfirm">确认</el-button>
-                </div>
-              </template>
-            </el-dialog>
 
+            <el-dropdown
+            trigger="click"
+            placement="bottom-end"  
+            @visible-change="handleDropdownChange"
+            >
+              <el-button type="primary">
+                <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
+                优化
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu class="custom-dropdown">
+                  <el-input 
+                    v-model="optimizationSuggestion" 
+                    type="textarea" 
+                    :rows="2" 
+                    placeholder="你希望如何修改课堂环节设计🤭"
+                    resize="none"
+                    style="border: 15px;"
+                  />
+                  <div class="dropdown-footer">
+                    <!-- <el-button @click="handleCancel">取消</el-button> -->
+                    <el-button type="primary" @click="handleConfirm">确认</el-button>
+                  </div>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+            
           </div>
           
 
@@ -215,6 +225,8 @@ import {
 
 import { generateResource, isForm1Editing } from './DashCompoents';
 
+//scss
+import '@/components/Dash_compoents/StepForm.scss';
 
 
 const props = defineProps({
@@ -293,7 +305,7 @@ const imageStyle = computed(() => ({
 
 
 // 控制 Dialog 显示
-const dialogVisible = ref(false);
+const isDropdownVisible = ref(false);
 
 // 存储用户输入的优化建议
 const optimizationSuggestion = ref('');
@@ -307,122 +319,26 @@ const optimizationSuggestion = ref('');
 // 提交优化建议
 const handleConfirm = () => {
   console.log('ed_input_submit:', optimizationSuggestion.value);
-  dialogVisible.value = false;
+  // isDropdownVisible.value = false;
   optimizationSuggestion.value = ''; // 清空输入
 };
 
 // 取消提交
 const handleCancel = () => {
-  dialogVisible.value = false;
+  isDropdownVisible.value = false;
   optimizationSuggestion.value = ''; // 清空输入
 };
 // 关闭 Dialog 前的回调
 const handleClose = (done) => {
   done();
 }
+
 </script>
 
+
+
 <style scoped lang="scss">
-.generation-step {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 300px;
-}
 
-.step-form {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.custom-textarea {
-  padding: 2%;
-  background-color: #4b5563;
-  border-radius: 15px;
-  width: 100vh;
-  max-width: 800px;
-  background-color: white;
-  color: black;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  /* 背景暗化 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.zoomed-image-container {
-  position: relative;
-  max-width: 90%;
-  max-height: 110%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.zoomed-image {
-  width: auto;
-  height: auto;
-  transform-origin: center center;
-}
-
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: white;
-  color: black;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-  font-size: 16px;
-  border-radius: 50%;
-}
-
-.close-btn:hover {
-  background-color: #ff4d4f;
-  color: white;
-}
-
-img {
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-img:hover {
-  transform: scale(1.05);
-  /* 放大一点用于提示 */
-}
-
-
-//优化按钮
-.scroll-container {
-  position: relative;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.floating-button {
-  position: absolute;
-  top: 40px;
-  right: 20px;
-  z-index: 10;
-}
-
-.dialog-footer {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 20px;
-}
 
 :deep(.el-dialog) {
   border-radius: 8px;
@@ -430,27 +346,6 @@ img:hover {
 
 :deep(.el-dialog__body) {
   padding: 20px;
-}
-
-
-
-
-.custom-dropdown {
-  min-width: 300px;
-  padding: 12px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-
-  .el-textarea {
-    margin-bottom: 16px;
-  }
-
-  .dropdown-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-  }
 }
 
 </style>
