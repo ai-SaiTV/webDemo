@@ -23,10 +23,36 @@
         <el-row :gutter="24" justify="center" class="scroll-container">
           <div class="floating-button">
 
-            <el-button type="primary" @click="handleNext">
+            <!-- <el-button type="primary" @click="handleNext">
+              <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
+              优化
+            </el-button> -->
+
+            <el-dropdown
+            trigger="click"
+            placement="bottom-end"  
+            @visible-change="handleDropdownChange"
+          >
+            <el-button type="primary">
               <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
               优化
             </el-button>
+            <template #dropdown>
+              <el-dropdown-menu class="custom-dropdown">
+                <el-input 
+                  v-model="optimizationSuggestion" 
+                  type="textarea" 
+                  :rows="4" 
+                  placeholder="你希望如何编写或优化提示词"
+                  resize="none"
+                />
+                <div class="dropdown-footer">
+                  <el-button @click="handleCancel">取消</el-button>
+                  <el-button type="primary" @click="handleConfirm">确认</el-button>
+                </div>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
 
           </div>
           <el-form-item label=" ">
@@ -80,17 +106,23 @@
               <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
               优化
             </el-button>
+            <el-dialog v-model="dialogVisible" 
+            :modal="false" 
+            :close-on-click-modal="false" 
+            :append-to-body="true" 
+            class="custom-dialog"
+            style="position: absolute; top: 0px; left: 0px;">
+              <el-input v-model="optimizationSuggestion" type="textarea" :rows="4" placeholder="你希望如何编写或优化提示词" resize="none" />
+              <template #footer>
+                <div class="dialog-footer">
+                  <el-button @click="handleCancel">取消</el-button>
+                  <el-button type="primary" @click="handleConfirm">确认</el-button>
+                </div>
+              </template>
+            </el-dialog>
 
           </div>
-          <el-dialog v-model="dialogVisible" title="优化提示" width="30%" center :close-on-click-modal="false">
-            <el-input v-model="inputText" type="textarea" :rows="4" placeholder="你希望如何编写或优化提示词" resize="none" />
-            <template #footer>
-              <div class="dialog-footer">
-                <el-button @click="handleCancel">取消</el-button>
-                <el-button type="primary" @click="handleConfirm">确认</el-button>
-              </div>
-            </template>
-          </el-dialog>
+          
 
           <el-form-item label=" ">
             <div v-if="!isForm1Editing">
@@ -259,22 +291,22 @@ const imageStyle = computed(() => ({
 // };
 
 
+
 // 控制 Dialog 显示
 const dialogVisible = ref(false);
 
 // 存储用户输入的优化建议
 const optimizationSuggestion = ref('');
 
-// 打开 Dialog
-const handleNext = () => {
-  
-  dialogVisible.value = true;
-  console.log('dialogVisible:', dialogVisible.value);
-};
+// // 打开 Dialog
+// const handleNext = () => {
+//   dialogVisible.value = true;
+//   console.log('dialogVisible:', dialogVisible.value);
+// };
 
 // 提交优化建议
 const handleConfirm = () => {
-  console.log('优化建议：', optimizationSuggestion.value);
+  console.log('ed_input_submit:', optimizationSuggestion.value);
   dialogVisible.value = false;
   optimizationSuggestion.value = ''; // 清空输入
 };
@@ -399,4 +431,26 @@ img:hover {
 :deep(.el-dialog__body) {
   padding: 20px;
 }
+
+
+
+
+.custom-dropdown {
+  min-width: 300px;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  .el-textarea {
+    margin-bottom: 16px;
+  }
+
+  .dropdown-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}
+
 </style>
