@@ -95,7 +95,7 @@
     <div class="overlay-content" @click.stop>
       <!-- <div class="markdown-container"> -->
         <!-- 渲染 Markdown 内容 -->
-        <PDF src="https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf" /> // npm i pdf-vue3
+        <PDF src="https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf" />  正在加载中.....
         <!-- <div v-html="parsedExercise" class="markdown-content"></div> -->
       <!-- </div> -->
     </div>
@@ -108,7 +108,6 @@ import { parseMarkdown, parseMarkdownList_ex, parseMarkdownList_re } from '@/uti
 import { sessionId, DataThisSession } from './DashCompoents.ts';
 import { storageService } from '@/services/storage/storageService';
 import PDF from "pdf-vue3";
-
 const generatedContent = ref({
   lessonPlan: {
     objectives: [],
