@@ -10,21 +10,33 @@
         <el-card class="upload-card">
           <template #header>
             <div class="card-header">
-              <span>成绩单导入</span>
-              <el-select v-model="selectedClassId" placeholder="选择班级" @change="reloadClassData">
+              <div>成绩单导入</div>
+              <el-select v-model="selectedClassId" placeholder="选择班级" @change="reloadClassData" style="width: 80%;">
                 <el-option v-for="class_ in classes" :key="class_.id" :label="class_.name" :value="class_.id" />
               </el-select>
+              <!-- <input ref="uploadMdRef" type="file" accept=".md" style="display: none" @change="handleExcelUpload" />
+              <el-button type="primary" @click="uploadMdRef.click()">
+                <el-icon>
+                  <Upload />
+                </el-icon>
+                上传试卷
+              </el-button> -->
             </div>
           </template>
           <div class="upload-area">
-            <input ref="uploadRef" type="file" accept=".xlsx,.xls" style="display: none" @change="handleExcelUpload" />
-            <el-button type="primary" @click="uploadRef.click()">
-              <el-icon>
-                <Upload />
-              </el-icon>
-              上传成绩单
-            </el-button>
-            <p class="upload-tip">支持.xlsx或.xls格式，请确保第一列为学生姓名，后续列为题目分数</p>
+            <div class="upload-transcript">
+              <input ref="uploadMdRef" type="file" accept=".md" style="display: none" @change="handleFileUpload" />
+              <el-button type="primary" @click="uploadMdRef.click()">
+                <el-icon><Upload /></el-icon>
+                上传试卷
+              </el-button>
+              <input ref="uploadExcelRef" type="file" accept=".xlsx,.xls" style="display: none" @change="handleExcelUpload" />
+              <el-button type="primary" @click="uploadExcelRef.click()">
+                <el-icon><Upload /></el-icon>
+                上传成绩单
+              </el-button>
+            </div>
+            <p class="upload-tip">试卷支持.md格式。成绩单支持.xlsx或.xls格式（确保第一列为学生姓名，后续列为题目分数）</p>
           </div>
         </el-card>
       </el-col>
@@ -48,7 +60,6 @@
         </el-card>
       </el-col>
     </el-row>
-
     <!-- 数据分析区域 -->
     <template v-if="1">
       <!-- 图表分析 -->
@@ -278,7 +289,12 @@ interface Class {
 const performanceChartRef = ref<HTMLElement>();
 const questionAnalysisChartRef = ref<HTMLElement>();
 const studentPerformanceChartRef = ref<HTMLElement>();
-const uploadRef = ref();
+const uploadExcelRef = ref();
+const uploadMdRef =ref()
+
+const markdownContent = ref<string | null>(null);
+const parsedMarkdown = ref<string | null>(null); 
+
 const tableData = ref<Student[]>([]);
 const questions = ref<Question[]>([]);
 const showAIAnalysis = ref(false);
@@ -330,6 +346,8 @@ const studentAnalysis = ref({
   trend: [] as { date: string; score: number }[],
   recommendations: [] as string[],
 });
+
+
 
 // 处理Excel文件上传
 const handleExcelUpload = (event: Event) => {
@@ -732,8 +750,16 @@ onMounted(() => {
   .upload-card {
     .card-header {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-start;
       align-items: center;
+    }
+
+    .upload-transcript{
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      gap: 30px;
+
     }
 
     .upload-area {
