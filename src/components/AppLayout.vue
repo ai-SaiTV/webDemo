@@ -42,7 +42,7 @@ const toggleCollapse = () => {
   <el-container class="layout-container">
     <el-aside :width="isCollapse ? '64px' : '200px'" class="aside">
       <div class="logo" style="cursor: pointer;">
-        <img src="/vite.svg" alt="Logo" class="logo-img" />
+        <img src="/A.png" alt="Logo" class="logo-img" />
         <span v-show="!isCollapse && !isAnimating" @click="router.push('/')">智慧备课平台</span>
       </div>
       <el-menu
