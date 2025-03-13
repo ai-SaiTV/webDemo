@@ -27,7 +27,7 @@
         </template>
         <div class="mind-map">
           <img :src="generatedContent.mindMap.preview" alt="思维导图"
-            @click="previewMindMap">
+            @click="previewMindMap" style="width: 100%; height: auto; display: block;">
         </div>
       </el-card>
     </el-col>
@@ -95,7 +95,7 @@
     <div class="overlay-content" @click.stop>
       <!-- <div class="markdown-container"> -->
         <!-- 渲染 Markdown 内容 -->
-        <PDF src="https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf" /> // npm i pdf-vue3
+        <PDF src="https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf" />  正在加载中.....
         <!-- <div v-html="parsedExercise" class="markdown-content"></div> -->
       <!-- </div> -->
     </div>
@@ -108,7 +108,6 @@ import { parseMarkdown, parseMarkdownList_ex, parseMarkdownList_re } from '@/uti
 import { sessionId, DataThisSession } from './DashCompoents.ts';
 import { storageService } from '@/services/storage/storageService';
 import PDF from "pdf-vue3";
-
 const generatedContent = ref({
   lessonPlan: {
     objectives: [],
@@ -207,7 +206,7 @@ onMounted(() => {
 
   .result-card {
     height: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 200px;
 
     .card-header {
       display: flex;
@@ -220,6 +219,12 @@ onMounted(() => {
         color: #1f2937;
       }
     }
+    .mind-map {
+    img {
+      width: 50%;
+      height: 10%;
+    }
+  }
   }
 
   .lesson-plan {
@@ -306,10 +311,6 @@ onMounted(() => {
   }
   .mt-20 {
     margin-top: 20px;
-  }
-  .mind-map {
-    width: 100%;
-    cursor: pointer;
   }
 }
 

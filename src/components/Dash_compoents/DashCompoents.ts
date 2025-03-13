@@ -165,10 +165,10 @@ export const nextStep = async () => {
 
     // 闭包保存当前步骤
     const currentStep = activeStep.value;
-    interface ProgressInterval {
-        elapsedTime: number;
-        progressRatio: number;
-    }
+    // interface ProgressInterval {
+    //     elapsedTime: number;
+    //     progressRatio: number;
+    // }
 
     stopPollingWatch = watch(() => isPolling.value, async (newPolling: boolean) => {
         if (newPolling) {
