@@ -84,7 +84,7 @@ const toggleCollapse = () => {
         <div class="header-right">
           <el-dropdown>
             <span class="user-info">
-              <el-avatar size="small" />
+              <el-avatar size="small"/>
               教师用户
             </span>
             <template #dropdown>
