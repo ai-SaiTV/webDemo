@@ -121,6 +121,15 @@ export default defineComponent({
             this.isPDFVisible = false;
             this.isVideoVisible = false;
         },
+
+        closePDFPreview() {
+            this.isPDFVisible = false;
+        },
+
+        closeVideoPreview() {
+            this.isVideoVisible = false;
+        },
+
         openAddBookModal() {
             this.isAddBookModalVisible = true;
         },
@@ -167,10 +176,20 @@ export default defineComponent({
             this.closeAddBookModal();
         },
         previewPDF() {
-            this.isPDFVisible = true;
+            if (this.isPDFVisible) {
+                this.closePDFPreview(); 
+            } else {
+                this.isPDFVisible = true; 
+                this.isVideoVisible = false;
+            }
         },
         previewVideo() {
-            this.isVideoVisible = true;
+            if (this.isVideoVisible) {
+            this.closeVideoPreview(); 
+            } else {
+                this.isVideoVisible = true; 
+                this.isPDFVisible = false;
+            }
         },
         handleVideoError() {
             ElMessage.error('视频加载失败，请检查文件格式或网络连接');
@@ -262,18 +281,15 @@ export default defineComponent({
                 <p><strong>ISBN：</strong>{{ selectedBook.isbn }}</p>
                 <p><strong>所有者：</strong>{{ selectedBook.owner }}</p>
                 <p><strong>描述：</strong>{{ selectedBook.description || '暂无描述' }}</p>
-                <div v-if="selectedBook.pdf || selectedBook.video" style="display: flex; gap: 10px;justify-content: center;margin: 10px 0;
-">
-                    <button v-if="selectedBook.pdf" @click="previewPDF">教材预览</button>
-                    <button v-if="selectedBook.video" @click="previewVideo">视频预览</button>
+                <div v-if="selectedBook.pdf || selectedBook.video" style="display: flex; gap: 10px; justify-content: center; margin: 10px 0;">
+                    <button v-if="selectedBook.pdf" @click="previewPDF">{{ isPDFVisible ? '关闭教材' : '教材预览' }}</button>
+                    <button v-if="selectedBook.video" @click="previewVideo">{{ isVideoVisible ? '关闭视频' : '视频预览' }}</button>
                 </div>
-
                 <div v-if="isPDFVisible" class="pdf-container">
                     <iframe v-if="selectedBook.pdf" :src="selectedBook.pdf" class="pdf-viewer" frameborder="0"></iframe>
                 </div>
                 <div v-if="isVideoVisible" class="video-container">
-                    <video v-if="selectedBook.video" :src="selectedBook.video" controls class="video-viewer"
-                        @error="handleVideoError"></video>
+                    <video v-if="selectedBook.video" :src="selectedBook.video" controls class="video-viewer" @error="handleVideoError"></video>
                 </div>
                 <button @click="closeModal">关闭</button>
             </div>
@@ -371,31 +387,26 @@ body {
 }
 
 .pdf-container {
+    position: relative; 
     margin: 20px 0;
     width: 100%;
-    height: 500px;
+    height: 630px;
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.pdf-viewer {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
 }
 
 .video-container {
+    position: relative; 
     margin: 20px 0;
     width: 100%;
-    height: 600px;
+    height: 630px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.video-viewer {
+.pdf-viewer, .video-viewer {
     width: 100%;
     height: 100%;
     object-fit: contain;
@@ -453,7 +464,8 @@ body {
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
     text-align: center;
     position: relative;
-    overflow: hidden;
+    overflow: hidden; 
+    max-height: 100%;
 }
 
 .modal-content h3 {
