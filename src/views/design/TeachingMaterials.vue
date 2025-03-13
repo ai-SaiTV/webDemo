@@ -177,17 +177,17 @@ export default defineComponent({
         },
         previewPDF() {
             if (this.isPDFVisible) {
-                this.closePDFPreview(); // 如果已经打开，关闭预览
+                this.closePDFPreview(); 
             } else {
-                this.isPDFVisible = true; // 否则打开预览
+                this.isPDFVisible = true; 
                 this.isVideoVisible = false;
             }
         },
         previewVideo() {
             if (this.isVideoVisible) {
-            this.closeVideoPreview(); // 如果已经打开，关闭预览
+            this.closeVideoPreview(); 
             } else {
-                this.isVideoVisible = true; // 否则打开预览
+                this.isVideoVisible = true; 
                 this.isPDFVisible = false;
             }
         },
@@ -282,8 +282,8 @@ export default defineComponent({
                 <p><strong>所有者：</strong>{{ selectedBook.owner }}</p>
                 <p><strong>描述：</strong>{{ selectedBook.description || '暂无描述' }}</p>
                 <div v-if="selectedBook.pdf || selectedBook.video" style="display: flex; gap: 10px; justify-content: center; margin: 10px 0;">
-                    <button v-if="selectedBook.pdf" @click="previewPDF">教材预览</button>
-                    <button v-if="selectedBook.video" @click="previewVideo">视频预览</button>
+                    <button v-if="selectedBook.pdf" @click="previewPDF">{{ isPDFVisible ? '关闭教材' : '教材预览' }}</button>
+                    <button v-if="selectedBook.video" @click="previewVideo">{{ isVideoVisible ? '关闭视频' : '视频预览' }}</button>
                 </div>
                 <div v-if="isPDFVisible" class="pdf-container">
                     <iframe v-if="selectedBook.pdf" :src="selectedBook.pdf" class="pdf-viewer" frameborder="0"></iframe>
