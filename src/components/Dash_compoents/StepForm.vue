@@ -223,7 +223,7 @@ import {
   response, chatMessages, handleSubmit, isPolling, chatConfig
 } from '@/components/api_compoents/api_handler';
 
-import { generateResource, isForm1Editing,isProcessing} from './DashCompoents';
+import { EditSubmit, generateResource, isForm1Editing,isProcessing} from './DashCompoents';
 //scss
 import '@/components/Dash_compoents/StepForm.scss';
 
@@ -291,19 +291,8 @@ const imageStyle = computed(() => ({
   cursor: isHovering.value ? 'zoom-in' : 'default',
 }));
 
-// const generatePlan = async () => {
-//   isGenerating.value = true;
-//   setTimeout(() => {
-//     isProcessing.value = false;
-//     showResult.value = true;
-//     console.log(showResult.value);
-//     emit('update:showResult', showResult.value);
-//   }, props.endWaitingTime);
-// };
 
-
-
-// 控制 Dialog 显示
+// 控制 Dropdown 显示
 const isDropdownVisible = ref(false);
 
 // 存储用户输入的优化建议
@@ -317,6 +306,7 @@ const optimizationSuggestion = ref('');
 
 // 提交优化建议
 const handleConfirm = () => {
+  EditSubmit();
   console.log('ed_input_submit:', optimizationSuggestion.value);
   // isDropdownVisible.value = false;
   optimizationSuggestion.value = ''; // 清空输入
@@ -327,24 +317,20 @@ const handleCancel = () => {
   isDropdownVisible.value = false;
   optimizationSuggestion.value = ''; // 清空输入
 };
-// 关闭 Dialog 前的回调
-const handleClose = (done) => {
-  done();
-}
+
+
+// // 关闭 Dialog 前的回调
+// const handleClose = (done) => {
+//   done();
+// }
 
 </script>
 
 
 
+
+
 <style scoped lang="scss">
 
-
-:deep(.el-dialog) {
-  border-radius: 8px;
-}
-
-:deep(.el-dialog__body) {
-  padding: 20px;
-}
 
 </style>

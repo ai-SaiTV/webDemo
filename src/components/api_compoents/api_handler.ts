@@ -154,6 +154,90 @@ export const handleSubmit = async (sessionId: string, step: number) => {
     }
 };
 
+export const handleSubmitEdit = async (sessionId: string, step: number) => {
+    if (sessionId !== "-1") {
+        // 保存用户消息
+        await storageService.updateMessages(sessionId, {
+            role: 'user',
+            content: chatConfig.value.message
+        });
+
+        if (!chatConfig.value.apiKey || !chatConfig.value.message) {
+            console.log('chatConfig not complete');
+            return;
+        }
+
+        try {
+            const initialResponse = await sendMessage(
+                chatConfig.value.apiKey, 
+                chatConfig.value.botId[step - 1],    //*
+                chatConfig.value.message
+            );
+            await startPolling(chatConfig.value.apiKey, initialResponse);
+
+            // 清理之前的 watcher
+            if (unwatch) {
+                unwatch();
+                unwatch = null;
+            }
+
+            const currentStep = step; // 通过闭包捕获当前 step
+            unwatch = watch(() => chatMessages.value, async (newMessages) => {
+                if (newMessages?.data) {
+                    console.log('newMessages:', newMessages)
+                    interface ChatMessage {
+                        type?: string;
+                        content_type?: string;
+                        role?: string;
+                        content?: string;
+                    }
+                    
+                    const lastMessage: ChatMessage = newMessages.data.find((msg: ChatMessage) => 
+                        (msg.type === 'answer' && msg.content_type === 'text')) || newMessages.data[0];
+                    if (lastMessage.role === 'assistant') {
+                        await storageService.updateMessages(sessionId, {
+                            role: 'assistant',
+                            content: lastMessage.content || ''
+                        });
+
+                        switch (currentStep) { // 使用闭包中的 currentStep
+                            case 1:
+                                // 修改教案
+                                await storageService.updateEditZone(sessionId, {
+                                    type: 'teaching_plan',
+                                    text: lastMessage.content || '',
+                                });
+                                break;
+                            case 2:
+                                // 修改课堂设计
+                                await storageService.updateEditZone(sessionId, {
+                                    type: 'class_design',
+                                    text: lastMessage.content || '',
+                                });
+                                break;
+                            
+                            default:
+                                break;
+                        }
+
+                        // 处理完成后，停止本次 watcher
+                        if (unwatch) {
+                            unwatch();
+                            unwatch = null;
+                        }
+                    }
+                }
+            }, { deep: true });
+
+            return storageService.getSessionData(sessionId) || null;
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
+    }
+};
+
+
 
 
 export const handleSubmitParallel = async (sessionId: string, botIndices: number[]) => {
@@ -232,6 +316,12 @@ export const handleSubmitParallel = async (sessionId: string, botIndices: number
         return null;
     }
 };
+
+
+
+
+
+
 
 
 

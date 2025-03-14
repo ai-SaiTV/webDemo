@@ -7,7 +7,11 @@ export interface StorageData {
             content: string
             timestamp: number
         }[]
-    }
+    },
+    editZone: {
+        type: 'teaching_plan' | 'class_design' | 'None',
+        text: string
+    },
     resources: {
         // 1. 教案纯文本
         teaching_plan: {

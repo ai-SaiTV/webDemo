@@ -23,7 +23,7 @@
               </el-button> -->
             </div>
           </template>
-          <div class="upload-area">
+          <div class="upload-area" v-if="selectedClassId">
             <div class="upload-transcript">
               <input ref="uploadMdRef" type="file" accept=".md" style="display: none" @change="handleFileUpload" />
               <el-button type="primary" @click="uploadMdRef.click()">
@@ -38,6 +38,10 @@
             </div>
             <p class="upload-tip">试卷支持.md格式。成绩单支持.xlsx或.xls格式（确保第一列为学生姓名，后续列为题目分数）</p>
           </div>
+          <div class="upload-area" v-else>
+            <p class="upload-tip">请选择班级</p>
+          </div>
+
         </el-card>
       </el-col>
       <el-col :span="8">
@@ -61,7 +65,7 @@
       </el-col>
     </el-row>
     <!-- 数据分析区域 -->
-    <template v-if="1">
+    <template v-if="selectedClassId">
       <!-- 图表分析 -->
       <el-row :gutter="20" class="chart-row">
         <el-col :span="12">
@@ -148,10 +152,7 @@
 			<div v-else>
 				暂无学情分析
 			</div>
-
 		</div>
-
-        
       </el-card>
     </template>
 
@@ -246,7 +247,6 @@
               <el-icon><Star /></el-icon>
               {{ rec }}
             </li>
-
           </ul>
         </el-card>
       </div>
@@ -255,12 +255,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from "@vue/runtime-core";
+import { ref, onMounted, watch, computed} from "@vue/runtime-core";
 import * as echarts from "echarts";
 import * as XLSX from "xlsx";
 import { ElMessage } from "element-plus";
-
-
 
 interface Student {
   id: string;
@@ -284,6 +282,7 @@ interface Class {
   name: string;
   grade: string;
   students: Student[];
+  questions: Question[]; 
 }
 
 const performanceChartRef = ref<HTMLElement>();
@@ -306,24 +305,28 @@ const classes = ref<Class[]>([
     name: "一年级一班",
     grade: "一年级",
     students: [],
+    questions: [], // 初始化为空数组
   },
   {
     id: "2-3",
     name: "二年级三班",
     grade: "二年级",
     students: [],
+    questions: [], // 初始化为空数组
   },
   {
     id: "3-1",
     name: "三年级一班",
     grade: "三年级",
     students: [],
+    questions: [], // 初始化为空数组
   },
   {
     id: "4-2",
     name: "四年级二班",
     grade: "四年级",
     students: [],
+    questions: [], // 初始化为空数组
   },
 ]);
 
@@ -343,8 +346,6 @@ const studentAnalysis = ref({
   trend: [] as { date: string; score: number }[],
   recommendations: [] as string[],
 });
-
-
 
 // 处理Excel文件上传
 const handleExcelUpload = (event: Event) => {
@@ -373,74 +374,113 @@ const handleExcelUpload = (event: Event) => {
 
 // 处理Excel数据
 const processExcelData = (data: any[]) => {
-  const processedData: Student[] = [];
-  const questionCount = Object.keys(data[0]).length - 1;
+  const questionCount = Object.keys(data[0]).length - 1; // 第一列是姓名，其余是题目分数
+  // 获取当前班级
+  const currentClass = classes.value.find((c) => c.id === selectedClassId.value);
+  if (!currentClass) {
+    return;
+  }
 
-  questions.value = Array.from({ length: questionCount }, (_, i) => ({
+  // 清空当前班级的旧数据
+  currentClass.students = [];
+  currentClass.questions = []; // 清空旧的题目得分分析数据
+
+  // 初始化当前班级的题目数据
+  currentClass.questions = Array.from({ length: questionCount }, (_, i) => ({
     id: i + 1,
     correctRate: 0,
     averageScore: 0,
     maxScore: 0,
   }));
 
-  data.forEach((row, index) => {
+  // 遍历 Excel 数据，填充新数据
+  data.forEach((row, rowIndex) => {
     const scores = Array.from({ length: questionCount }, (_, i) =>
       Number(row[`题目${i + 1}`] || 0)
     );
     const total = scores.reduce((a, b) => a + b, 0);
 
-    processedData.push({
-      id: String(index + 1),
+    // 新增学生数据
+    const newStudent: Student = {
+      id: String(rowIndex + 1),
       name: row["姓名"],
       class: selectedClassId.value,
       scores,
       total,
       average: total / questionCount,
       rank: 0,
-    });
+    };
+    currentClass.students.push(newStudent);
 
+    // 更新当前班级的题目数据
     scores.forEach((score, index) => {
-      questions.value[index].maxScore = Math.max(
-        questions.value[index].maxScore,
-        score
-      );
-      questions.value[index].averageScore += score;
+      currentClass.questions[index].maxScore = Math.max(currentClass.questions[index].maxScore, score);
+      currentClass.questions[index].averageScore += score;
     });
   });
 
-  // 计算每个题目的平均得分（总分除以班级人数）
-  questions.value.forEach((q) => {
+  // 重新计算当前班级的题目平均得分
+  currentClass.questions.forEach((q) => {
     q.averageScore /= data.length;
+    q.correctRate = (q.averageScore / q.maxScore) * 100; // 计算正确率
   });
 
-  processedData.sort((a, b) => b.total - a.total);
-  processedData.forEach((student, index) => {
+  // 重新计算学生排名
+  currentClass.students.sort((a, b) => b.total - a.total);
+  currentClass.students.forEach((student, index) => {
     student.rank = index + 1;
   });
 
-  tableData.value = processedData;
-
-  // 更新班级学生列表
-  const currentClass = classes.value.find((c) => c.id === selectedClassId.value);
-  if (currentClass) {
-    currentClass.students = processedData;
-  }
+  // 更新全局数据
+  tableData.value = currentClass.students;
 
   // 更新图表和分析
   updateCharts();
   // generateAIAnalysis();
 };
-
 // 更新图表
 const updateCharts = () => {
-  if (performanceChartRef.value && questionAnalysisChartRef.value) {
-    const performanceChart = echarts.init(performanceChartRef.value);
-    const questionAnalysisChart = echarts.init(questionAnalysisChartRef.value);
+  const currentClass = classes.value.find((c) => c.id === selectedClassId.value);
+  if (!currentClass) {
+    return;
+  }
 
+  if (performanceChartRef.value && questionAnalysisChartRef.value) {
+    // 销毁旧实例
+    const performanceChart = echarts.getInstanceByDom(performanceChartRef.value);
+    const questionAnalysisChart = echarts.getInstanceByDom(questionAnalysisChartRef.value);
+
+    if (performanceChart) performanceChart.dispose();
+    if (questionAnalysisChart) questionAnalysisChart.dispose();
+
+    // 初始化新实例
+    const newPerformanceChart = echarts.init(performanceChartRef.value);
+    const newQuestionAnalysisChart = echarts.init(questionAnalysisChartRef.value);
+
+    // 更新题目得分分析图表
+    newQuestionAnalysisChart.setOption({
+      title: { text: "题目得分分析" },
+      tooltip: { trigger: "axis" },
+      legend: { data: ["平均得分"] },
+      xAxis: {
+        type: "category",
+        data: currentClass.questions.map((q) => `题目${q.id}`),
+      },
+      yAxis: { type: "value" },
+      series: [
+        {
+          name: "平均得分",
+          type: "line",
+          data: currentClass.questions.map((q) => q.averageScore.toFixed(2)),
+        },
+      ],
+    });
+
+    // 更新成绩分布图表
     const scoreRanges = ["90-100", "80-89", "70-79", "60-69", "60以下"];
     const scoreCounts = new Array(5).fill(0);
 
-    tableData.value.forEach((student) => {
+    currentClass.students.forEach((student) => {
       const total = student.total;
       if (total >= 90) scoreCounts[0]++;
       else if (total >= 80) scoreCounts[1]++;
@@ -449,7 +489,7 @@ const updateCharts = () => {
       else scoreCounts[4]++;
     });
 
-    performanceChart.setOption({
+    newPerformanceChart.setOption({
       title: { text: "成绩分布" },
       tooltip: {},
       xAxis: { data: scoreRanges },
@@ -463,24 +503,6 @@ const updateCharts = () => {
         },
       ],
     });
-
-    questionAnalysisChart.setOption({
-      title: { text: "题目得分分析" },
-      tooltip: { trigger: "axis" },
-      legend: { data: ["平均得分"] },
-      xAxis: {
-        type: "category",
-        data: questions.value.map((q) => `题目${q.id}`),
-      },
-      yAxis: { type: "value" },
-      series: [
-        {
-          name: "平均得分",
-          type: "line",
-          data: questions.value.map((q) => q.averageScore.toFixed(2)),
-        },
-      ],
-    }, true); // 添加 notMerge 参数
   }
 };
 
@@ -503,8 +525,6 @@ const sessionId = ref("");
 
 // 生成AI分析
 const generateAIAnalysis = async () => {
-
-
 
   // 计算题目正确率和平均分
   questions.value.forEach((q) => {
@@ -608,9 +628,6 @@ const generateStudentAnalysis = async (student: Student) => {
     .filter((q) => q.score < q.maxScore * 0.5)
     .map((q) => `${q.question}得分较低，为${q.score}分，需要加强练习。`);
 
-
-  
-
   // 学习建议：针对待提升的题目提出建议
   const recommendations = [
     `针对得分较低的题目，建议多做相关练习题，巩固知识点。`,
@@ -679,6 +696,7 @@ const viewStudentDetails = (student: Student) => {
 // 获取当前选中班级的学生列表
 const currentClassStudents = computed(() => {
   const currentClass = classes.value.find((c) => c.id === selectedClassId.value);
+  console.log("currentClassStudents:", currentClass?.students);
   return currentClass ? currentClass.students : [];
 });
 
@@ -704,6 +722,7 @@ const reloadClassData = (classId: string) => {
 // 初始化时加载默认班级的数据
 onMounted(() => {
   reloadClassData(selectedClassId.value);
+  updateCharts();
 });
 </script>
 
