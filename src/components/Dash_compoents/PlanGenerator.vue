@@ -18,7 +18,7 @@
 <script setup>
 import { ref } from '@vue/runtime-core';
 import StepProgress from './StepProgress.vue';
-import {
+import { isProcessing } from './DashCompoents';import {
   isProcessing, progress,
   showResult, progressStatus,
   isEditing,

@@ -223,8 +223,7 @@ import {
   response, chatMessages, handleSubmit, isPolling, chatConfig
 } from '@/components/api_compoents/api_handler';
 
-import { EditSubmit, generateResource, isForm1Editing } from './DashCompoents';
-
+import { EditSubmit, generateResource, isForm1Editing,isProcessing} from './DashCompoents';
 //scss
 import '@/components/Dash_compoents/StepForm.scss';
 
