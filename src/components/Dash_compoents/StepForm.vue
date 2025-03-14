@@ -243,9 +243,8 @@ const props = defineProps({
   isForm1Editing: Boolean,  //Form1编辑状态
 });
 
-const showResult = ref(false);
 const isHovering = ref(false);
-const isProcessing = ref(false);
+
 
 const emit = defineEmits([
   'update:showResult',

@@ -224,7 +224,7 @@ export const handleKeydown = (event: KeyboardEvent) => {
     }
 };
 
-import { parseMarkdown } from '../../utils/markdownUtils';
+import { parseMarkdown } from '@/utils/markdownUtils';
 
 
 const turnStep = async (step: number) => {
