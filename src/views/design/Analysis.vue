@@ -152,10 +152,7 @@
 			<div v-else>
 				暂无学情分析
 			</div>
-
 		</div>
-
-        
       </el-card>
     </template>
 
@@ -263,8 +260,6 @@ import * as echarts from "echarts";
 import * as XLSX from "xlsx";
 import { ElMessage } from "element-plus";
 
-
-
 interface Student {
   id: string;
   name: string;
@@ -351,8 +346,6 @@ const studentAnalysis = ref({
   trend: [] as { date: string; score: number }[],
   recommendations: [] as string[],
 });
-
-
 
 // 处理Excel文件上传
 const handleExcelUpload = (event: Event) => {
@@ -532,8 +525,6 @@ const sessionId = ref("");
 
 // 生成AI分析
 const generateAIAnalysis = async () => {
-
-
 
   // 计算题目正确率和平均分
   questions.value.forEach((q) => {
