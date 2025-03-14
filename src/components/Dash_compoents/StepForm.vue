@@ -223,8 +223,7 @@ import {
   response, chatMessages, handleSubmit, isPolling, chatConfig
 } from '@/components/api_compoents/api_handler';
 
-import { generateResource, isForm1Editing } from './DashCompoents';
-
+import { generateResource, isForm1Editing,isProcessing} from './DashCompoents';
 //scss
 import '@/components/Dash_compoents/StepForm.scss';
 
@@ -245,7 +244,7 @@ const props = defineProps({
 
 const showResult = ref(false);
 const isHovering = ref(false);
-const isProcessing = ref(false);
+
 
 const emit = defineEmits([
   'update:showResult',

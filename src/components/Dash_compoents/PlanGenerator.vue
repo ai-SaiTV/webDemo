@@ -18,10 +18,10 @@
 <script setup>
 import { ref } from '@vue/runtime-core';
 import StepProgress from './StepProgress.vue';
-
+import { isProcessing } from './DashCompoents';
 // 组件的属性
 const showResult = ref(false); // 控制是否显示结果
-const isProcessing = ref(false); // 控制是否显示进度条
+
 const progress = ref(0); // 进度百分比
 const progressStatus = ref("active"); // 进度条状态
 const activeStep = ref(0); // 当前步骤
