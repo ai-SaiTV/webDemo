@@ -382,11 +382,9 @@ const handleExcelUpload = (event: Event) => {
 // 处理Excel数据
 const processExcelData = (data: any[]) => {
   const questionCount = Object.keys(data[0]).length - 1; // 第一列是姓名，其余是题目分数
-
   // 获取当前班级
   const currentClass = classes.value.find((c) => c.id === selectedClassId.value);
   if (!currentClass) {
-    ElMessage.error("未找到当前班级，请重新选择班级");
     return;
   }
 
@@ -451,7 +449,6 @@ const processExcelData = (data: any[]) => {
 const updateCharts = () => {
   const currentClass = classes.value.find((c) => c.id === selectedClassId.value);
   if (!currentClass) {
-    ElMessage.error("未找到当前班级，请重新选择班级");
     return;
   }
 
