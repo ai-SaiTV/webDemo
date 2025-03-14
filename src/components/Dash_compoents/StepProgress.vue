@@ -10,9 +10,10 @@
   
 <script setup>
 import {
-  isProcessing, progress,
-  showResult, progressStatus,
-  isEditing,
-} from '@/components/Dash_compoents/DashCompoents.ts'
+  isProcessing, isEditing,
+  progressStatus, gradientColor, progress
+
+} from "@/components/Dash_compoents/DashCompoents.ts"
+
 
 </script>

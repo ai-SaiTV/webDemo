@@ -30,7 +30,7 @@
             <!-- "点击下一步"事件 -->
             <el-button v-if="activeStep < steps.length - 1" type="primary" @click="nextStep" :loading="isProcessing"
               :disabled="isProcessing || !form.unit || isEditing">
-              {{ isProcessing ? '正在处理中...' : '下一步' }}
+              {{ isProcessing ? '正在生成中...' : '下一步' }}
             </el-button>
           </div>
         </template>

@@ -132,9 +132,11 @@ const initializeData = async () => {
 
     // 解析资源列表
     const resourcesMarkdown = DataThisSession.value.resources.courseware.Courseware[0].url || '';
-    console.log(resourcesMarkdown);
+    console.log('resource: ',resourcesMarkdown);
+
     const resources = parseMarkdownList_re(resourcesMarkdown);
-    console.log(resources);
+
+
 
     const exercises = DataThisSession.value.resources.courseware.exercises[0].url || "";
     const parsedExercise = parseMarkdownList_ex(exercises);

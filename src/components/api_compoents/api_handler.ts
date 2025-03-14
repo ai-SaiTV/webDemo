@@ -262,7 +262,7 @@ export const handleSubmitParallel = async (sessionId: string, botIndices: number
 
                 let stopWatch = watch(() => chatInstance.chatMessages.value, async (newMessages) => {
                     if (newMessages?.data) {
-                        console.log(`Bot ${botIndex} messages:`, newMessages);
+                        console.log(`Step ${botIndex} result:`, newMessages);
                         const lastMessage = newMessages.data.find((msg: Message) => 
                             msg.type === 'answer' && msg.content_type === 'text'
                         );

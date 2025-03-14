@@ -17,7 +17,7 @@ export const parseMarkdown = (content: string): MarkdownParserResult => {
 };
 
 // utils/markdownUtils.ts
-export function parseMarkdownList_re(markdown: string): { type: string, title: string, url: string }[] {
+export function parseMarkdownList_re(markdown: string): { type: string, title: string, url: string }[]{
   // 新正则表达式：匹配类型、名称、链接三部分
   const regex = /- #(.*?)#\[(.*?)\]\((.*?)\)/g;
   const matches = [];

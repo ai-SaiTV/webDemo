@@ -289,7 +289,7 @@ export const EditSubmit = async () => {
             chatConfig.value.message = DataThisSession.value?.resources.class_design.text || "";
             break;
         default:
-            chatConfig.value.message = "你好嘛？"; // 默认值
+            chatConfig.value.message = ""; // 默认值
     }
 
 
