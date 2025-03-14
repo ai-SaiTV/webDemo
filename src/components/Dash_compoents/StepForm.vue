@@ -203,7 +203,7 @@
     </div>
     <!-- 步骤4：生成结果 -->
     <div v-if="activeStep === 4" class="generation-step">
-      <el-result icon="success" title="准备就绪" sub-title="已收集所有必要信息，点击下方按钮开始生成教案">
+      <el-result icon="success" title="准备就绪" sub-title="根据教案、课堂设计和思维导图，推荐和生成资源">
         <template #extra>
           <el-button type="primary" size="large" :loading="isGenerating" @click="generateResource">
             {{ isGenerating ? '正在生成...' : '开始生成' }}

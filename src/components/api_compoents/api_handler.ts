@@ -235,6 +235,12 @@ export const handleSubmitParallel = async (sessionId: string, botIndices: number
 
 
 
+
+
+
+
+
+
 export const handleSubmit_analysis = async (sessionId: string, botid: number): Promise<analysisRes | null> => {
     if (!sessionId) {
         console.log('Invalid sessionId');

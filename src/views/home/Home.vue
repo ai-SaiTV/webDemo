@@ -35,7 +35,7 @@ export default {
     <AWaves/>
     <nav class="navbar">
       <div class="logo">
-        <img src="/vite.svg" alt="Logo" />
+        <img src="/A.png" alt="Logo" />
         <span>智慧备课平台</span>
       </div>
       <div class="nav-links">
