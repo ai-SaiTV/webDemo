@@ -12,6 +12,7 @@ export class StorageService {
       id: Date.now().toString(),  //用时间戳作为id
       timestamp: Date.now(),      
       conversation: { messages: [] },
+      editZone: { type: 'None', text: '' },
       resources: { 
         teaching_plan: { text: '' },
         class_design: { text: '' },
@@ -99,6 +100,22 @@ export class StorageService {
       }
       if (data.exercises) {
         session.resources.courseware.exercises = data.exercises
+      }
+      session.metadata.lastUpdate = Date.now()
+      await this.saveToFile()
+    }
+  }
+
+
+  // 更新编辑暂存区
+  async updateEditZone(sessionId: string, data: { 
+    type: 'teaching_plan' | 'class_design' | 'None', text: string }) {
+    console.log('更新编辑暂存区:', sessionId, data)
+    const session = this.data.value.find(s => s.id === sessionId)
+    if (session) {
+      session.editZone = {
+        type: data.type,
+        text: data.text,
       }
       session.metadata.lastUpdate = Date.now()
       await this.saveToFile()

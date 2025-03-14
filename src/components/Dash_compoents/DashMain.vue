@@ -29,7 +29,7 @@
             <el-button v-if="activeStep > 0" @click="prevStep">上一步</el-button>
             <!-- "点击下一步"事件 -->
             <el-button v-if="activeStep < steps.length - 1" type="primary" @click="nextStep" :loading="isProcessing"
-              :disabled="isProcessing || !form.unit">
+              :disabled="isProcessing || !form.unit || isEditing">
               {{ isProcessing ? '正在处理中...' : '下一步' }}
             </el-button>
           </div>
@@ -63,7 +63,8 @@ import {
   Mindimgsrc, imageStyle,handleKeydown,
   form, form1, progressStatus,
   isProcessing, progress,
-  generatedContent, gradientColor, waitingTime
+  generatedContent, gradientColor, waitingTime,
+  isEditing
 } from './DashCompoents';
 
 </script>

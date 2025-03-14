@@ -11,7 +11,8 @@ import { watch } from '@vue/runtime-core';
 
 // ------------------------------------------------------------>> api
 import {
-    handleSubmit, handleSubmitParallel, isPolling, chatConfig
+    handleSubmit, handleSubmitParallel, isPolling, chatConfig,
+    handleSubmitEdit
 } from '@/components/api_compoents/api_handler';
 
 import { storageService } from '@/services/storage/storageService';
@@ -28,6 +29,7 @@ export const activeStep = ref(0);
 export const isGenerating = ref(false);
 export const showResult = ref(false);
 export const isProcessing = ref(false);
+export const isEditing = ref(false);
 export const isZoomed = ref(false);
 export const isForm1Editing = ref(false);
 export const isHovering = ref(false);
@@ -271,14 +273,15 @@ export const EditSubmit = async () => {
         stopPollingWatch = null;
     }
 
-    isProcessing.value = true;
+    //isProcessing.value = true;
+    isEditing.value = true;
     progress.value = 0;
     progressStatus.value = "active";
 
     // 根据当前步骤设置 chatConfig.message
     switch (activeStep.value) {
         case 0:
-            chatConfig.value.message = form.value.unit;
+            chatConfig.value.message = "nihaoma ??? ";
             break;
         case 1:
             chatConfig.value.message = DataThisSession.value?.resources.teaching_plan.text || "";
@@ -292,12 +295,11 @@ export const EditSubmit = async () => {
 
 
     // 调用 handleSubmit 提交当前步骤数据
-    const result = await handleSubmit(sessionId.value, activeStep.value);
+    const result = await handleSubmitEdit(sessionId.value, activeStep.value);
     DataThisSession.value = result || null;
+    console.log('DataThisSession.value', DataThisSession.value)
 
-    // 闭包保存当前步骤
-    const currentStep = activeStep.value;
-
+    
     // 监听 isPolling 状态变化
     stopPollingWatch = watch(
         () => isPolling.value,
@@ -322,19 +324,18 @@ export const EditSubmit = async () => {
                 clearInterval(progressInterval as ReturnType<typeof setInterval>);
                 progress.value = 100;
                 progressStatus.value = "success";
-                await turnStep(currentStep);
 
                 setTimeout(() => {
-                    isProcessing.value = false;
+                    isEditing.value = false;
                     progress.value = 0;
                     progressStatus.value = "active";
 
                     // 根据需求选择是否自动推进步骤
                     // 如果需要推进步骤：
-                    if (activeStep.value === currentStep) {
-                        activeStep.value++;
-                    }
-                    console.log("activeStep", activeStep.value);
+                    // if (activeStep.value === currentStep) {
+                    //     activeStep.value++;
+                    // }
+                    // console.log("activeStep", activeStep.value);
 
                     // 清理资源
                     if (stopPollingWatch) {
