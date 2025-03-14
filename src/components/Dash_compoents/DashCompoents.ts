@@ -153,11 +153,13 @@ export const nextStep = async () => {
             chatConfig.value.message = form.value.unit;
             break;
         case 1:
-            chatConfig.value.message = form1.value.requirements;
+            chatConfig.value.message = DataThisSession.value?.resources.teaching_plan.text || "";
             break;
         case 2:
-            chatConfig.value.message = form1.value.requirements;
+            chatConfig.value.message = DataThisSession.value?.resources.class_design.text || "";
             break;
+        default:
+            chatConfig.value.message = "你好嘛？"; // 默认值
     }
 
     const result = await handleSubmit(sessionId.value, activeStep.value);
@@ -258,6 +260,108 @@ export const prevStep = () => {
     }
 };
 
+
+export const EditSubmit = async () => {
+    if (activeStep.value >= steps.length - 1 || isUpdatingStep) return;
+    isUpdatingStep = true;
+
+    // 清理旧监听器
+    if (stopPollingWatch) {
+        stopPollingWatch();
+        stopPollingWatch = null;
+    }
+
+    isProcessing.value = true;
+    progress.value = 0;
+    progressStatus.value = "active";
+
+    // 根据当前步骤设置 chatConfig.message
+    switch (activeStep.value) {
+        case 0:
+            chatConfig.value.message = form.value.unit;
+            break;
+        case 1:
+            chatConfig.value.message = DataThisSession.value?.resources.teaching_plan.text || "";
+            break;
+        case 2:
+            chatConfig.value.message = DataThisSession.value?.resources.class_design.text || "";
+            break;
+        default:
+            chatConfig.value.message = "你好嘛？"; // 默认值
+    }
+
+
+    // 调用 handleSubmit 提交当前步骤数据
+    const result = await handleSubmit(sessionId.value, activeStep.value);
+    DataThisSession.value = result || null;
+
+    // 闭包保存当前步骤
+    const currentStep = activeStep.value;
+
+    // 监听 isPolling 状态变化
+    stopPollingWatch = watch(
+        () => isPolling.value,
+        async (newPolling: boolean) => {
+            if (newPolling) {
+                progress.value = 0;
+                progressStatus.value = "active";
+                let startTime = Date.now();
+                const duration = 20000;
+                const targetProgress = 97;
+
+                progressInterval = setInterval(() => {
+                    const elapsedTime = Date.now() - startTime;
+                    const progressRatio = elapsedTime / duration;
+                    progress.value = Math.min(targetProgress, progressRatio * targetProgress);
+
+                    if (elapsedTime >= duration) {
+                        clearInterval(progressInterval as ReturnType<typeof setInterval>);
+                    }
+                }, 50);
+            } else {
+                clearInterval(progressInterval as ReturnType<typeof setInterval>);
+                progress.value = 100;
+                progressStatus.value = "success";
+                await turnStep(currentStep);
+
+                setTimeout(() => {
+                    isProcessing.value = false;
+                    progress.value = 0;
+                    progressStatus.value = "active";
+
+                    // 根据需求选择是否自动推进步骤
+                    // 如果需要推进步骤：
+                    if (activeStep.value === currentStep) {
+                        activeStep.value++;
+                    }
+                    console.log("activeStep", activeStep.value);
+
+                    // 清理资源
+                    if (stopPollingWatch) {
+                        stopPollingWatch();
+                        stopPollingWatch = null;
+                    }
+                    isUpdatingStep = false;
+                }, 500);
+            }
+        },
+        { immediate: true }
+    );
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const generateResource = async () => {
     isGenerating.value = true;
     try {
@@ -305,6 +409,7 @@ export const generateResource = async () => {
         isGenerating.value = false;
     }
 };
+
 
 
 export const imageStyle = computed(() => ({
