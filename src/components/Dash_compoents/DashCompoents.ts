@@ -273,7 +273,6 @@ export const EditSubmit = async () => {
         stopPollingWatch = null;
     }
 
-    //isProcessing.value = true;
     isEditing.value = true;
     progress.value = 0;
     progressStatus.value = "active";
