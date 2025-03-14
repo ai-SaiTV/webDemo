@@ -23,7 +23,7 @@
               </el-button> -->
             </div>
           </template>
-          <div class="upload-area">
+          <div class="upload-area" v-if="selectedClassId">
             <div class="upload-transcript">
               <input ref="uploadMdRef" type="file" accept=".md" style="display: none" @change="handleFileUpload" />
               <el-button type="primary" @click="uploadMdRef.click()">
@@ -38,6 +38,10 @@
             </div>
             <p class="upload-tip">试卷支持.md格式。成绩单支持.xlsx或.xls格式（确保第一列为学生姓名，后续列为题目分数）</p>
           </div>
+          <div class="upload-area" v-else>
+            <p class="upload-tip">请选择班级</p>
+          </div>
+
         </el-card>
       </el-col>
       <el-col :span="8">
@@ -61,7 +65,7 @@
       </el-col>
     </el-row>
     <!-- 数据分析区域 -->
-    <template v-if="1">
+    <template v-if="selectedClassId">
       <!-- 图表分析 -->
       <el-row :gutter="20" class="chart-row">
         <el-col :span="12">
@@ -373,9 +377,16 @@ const handleExcelUpload = (event: Event) => {
 
 // 处理Excel数据
 const processExcelData = (data: any[]) => {
-  const processedData: Student[] = [];
-  const questionCount = Object.keys(data[0]).length - 1;
+  const questionCount = Object.keys(data[0]).length - 1; // 第一列是姓名，其余是题目分数
 
+  // 获取当前班级
+  const currentClass = classes.value.find((c) => c.id === selectedClassId.value);
+  if (!currentClass) {
+    ElMessage.error("未找到当前班级，请重新选择班级");
+    return;
+  }
+
+  // 初始化题目数据
   questions.value = Array.from({ length: questionCount }, (_, i) => ({
     id: i + 1,
     correctRate: 0,
@@ -383,48 +394,54 @@ const processExcelData = (data: any[]) => {
     maxScore: 0,
   }));
 
-  data.forEach((row, index) => {
+  // 遍历 Excel 数据，更新或新增学生数据
+  data.forEach((row) => {
+    const existingStudent = currentClass.students.find((s) => s.name === row["姓名"]);
     const scores = Array.from({ length: questionCount }, (_, i) =>
       Number(row[`题目${i + 1}`] || 0)
     );
     const total = scores.reduce((a, b) => a + b, 0);
 
-    processedData.push({
-      id: String(index + 1),
-      name: row["姓名"],
-      class: selectedClassId.value,
-      scores,
-      total,
-      average: total / questionCount,
-      rank: 0,
-    });
+    // 如果学生已存在，更新其成绩
+    if (existingStudent) {
+      existingStudent.scores = scores;
+      existingStudent.total = total;
+      existingStudent.average = total / questionCount;
+    } else {
+      // 如果学生不存在，新增学生
+      const newStudent: Student = {
+        id: String(currentClass.students.length + 1),
+        name: row["姓名"],
+        class: selectedClassId.value,
+        scores,
+        total,
+        average: total / questionCount,
+        rank: 0,
+      };
+      currentClass.students.push(newStudent);
+    }
 
+    // 更新题目数据
     scores.forEach((score, index) => {
-      questions.value[index].maxScore = Math.max(
-        questions.value[index].maxScore,
-        score
-      );
-      questions.value[index].averageScore += score;
+    questions.value[index].maxScore = Math.max(questions.value[index].maxScore, score);
+    questions.value[index].averageScore += score;
     });
   });
 
-  // 计算每个题目的平均得分（总分除以班级人数）
+
+  // 重新计算每个题目的平均得分
   questions.value.forEach((q) => {
     q.averageScore /= data.length;
   });
 
-  processedData.sort((a, b) => b.total - a.total);
-  processedData.forEach((student, index) => {
+  // 重新计算学生排名
+  currentClass.students.sort((a, b) => b.total - a.total);
+  currentClass.students.forEach((student, index) => {
     student.rank = index + 1;
   });
 
-  tableData.value = processedData;
-
-  // 更新班级学生列表
-  const currentClass = classes.value.find((c) => c.id === selectedClassId.value);
-  if (currentClass) {
-    currentClass.students = processedData;
-  }
+  // 更新全局数据
+  tableData.value = currentClass.students;
 
   // 更新图表和分析
   updateCharts();
@@ -480,7 +497,7 @@ const updateCharts = () => {
           data: questions.value.map((q) => q.averageScore.toFixed(2)),
         },
       ],
-    }, true); // 添加 notMerge 参数
+    }); // 添加 notMerge 参数
   }
 };
 
@@ -679,6 +696,7 @@ const viewStudentDetails = (student: Student) => {
 // 获取当前选中班级的学生列表
 const currentClassStudents = computed(() => {
   const currentClass = classes.value.find((c) => c.id === selectedClassId.value);
+  console.log("currentClassStudents:", currentClass?.students);
   return currentClass ? currentClass.students : [];
 });
 
@@ -704,6 +722,7 @@ const reloadClassData = (classId: string) => {
 // 初始化时加载默认班级的数据
 onMounted(() => {
   reloadClassData(selectedClassId.value);
+  updateCharts();
 });
 </script>
 
