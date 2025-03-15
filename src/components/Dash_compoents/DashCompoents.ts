@@ -34,6 +34,8 @@ export const isZoomed = ref(false);
 export const isForm1Editing = ref(false);
 export const isHovering = ref(false);
 
+export const isEditingFinish = ref(false);
+
 export const progressStatus = ref("active");
 export const Mindimgsrc = ref(
     'https://static.shutu.cn/shutu/jpeg/open3e/2025/02/12/8b749027703a3e2a62682ac20c04931c.jpeg'
@@ -356,6 +358,8 @@ export const EditSubmit = async () => {
 const NextEdit = async () => {
     await nextTick();  
     EditZoneContent.value = parseMarkdown(DataThisSession.value?.editZone.text || "").__html
+    
+    isEditingFinish.value = true;
     console.log('EditZoneContent.value: ', EditZoneContent.value);
 };
 

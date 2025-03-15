@@ -92,13 +92,16 @@ export default {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    // background-image: radial-gradient(transparent 1px, #d7f6ff47 1px); 
+    // background-size: 4px 4px;
+    backdrop-filter: blur(4px);
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 100;
+
+
 
     .logo {
       display: flex;

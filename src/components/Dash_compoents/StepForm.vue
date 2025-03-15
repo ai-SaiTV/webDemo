@@ -22,8 +22,6 @@
       <el-form :model="form" label-position="top">
         <el-row :gutter="24" justify="center" class="scroll-container">
           <div class="floating-button">
-
-
             <el-dropdown
             trigger="click"
             placement="bottom-end"  
@@ -34,8 +32,9 @@
                 优化
               </el-button>
               <template #dropdown>
+
                 <el-dropdown-menu class="custom-dropdown">
-                  <div v-if = "!isEditing" class = "opt-content">
+                  <div v-if = "!isEditing && !isEditingFinish" class = "opt-content">
                     <el-input 
                       v-model="optimizationSuggestion" 
                       type="textarea" 
@@ -46,16 +45,21 @@
                     />
                   </div>
 
-                  <div v-else>
-                    <div v-html="EditZoneContent" class="markdown-content" style="max-height: 100px; overflow-y: auto;"></div>
+                  <div v-else-if="isEditing && !isEditingFinish" class = "opt-content">
+                    正在生成中⏲️...
                   </div>
-
+                  
+                  <div v-else class = "opt-content">
+                    <div v-html="EditZoneContent" class="markdown-content" style="max-height: 600px; overflow-y: auto;">
+                    </div>
+                  </div>
 
                   <div class="dropdown-footer">
-                    <el-button @click="handleCancel">替换</el-button>
-                    <el-button type="primary" @click="handleConfirm">确认</el-button>
+                    <el-button @click="handleCancel" :disabled = "isEditing || !isEditingFinish">替换</el-button>
+                    <el-button type="primary" @click="handleConfirm" :disabled = "isEditing || isEditingFinish">确认</el-button>
                   </div>
                 </el-dropdown-menu>
+
               </template>
             </el-dropdown>
 
@@ -229,7 +233,7 @@ import {
   response, chatMessages, handleSubmit, isPolling, chatConfig
 } from '@/components/api_compoents/api_handler';
 
-import { EditSubmit, EditZoneContent, generateResource, isEditing, isForm1Editing,isProcessing} from './DashCompoents';
+import { EditSubmit, EditZoneContent, generateResource, isEditing, isEditingFinish, isForm1Editing,isProcessing} from './DashCompoents';
 
 
 //scss
