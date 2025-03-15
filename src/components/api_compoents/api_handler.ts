@@ -29,8 +29,7 @@ import { config } from '@/config/config';
 import { useChat } from '@/composables/useChat';
 import { useChatPolling } from '@/composables/useChatPolling';
 import { Message } from 'postcss';
-import { sessionId } from '../Dash_compoents/DashCompoents';
-import { analysisResService, analysisService } from '@/services/storage/analysisResService';
+import { analysisService } from '@/services/storage/analysisResService';
 
 
 interface ChatConfig {
@@ -237,9 +236,6 @@ export const handleSubmitEdit = async (sessionId: string, step: number) => {
     }
 };
 
-
-
-
 export const handleSubmitParallel = async (sessionId: string, botIndices: number[]) => {
     if (sessionId === "-1") return null;
 
@@ -315,6 +311,43 @@ export const handleSubmitParallel = async (sessionId: string, botIndices: number
         console.error('Parallel submission error:', err);
         return null;
     }
+};
+
+export const handleEditZoneReplace = async (sessionId: string, data: {
+    type: 'teaching_plan' | 'class_design' | 'None',
+    text: string
+}) => {
+    switch (data.type)
+    {
+        case 'teaching_plan':
+            await storageService.updateTeachingPlan(sessionId, {
+                text: data.text,
+            });
+            console.log('teaching_plan Replaced: ',data.text);
+            await storageService.updateEditZone(sessionId, {
+                type: 'None',
+                text: "",
+            });
+            break;
+
+        case 'class_design':
+            await storageService.updateClassDesign(sessionId, {
+                text: data.text,
+            });
+            console.log('class_design Replaced: ',data.text);
+            await storageService.updateEditZone(sessionId, {
+                type: 'None',
+                text: "",
+            });
+            break;
+        default:
+            console.log('No type selected');
+    }
+
+    return storageService.getSessionData(sessionId) || null;
+    
+
+
 };
 
 

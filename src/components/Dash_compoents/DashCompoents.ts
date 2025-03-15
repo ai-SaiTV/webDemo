@@ -12,7 +12,7 @@ import { watch } from '@vue/runtime-core';
 // ------------------------------------------------------------>> api
 import {
     handleSubmit, handleSubmitParallel, isPolling, chatConfig,
-    handleSubmitEdit
+    handleSubmitEdit, handleEditZoneReplace
 } from '@/components/api_compoents/api_handler';
 
 import { storageService } from '@/services/storage/storageService';
@@ -35,6 +35,10 @@ export const isForm1Editing = ref(false);
 export const isHovering = ref(false);
 
 export const isEditingFinish = ref(false);
+export const isDropdownVisible = ref(false);
+
+// 存储用户输入的优化建议
+export const optimizationSuggestion = ref('');
 
 export const progressStatus = ref("active");
 export const Mindimgsrc = ref(
@@ -265,6 +269,15 @@ export const prevStep = () => {
 };
 
 
+// 提交优化建议
+export const handleConfirm = () => {
+    EditSubmit();
+    // isDropdownVisible.value = false;
+    optimizationSuggestion.value = ''; // 清空输入
+  };
+
+
+
 export const EditSubmit = async () => {
     if (activeStep.value >= steps.length - 1 || isUpdatingStep) return;
     isUpdatingStep = true;
@@ -281,26 +294,26 @@ export const EditSubmit = async () => {
 
     // 根据当前步骤设置 chatConfig.message
     switch (activeStep.value) {
-        case 0:
-            chatConfig.value.message = "nihaoma ??? ";
-            break;
         case 1:
-            chatConfig.value.message = DataThisSession.value?.resources.teaching_plan.text || "";
+            //教案修改
+            chatConfig.value.message = DataThisSession.value?.resources.teaching_plan.text 
+                + "并根据以下修改意见进行修改：" + optimizationSuggestion.value || "";
             break;
         case 2:
-            chatConfig.value.message = DataThisSession.value?.resources.class_design.text || "";
+            // 课堂设计修改
+            chatConfig.value.message = DataThisSession.value?.resources.class_design.text 
+            + "并根据以下修改意见进行修改：" + optimizationSuggestion.value || "";
             break;
         default:
             chatConfig.value.message = ""; // 默认值
     }
 
+    console.log('EditSubmit', chatConfig.value.message);
 
     // 调用 handleSubmit 提交当前步骤数据
     const result = await handleSubmitEdit(sessionId.value, activeStep.value);
     DataThisSession.value = result || null;
     
-    
-
     
     // 监听 isPolling 状态变化
     stopPollingWatch = watch(
@@ -358,12 +371,23 @@ export const EditSubmit = async () => {
 const NextEdit = async () => {
     await nextTick();  
     EditZoneContent.value = parseMarkdown(DataThisSession.value?.editZone.text || "").__html
-    
     isEditingFinish.value = true;
     console.log('EditZoneContent.value: ', EditZoneContent.value);
 };
 
+// 提交替换
+export const handleReplace = async() => {
 
+    //提交替换，替换原有的教案内容为EditZone中的内容
+    const result =  await handleEditZoneReplace(sessionId.value, { type: DataThisSession.value?.editZone.type || "None",
+        text: DataThisSession.value?.editZone.text || "" });
+    console.log('handleEditZoneReplace: ', result);
+    DataThisSession.value = result || null;
+
+    await turnStep(activeStep.value - 1);
+
+    isEditingFinish.value = false;
+  };
 
 
 export const generateResource = async () => {
@@ -442,3 +466,6 @@ export const updateIsZoomed = (newZoomedStatus: boolean) => {
 export const updateTranslateY = (newTranslateY: number) => {
     translateY.value = newTranslateY;
 }; 
+
+
+

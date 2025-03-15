@@ -21,52 +21,16 @@
     <div v-if="activeStep === 1" class="step-form">
       <el-form :model="form" label-position="top">
         <el-row :gutter="24" justify="center" class="scroll-container">
-          <div class="floating-button">
-            <el-dropdown
-            trigger="click"
-            placement="bottom-end"  
-            @visible-change="handleDropdownChange"
-            >
-              <el-button type="primary">
-                <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
-                优化
-              </el-button>
-              <template #dropdown>
-
-                <el-dropdown-menu class="custom-dropdown">
-                  <div v-if = "!isEditing && !isEditingFinish" class = "opt-content">
-                    <el-input 
-                      v-model="optimizationSuggestion" 
-                      type="textarea" 
-                      :rows="2" 
-                      placeholder="你希望如何修改教案"
-                      resize="none"
-                      style="border: 15px;"
-                    />
-                  </div>
-
-                  <div v-else-if="isEditing && !isEditingFinish" class = "opt-content">
-                    正在生成中⏲️...
-                  </div>
-                  
-                  <div v-else class = "opt-content">
-                    <div v-html="EditZoneContent" class="markdown-content" style="max-height: 600px; overflow-y: auto;">
-                    </div>
-                  </div>
-
-                  <div class="dropdown-footer">
-                    <el-button @click="handleCancel" :disabled = "isEditing || !isEditingFinish">替换</el-button>
-                    <el-button type="primary" @click="handleConfirm" :disabled = "isEditing || isEditingFinish">确认</el-button>
-                  </div>
-                </el-dropdown-menu>
-
-              </template>
-            </el-dropdown>
-
-
-
-
-          </div>
+          <OptimizeButton
+          :is-editing="isEditing"
+          :is-editing-finish="isEditingFinish"
+          v-model:optimization-suggestion="optimizationSuggestion"
+          :edit-zone-content="EditZoneContent"
+          placeholder="请给输入优化建议"
+          @dropdown-change="handleDropdownChange"
+          @replace="handleReplace"
+          @confirm="handleConfirm"
+          />
           <el-form-item label=" ">
             <div v-if="!isForm1Editing">
               <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;">
@@ -80,30 +44,6 @@
             </div>
           </el-form-item>
         </el-row>
-
-        <!-- <el-row :gutter="24" justify="center">
-          <el-form-item label=" ">
-            <div v-if="!isForm1Editing">
-              <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;"></div>
-            </div>
-            <div v-else>
-              <textarea
-                v-model="form1.requirements"
-                rows="10"
-                placeholder="请输入具体的教学要求和注意事项..."
-                class="custom-textarea"
-              ></textarea>
-            </div>
-            <div class="form-buttons">
-
-              <el-button type="primary" @click="isForm1Editing = !isForm1Editing; dialogVisible = true;" >
-                <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
-                {{ isForm1Editing  ? '保存' : '优化' }}
-              </el-button>
-            </div>
-          </el-form-item>
-
-        </el-row> -->
       </el-form>
     </div>
 
@@ -112,39 +52,16 @@
       <el-form :model="form" label-position="top">
 
         <el-row :gutter="24" justify="center" class="scroll-container">
-          <div class="floating-button">
-
-
-            <el-dropdown
-            trigger="click"
-            placement="bottom-end"  
-            @visible-change="handleDropdownChange"
-            >
-              <el-button type="primary">
-                <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
-                优化
-              </el-button>
-              <template #dropdown>
-                <el-dropdown-menu class="custom-dropdown">
-                  <el-input 
-                    v-model="optimizationSuggestion" 
-                    type="textarea" 
-                    :rows="2" 
-                    placeholder="你希望如何修改课堂环节设计"
-                    resize="none"
-                    style="border: 15px;"
-                  />
-                  <div class="dropdown-footer">
-                    <!-- <el-button @click="handleCancel">取消</el-button> -->
-                    <el-button type="primary" @click="handleConfirm">确认</el-button>
-                  </div>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-            
-          </div>
-          
-
+          <OptimizeButton
+          :is-editing="isEditing"
+          :is-editing-finish="isEditingFinish"
+          v-model:optimization-suggestion="optimizationSuggestion"
+          :edit-zone-content="EditZoneContent"
+          placeholder="请给输入优化建议"
+          @dropdown-change="handleDropdownChange"
+          @replace="handleReplace"
+          @confirm="handleConfirm"
+          />
           <el-form-item label=" ">
             <div v-if="!isForm1Editing">
               <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;">
@@ -233,7 +150,13 @@ import {
   response, chatMessages, handleSubmit, isPolling, chatConfig
 } from '@/components/api_compoents/api_handler';
 
-import { EditSubmit, EditZoneContent, generateResource, isEditing, isEditingFinish, isForm1Editing,isProcessing} from './DashCompoents';
+import { activeStep, EditSubmit, EditZoneContent, 
+  generateResource, isEditing, isEditingFinish,
+   isForm1Editing, isProcessing, handleReplace,
+   optimizationSuggestion, isDropdownVisible, handleConfirm } from './DashCompoents';
+
+//Edit OptimizeButton
+import OptimizeButton from './EditDropDown.vue';
 
 
 //scss
@@ -301,38 +224,6 @@ const imageStyle = computed(() => ({
   height: 'auto',
   cursor: isHovering.value ? 'zoom-in' : 'default',
 }));
-
-
-// 控制 Dropdown 显示
-const isDropdownVisible = ref(false);
-
-// 存储用户输入的优化建议
-const optimizationSuggestion = ref('');
-
-// // 打开 Dialog
-// const handleNext = () => {
-//   dialogVisible.value = true;
-//   console.log('dialogVisible:', dialogVisible.value);
-// };
-
-// 提交优化建议
-const handleConfirm = () => {
-  EditSubmit();
-  console.log('ed_input_submit:', optimizationSuggestion.value);
-  // isDropdownVisible.value = false;
-  optimizationSuggestion.value = ''; // 清空输入
-};
-
-// 提交替换
-const handleReplace = () => {
-  //提交替换，替换原有的教案内容为EditZone中的内容
-};
-
-
-// // 关闭 Dialog 前的回调
-// const handleClose = (done) => {
-//   done();
-// }
 
 </script>
 
