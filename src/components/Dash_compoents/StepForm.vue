@@ -23,10 +23,6 @@
         <el-row :gutter="24" justify="center" class="scroll-container">
           <div class="floating-button">
 
-            <!-- <el-button type="primary" @click="handleNext">
-              <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
-              优化
-            </el-button> -->
 
             <el-dropdown
             trigger="click"
@@ -39,21 +35,32 @@
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu class="custom-dropdown">
-                  <el-input 
-                    v-model="optimizationSuggestion" 
-                    type="textarea" 
-                    :rows="2" 
-                    placeholder="你希望如何修改教案🙊"
-                    resize="none"
-                    style="border: 15px;"
-                  />
+                  <div v-if = "!isEditing" class = "opt-content">
+                    <el-input 
+                      v-model="optimizationSuggestion" 
+                      type="textarea" 
+                      :rows="2" 
+                      placeholder="你希望如何修改教案"
+                      resize="none"
+                      style="border: 15px;"
+                    />
+                  </div>
+
+                  <div v-else>
+                    <div v-html="EditZoneContent" class="markdown-content" style="max-height: 100px; overflow-y: auto;"></div>
+                  </div>
+
+
                   <div class="dropdown-footer">
-                    <!-- <el-button @click="handleCancel">取消</el-button> -->
+                    <el-button @click="handleCancel">替换</el-button>
                     <el-button type="primary" @click="handleConfirm">确认</el-button>
                   </div>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
+
+
+
 
           </div>
           <el-form-item label=" ">
@@ -119,7 +126,7 @@
                     v-model="optimizationSuggestion" 
                     type="textarea" 
                     :rows="2" 
-                    placeholder="你希望如何修改课堂环节设计🤭"
+                    placeholder="你希望如何修改课堂环节设计"
                     resize="none"
                     style="border: 15px;"
                   />
@@ -218,12 +225,13 @@
 import flash from '@/assets/icons/dashBoard/flash.png'
 
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import ResponseDisplay from '@/components/api_compoents/ResponseDisplay.vue';
 import {
   response, chatMessages, handleSubmit, isPolling, chatConfig
 } from '@/components/api_compoents/api_handler';
 
-import { EditSubmit, generateResource, isForm1Editing,isProcessing} from './DashCompoents';
+import { EditSubmit, EditZoneContent, generateResource, isEditing, isForm1Editing,isProcessing} from './DashCompoents';
+
+
 //scss
 import '@/components/Dash_compoents/StepForm.scss';
 
@@ -311,10 +319,9 @@ const handleConfirm = () => {
   optimizationSuggestion.value = ''; // 清空输入
 };
 
-// 取消提交
-const handleCancel = () => {
-  isDropdownVisible.value = false;
-  optimizationSuggestion.value = ''; // 清空输入
+// 提交替换
+const handleReplace = () => {
+  //提交替换，替换原有的教案内容为EditZone中的内容
 };
 
 

@@ -1,11 +1,14 @@
 <template>
+  <div class="step-progress">
     <el-progress
       v-if="isProcessing || isEditing"
-      :percentage="progress"
-      :stroke-width="8"
+      :percentage="Math.floor(progress)"
+      :text-inside="true"
+      :stroke-width="16"
       :color="gradientColor"
-      :status="progressStatus"
     />
+  </div>
+    
 </template>
   
 <script setup>
@@ -15,5 +18,10 @@ import {
 
 } from "@/components/Dash_compoents/DashCompoents.ts"
 
-
 </script>
+
+<style scoped>
+.step-progress {
+  padding: 2px 2px 0;
+}
+</style>

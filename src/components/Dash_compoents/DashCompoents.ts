@@ -296,7 +296,8 @@ export const EditSubmit = async () => {
     // 调用 handleSubmit 提交当前步骤数据
     const result = await handleSubmitEdit(sessionId.value, activeStep.value);
     DataThisSession.value = result || null;
-    console.log('DataThisSession.value', DataThisSession.value)
+    
+    
 
     
     // 监听 isPolling 状态变化
@@ -324,6 +325,8 @@ export const EditSubmit = async () => {
                 progress.value = 100;
                 progressStatus.value = "success";
 
+                await NextEdit();
+
                 setTimeout(() => {
                     isEditing.value = false;
                     progress.value = 0;
@@ -350,14 +353,11 @@ export const EditSubmit = async () => {
 };
 
 
-
-
-
-
-
-
-
-
+const NextEdit = async () => {
+    await nextTick();  
+    EditZoneContent.value = parseMarkdown(DataThisSession.value?.editZone.text || "").__html
+    console.log('EditZoneContent.value: ', EditZoneContent.value);
+};
 
 
 
@@ -421,6 +421,11 @@ export const imageStyle = computed(() => ({
 export const form1 = ref({
     requirements: `😿`
 });
+
+
+export const EditZoneContent = ref('');
+
+
 
 export const updateShowResult = (newValue: boolean) => {
     showResult.value = newValue;
