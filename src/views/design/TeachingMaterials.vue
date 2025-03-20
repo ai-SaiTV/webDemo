@@ -90,9 +90,9 @@ export default defineComponent({
                 },
                 {
                     id: 2,
-                    title: '三打白骨精',
+                    title: '两小儿辩日',
                     duration: '12:45',
-                    description: '一个关于三打白骨精的教学视频。',
+                    description: '一个关于两小儿辩日的教学视频。',
                     path: Vid
                 }
             ] as Video[],
