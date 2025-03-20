@@ -20,8 +20,15 @@ interface Book {
     description: string | null;
     image: string | null;
     pdf: string | null | undefined;
-    video: string | null | undefined;
     showDetails: boolean;
+}
+
+interface Video {
+    id: number;
+    title: string;
+    duration: string;
+    description: string;
+    path: string | null | undefined;
 }
 
 export default defineComponent({
@@ -37,7 +44,6 @@ export default defineComponent({
                     description: '一本关于二年级语文上册的教师用书。',
                     image: zh2vo,
                     pdf: Doc2,
-                    video: Vid,
                     showDetails: false
                 },
                 {
@@ -49,7 +55,6 @@ export default defineComponent({
                     description: '一本关于三年级语文上册的教师用书。',
                     image: zh3vo,
                     pdf: Doc3,
-                    video: Vid,
                     showDetails: false
                 },
                 {
@@ -61,7 +66,6 @@ export default defineComponent({
                     description: '一本关于四年级语文上册的教师用书。',
                     image: zh4vo,
                     pdf: Doc4,
-                    video: Vid,
                     showDetails: false
                 },
                 {
@@ -73,12 +77,29 @@ export default defineComponent({
                     description: '一本关于五年级语文上册的教师用书。',
                     image: zh5vo,
                     pdf: Doc5,
-                    video: Vid,
                     showDetails: false
                 }
             ] as Book[],
-            isModalVisible: false,
+            videos: [
+                {
+                    id: 1,
+                    title: '田忌赛马',
+                    duration: '15:30',
+                    description: '一个关于田忌赛马的教学视频。',
+                    path: Vid
+                },
+                {
+                    id: 2,
+                    title: '三打白骨精',
+                    duration: '12:45',
+                    description: '一个关于三打白骨精的教学视频。',
+                    path: Vid
+                }
+            ] as Video[],
+            isBookModalVisible: false,
+            isVideoModalVisible: false,
             selectedBook: {} as Book,
+            selectedVideo: {} as Video,
             newBook: {
                 title: '',
                 author: '',
@@ -87,11 +108,20 @@ export default defineComponent({
                 description: '',
                 image: null as File | null,
                 pdf: null as File | string | null,
+            },
+            newVideo: {
+                title: '',
+                duration: '',
+                description: '',
                 video: null as File | string | null
             },
             isAddBookModalVisible: false,
+            isAddVideoModalVisible: false,
             isPDFVisible: false,
-            isVideoVisible: false
+            isVideoVisible: false,
+            resourceType: 'books',
+            previewType: 'pdf',
+            videoSource: Vid
         };
     },
     methods: {
@@ -112,29 +142,47 @@ export default defineComponent({
                     ElMessage.info('已取消删除');
                 });
         },
-        openModal(book: Book) {
+        deleteVideo(video: Video) {
+            ElMessageBox.confirm(`确定要删除视频《${video.title}》吗？`, '提示', {
+                type: 'warning',
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            })
+                .then(() => {
+                    this.videos = this.videos.filter((v) => v.id !== video.id);
+                    ElMessage.success('删除成功');
+                })
+                .catch(() => {
+                    ElMessage.info('已取消删除');
+                });
+        },
+        openBookModal(book: Book) {
             this.selectedBook = book;
-            this.isModalVisible = true;
+            this.isBookModalVisible = true;
         },
-        closeModal() {
-            this.isModalVisible = false;
+        openVideoModal(video: Video) {
+            this.selectedVideo = video;
+            this.isVideoModalVisible = true;
+        },
+        closeBookModal() {
+            this.isBookModalVisible = false;
             this.isPDFVisible = false;
+        },
+        closeVideoModal() {
+            this.isVideoModalVisible = false;
             this.isVideoVisible = false;
         },
-
-        closePDFPreview() {
-            this.isPDFVisible = false;
-        },
-
-        closeVideoPreview() {
-            this.isVideoVisible = false;
-        },
-
         openAddBookModal() {
             this.isAddBookModalVisible = true;
         },
         closeAddBookModal() {
             this.isAddBookModalVisible = false;
+        },
+        openAddVideoModal() {
+            this.isAddVideoModalVisible = true;
+        },
+        closeAddVideoModal() {
+            this.isAddVideoModalVisible = false;
         },
         handleImageUpload(event: Event) {
             const input = event.target as HTMLInputElement;
@@ -152,8 +200,9 @@ export default defineComponent({
         },
         handleVideoUpload(event: Event) {
             const file = (event.target as HTMLInputElement).files?.[0];
-            if (file && (file.type === 'video/mp4' || file.type === 'video/quicktime' || file.type === 'video/x-matroska')) {
-                this.newBook.video = URL.createObjectURL(file);
+            const validVideoTypes = ['video/mp4', 'video/quicktime', 'video/x-matroska'];
+            if (file && validVideoTypes.includes(file.type)) {
+                this.newVideo.video = file;
             } else {
                 ElMessage.error('请上传视频文件');
             }
@@ -168,28 +217,47 @@ export default defineComponent({
                 description: this.newBook.description,
                 image: this.newBook.image ? URL.createObjectURL(this.newBook.image!) : '',
                 pdf: this.newBook.pdf ? (typeof this.newBook.pdf === 'string' ? this.newBook.pdf : URL.createObjectURL(this.newBook.pdf)) : '',
-                video: this.newBook.video ? (typeof this.newBook.video === 'string' ? this.newBook.video : URL.createObjectURL(this.newBook.video)) : '',
                 showDetails: false,
             };
             this.books.push(newBook);
             ElMessage.success('新增书籍成功');
             this.closeAddBookModal();
         },
+        addNewVideo() {
+            if (this.newVideo.video && this.newVideo.video instanceof File) {
+                const newVideo: Video = {
+                    id: Date.now(),
+                    title: this.newVideo.title,
+                    duration: this.newVideo.duration,
+                    description: this.newVideo.description,
+                    path: URL.createObjectURL(this.newVideo.video)
+                };
+                this.videos.push(newVideo);
+                ElMessage.success('新增视频成功');
+                this.closeAddVideoModal();
+            } else {
+                ElMessage.error('请上传有效的视频文件');
+            }
+        },
         previewPDF() {
             if (this.isPDFVisible) {
-                this.closePDFPreview(); 
+                this.closePDFPreview();
             } else {
-                this.isPDFVisible = true; 
-                this.isVideoVisible = false;
+                this.isPDFVisible = true;
             }
         },
         previewVideo() {
             if (this.isVideoVisible) {
-            this.closeVideoPreview(); 
+                this.closeVideoPreview();
             } else {
-                this.isVideoVisible = true; 
-                this.isPDFVisible = false;
+                this.isVideoVisible = true;
             }
+        },
+        closePDFPreview() {
+            this.isPDFVisible = false;
+        },
+        closeVideoPreview() {
+            this.isVideoVisible = false;
         },
         handleVideoError() {
             ElMessage.error('视频加载失败，请检查文件格式或网络连接');
@@ -197,7 +265,6 @@ export default defineComponent({
     }
 });
 </script>
-
 <template>
     <div>
         <div class="plan-header">
@@ -206,26 +273,85 @@ export default defineComponent({
         </div>
 
         <div class="container">
-            <div class="book-list">
-                <!-- 新增书籍卡片 -->
-                <div class="book-item add-book-card" @click="openAddBookModal">
-                    <el-icon class="add-icon">
-                        <Plus />
-                    </el-icon><!-- 加号图标 -->
-                    <h3>新增教材</h3>
-                    <p>点击添加新书籍</p>
-                </div>
+            <el-select v-model="resourceType" placeholder="请选择资源类型" class="resource-selector">
+                <el-option label="教材" value="books"></el-option>
+                <el-option label="视频" value="videos"></el-option>
+            </el-select>
 
-                <!-- 原有书籍列表 -->
-                <div v-for="book in books" :key="book.id" class="book-item" :data-id="book.id">
-                    <div class="book-header">
-                        <img :src="book.image || 'default.jpg'" :alt="book.title" />
-                        <h3>{{ book.title }}</h3>
-                        <p><strong>作者：</strong>{{ book.author }}</p>
+            <div v-if="resourceType === 'books'" class="resource-list">
+                <div class="book-list">
+                    <!-- 新增书籍卡片 -->
+                    <div class="book-item add-book-card" @click="openAddBookModal">
+                        <el-icon class="add-icon">
+                            <Plus />
+                        </el-icon><!-- 加号图标 -->
+                        <h3>新增教材</h3>
+                        <p>点击添加新书籍</p>
                     </div>
-                    <button class="more-details" @click="openModal(book)">更多详情</button>
-                    <button class="delete-button" @click="deleteBook(book)">删除</button>
+
+                    <!-- 原有书籍列表 -->
+                    <div v-for="book in books" :key="book.id" class="book-item" :data-id="book.id">
+                        <div class="book-header">
+                            <img :src="book.image || 'default.jpg'" :alt="book.title" />
+                            <h3>{{ book.title }}</h3>
+                            <p><strong>作者：</strong>{{ book.author }}</p>
+                        </div>
+                        <button class="more-details" @click="openBookModal(book)">更多详情</button>
+                        <button class="delete-button" @click="deleteBook(book)">删除</button>
+                    </div>
                 </div>
+            </div>
+
+            <div v-if="resourceType === 'videos'" class="resource-list">
+                <div class="video-list">
+                    <!-- 新增视频卡片 -->
+                    <div class="video-item add-video-card" @click="openAddVideoModal">
+                        <el-icon class="add-icon">
+                            <Plus />
+                        </el-icon><!-- 加号图标 -->
+                        <h3>新增视频</h3>
+                        <p>点击添加新视频</p>
+                    </div>
+
+                    <!-- 原有视频列表 -->
+                    <div v-for="video in videos" :key="video.id" class="video-item" :data-id="video.id">
+                        <div class="video-header">
+                            <h3>{{ video.title }}</h3>
+                            <p><strong>时长：</strong>{{ video.duration }}</p>
+                        </div>
+                        <button class="more-details" @click="openVideoModal(video)">更多详情</button>
+                        <button class="delete-button" @click="deleteVideo(video)">删除</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 新增视频的模态框 -->
+        <div v-if="isAddVideoModalVisible" class="modal-overlay">
+            <div class="modal-content">
+                <h3>添加新视频</h3>
+                <form @submit.prevent="addNewVideo">
+                    <div class="input-group">
+                        <label for="title">标题：</label>
+                        <el-input type="text" v-model="newVideo.title" />
+                    </div>
+                    <div class="input-group">
+                        <label for="duration">时长：</label>
+                        <el-input type="text" v-model="newVideo.duration" />
+                    </div>
+                    <div class="input-group">
+                        <label for="description">描述：</label>
+                        <textarea v-model="newVideo.description" placeholder="在这里输入视频的描述（可不填）"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label for="video">视频文件：</label>
+                        <input type="file" @change="handleVideoUpload" accept="video/*" />
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="submit-btn">提交</button>
+                        <button @click="closeAddVideoModal" class="cancel-btn">取消</button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -262,10 +388,6 @@ export default defineComponent({
                         <label for="pdf">教材PDF：</label>
                         <input type="file" @change="handlePdfUpload" accept="application/pdf" />
                     </div>
-                    <div class="input-group">
-                        <label for="video">教材视频：</label>
-                        <input type="file" @change="handleVideoUpload" accept="video/*" />
-                    </div>
                     <div class="button-group">
                         <button type="submit" class="submit-btn">提交</button>
                         <button @click="closeAddBookModal" class="cancel-btn">取消</button>
@@ -275,23 +397,31 @@ export default defineComponent({
         </div>
 
         <!-- 书籍详情模态框 -->
-        <div v-if="isModalVisible" class="modal-overlay">
+        <div v-if="isBookModalVisible" class="modal-overlay">
             <div class="modal-content">
                 <h3>{{ selectedBook.title }}</h3>
                 <p><strong>ISBN：</strong>{{ selectedBook.isbn }}</p>
                 <p><strong>所有者：</strong>{{ selectedBook.owner }}</p>
                 <p><strong>描述：</strong>{{ selectedBook.description || '暂无描述' }}</p>
-                <div v-if="selectedBook.pdf || selectedBook.video" style="display: flex; gap: 10px; justify-content: center; margin: 10px 0;">
-                    <button v-if="selectedBook.pdf" @click="previewPDF">{{ isPDFVisible ? '关闭教材' : '教材预览' }}</button>
-                    <button v-if="selectedBook.video" @click="previewVideo">{{ isVideoVisible ? '关闭视频' : '视频预览' }}</button>
-                </div>
+                <button v-if="selectedBook.pdf" @click="previewPDF">{{ isPDFVisible ? '关闭教材' : '教材预览' }}</button>
                 <div v-if="isPDFVisible" class="pdf-container">
                     <iframe v-if="selectedBook.pdf" :src="selectedBook.pdf" class="pdf-viewer" frameborder="0"></iframe>
                 </div>
+                <button @click="closeBookModal">关闭</button>
+            </div>
+        </div>
+
+        <!-- 视频详情模态框 -->
+        <div v-if="isVideoModalVisible" class="modal-overlay">
+            <div class="modal-content">
+                <h3>{{ selectedVideo.title }}</h3>
+                <p><strong>时长：</strong>{{ selectedVideo.duration }}</p>
+                <p><strong>描述：</strong>{{ selectedVideo.description || '暂无描述' }}</p>
+                <button @click="previewVideo">{{ isVideoVisible ? '关闭视频' : '视频预览' }}</button>
                 <div v-if="isVideoVisible" class="video-container">
-                    <video v-if="selectedBook.video" :src="selectedBook.video" controls class="video-viewer" @error="handleVideoError"></video>
+                    <video v-if="selectedVideo.path" :src="selectedVideo.path" controls @error="handleVideoError" class="video-viewer"></video>
                 </div>
-                <button @click="closeModal">关闭</button>
+                <button @click="closeVideoModal">关闭</button>
             </div>
         </div>
     </div>
@@ -329,13 +459,19 @@ body {
     gap: 20px;
 }
 
-.book-list {
+.resource-selector {
+    margin-bottom: 20px;
+}
+
+.book-list,
+.video-list {
     display: grid;
     gap: 20px;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 
-.book-item {
+.book-item,
+.video-item {
     background-color: #fff;
     border-radius: 12px;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
@@ -351,12 +487,14 @@ body {
     position: relative;
 }
 
-.book-item:hover {
+.book-item:hover,
+.video-item:hover {
     transform: translateY(-8px);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
 }
 
-.book-header {
+.book-header,
+.video-header {
     background: linear-gradient(135deg, #a5c5ff 0%, #6200ff 100%);
     color: #fff;
     padding: 1.5rem;
@@ -368,12 +506,14 @@ body {
     text-align: center;
 }
 
-.book-header h3 {
+.book-header h3,
+.video-header h3 {
     margin: 0;
     font-size: 1.4rem;
 }
 
-.book-header p {
+.book-header p,
+.video-header p {
     margin: 0.5rem 0 0;
     opacity: 0.9;
 }
@@ -387,7 +527,7 @@ body {
 }
 
 .pdf-container {
-    position: relative; 
+    position: relative;
     margin: 20px 0;
     width: 100%;
     height: 630px;
@@ -397,7 +537,7 @@ body {
 }
 
 .video-container {
-    position: relative; 
+    position: relative;
     margin: 20px 0;
     width: 100%;
     height: 630px;
@@ -406,7 +546,8 @@ body {
     align-items: center;
 }
 
-.pdf-viewer, .video-viewer {
+.pdf-viewer,
+.video-viewer {
     width: 100%;
     height: 100%;
     object-fit: contain;
@@ -464,7 +605,7 @@ body {
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
     text-align: center;
     position: relative;
-    overflow: hidden; 
+    overflow: hidden;
     max-height: 100%;
 }
 
@@ -486,11 +627,14 @@ body {
 }
 
 @media (max-width: 768px) {
-    .book-list {
+
+    .book-list,
+    .video-list {
         gap: 15px;
     }
 
-    .book-item {
+    .book-item,
+    .video-item {
         height: 300px;
     }
 
@@ -502,10 +646,10 @@ body {
 }
 
 /* 新增书籍卡片样式 */
-.add-book-card {
+.add-book-card,
+.add-video-card {
     background-color: #f4f7f6;
     border: 2px dashed #dcdfe6;
-    /* 加边框并设置为虚线 */
     border-radius: 12px;
     padding: 20px;
     text-align: center;
@@ -518,24 +662,28 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.add-book-card:hover {
+.add-book-card:hover,
+.add-video-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
 }
 
-.add-book-card h3 {
+.add-book-card h3,
+.add-video-card h3 {
     font-size: 1.4rem;
     margin-top: 10px;
     color: #2c3e50;
 }
 
-.add-book-card p {
+.add-book-card p,
+.add-video-card p {
     font-size: 1rem;
     opacity: 0.8;
     color: #7f8c8d;
 }
 
-.add-book-card i {
+.add-book-card i,
+.add-video-card i {
     font-size: 36px;
     color: #7f8c8d;
     margin-bottom: 10px;
@@ -564,8 +712,6 @@ body {
     border: 1px solid #ddd;
     border-radius: 5px;
     background-color: white;
-    height: 100px;
-    resize: none;
 }
 
 .button-group {
