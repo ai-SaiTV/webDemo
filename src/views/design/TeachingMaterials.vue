@@ -10,7 +10,7 @@ import Doc3 from '@/assets/Doc3.pdf';
 import Doc4 from '@/assets/Doc4.pdf';
 import Doc5 from '@/assets/Doc5.pdf';
 import Vid from '@/assets/田忌赛马.mp4';
-
+import nullvideoimg from '@/assets/OIP-C.jpg';
 interface Book {
     id: number;
     title: string;
@@ -28,6 +28,7 @@ interface Video {
     title: string;
     duration: string;
     description: string;
+    image: string | null;
     path: string | null | undefined;
 }
 
@@ -86,6 +87,7 @@ export default defineComponent({
                     title: '田忌赛马',
                     duration: '15:30',
                     description: '一个关于田忌赛马的教学视频。',
+                    image: nullvideoimg,
                     path: Vid
                 },
                 {
@@ -93,6 +95,7 @@ export default defineComponent({
                     title: '两小儿辩日',
                     duration: '12:45',
                     description: '一个关于两小儿辩日的教学视频。',
+                    image: nullvideoimg,
                     path: Vid
                 }
             ] as Video[],
@@ -113,6 +116,7 @@ export default defineComponent({
                 title: '',
                 duration: '',
                 description: '',
+                image: null as File | null,
                 video: null as File | string | null
             },
             isAddBookModalVisible: false,
@@ -207,6 +211,12 @@ export default defineComponent({
                 ElMessage.error('请上传视频文件');
             }
         },
+        handleVideoImageUpload(event: Event) {
+            const input = event.target as HTMLInputElement;
+            if (input.files && input.files[0]) {
+                this.newVideo.image = input.files[0];
+            }
+        },
         addNewBook() {
             const newBook: Book = {
                 id: Date.now(),
@@ -230,6 +240,7 @@ export default defineComponent({
                     title: this.newVideo.title,
                     duration: this.newVideo.duration,
                     description: this.newVideo.description,
+                    image: this.newVideo.image ? URL.createObjectURL(this.newVideo.image!) : '',
                     path: URL.createObjectURL(this.newVideo.video)
                 };
                 this.videos.push(newVideo);
@@ -316,6 +327,7 @@ export default defineComponent({
                     <!-- 原有视频列表 -->
                     <div v-for="video in videos" :key="video.id" class="video-item" :data-id="video.id">
                         <div class="video-header">
+                            <img :src="video.image || 'default.jpg'" :alt="video.title" />
                             <h3>{{ video.title }}</h3>
                             <p><strong>时长：</strong>{{ video.duration }}</p>
                         </div>
@@ -342,6 +354,10 @@ export default defineComponent({
                     <div class="input-group">
                         <label for="description">描述：</label>
                         <textarea v-model="newVideo.description" placeholder="在这里输入视频的描述（可不填）"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label for="image">封面图片：</label>
+                        <input type="file" @change="handleVideoImageUpload" accept="image/*" />
                     </div>
                     <div class="input-group">
                         <label for="video">视频文件：</label>
@@ -426,6 +442,7 @@ export default defineComponent({
         </div>
     </div>
 </template>
+
 
 <style scoped>
 body {
