@@ -447,7 +447,7 @@ export const imageStyle = computed(() => ({
 }));
 
 export const form1 = ref({
-    requirements: `😿`
+    requirements: `网络超时，请检查网络设置😿`
 });
 
 

@@ -7,7 +7,7 @@ import VideoList from './VideoList.vue';
 import BookModal from './BookModal.vue';
 import VideoModal from './VideoModal.vue';
 import AddResourceModal from './AddResourceModal.vue';
-import { Book, Video, NewBook, NewVideo } from '@/types';
+import { Book, Video,Text,NewBook, NewVideo,NewText } from '@/types';
 
 // Import assets
 import zh2vo from '@/assets/zh2vo.png';
@@ -86,7 +86,15 @@ const videos = ref<Video[]>([
         path: Vid
     }
 ]);
-
+const texts = ref<Text[]>([
+    {
+        id: 1,
+        title: '二年级上册教学大纲',
+        description: '一份关于二年级语文上册的教学大纲。',
+        image: nullvideoimg,
+        words: '一份关于二年级语文上册的教学大纲。',
+    }
+]);    
 const resourceType = ref('books');
 const selectedBook = ref<Book | null>(null);
 const selectedVideo = ref<Video | null>(null);
@@ -241,6 +249,7 @@ const handleVideoError = () => {
             <el-select v-model="resourceType" placeholder="请选择资源类型" class="resource-selector">
                 <el-option label="教材" value="books"></el-option>
                 <el-option label="视频" value="videos"></el-option>
+                <el-option label="文本大纲" value="texts"></el-option>
             </el-select>
 
             <BookList v-if="resourceType === 'books'" :books="books"

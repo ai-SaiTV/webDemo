@@ -18,7 +18,13 @@ export interface Book {
     image: string | null;
     path: string | null | undefined;
   }
-  
+  export interface Text {
+    id: number;
+    title: string;
+    description: string;
+    image: string | null;
+    words: string | null | undefined;
+  }
   export interface NewBook {
     title: string;
     author: string;
@@ -35,4 +41,12 @@ export interface Book {
     description: string;
     image: File | null;
     video: File | string | null;
+  }
+
+  export interface NewText {
+    id: number;
+    title: string;
+    description: string;
+    image: string | null;
+    words: string | null | undefined;
   }
