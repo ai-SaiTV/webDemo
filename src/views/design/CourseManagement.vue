@@ -54,8 +54,8 @@
           <h3>教学记录</h3>
           <el-card class="note-card">
             <el-table :data="selectedClassDetails.notes" :bordered="true">
-              <el-table-column label="教学总结" prop="content" />
               <el-table-column label="记录日期" prop="date" />
+              <el-table-column label="记录内容" prop="content" />
               <el-table-column label="操作" width="180">
                 <template #default="scope">
                   <el-button type="text" @click="editNote(scope.row)" title="编辑课程">编辑</el-button>
@@ -269,8 +269,7 @@ const courses = ref<Course[]>([
   },
 ]);
 
-// const selectedClassId = ref<string | null>(null);
-const selectedClassId = ref("1")
+const selectedClassId = ref<string | null>(null);
 const selectedClassDetails = computed(() => {
   if (!selectedClassId.value) return null;
   return courses.value.find((course) => course.id === selectedClassId.value) || null;
@@ -339,7 +338,7 @@ const addNote = () => {
 
 // 编辑教学记录
 const editNote = (note: Note) => {
-  ElMessageBox.prompt("请输入新的教学总结", "编辑教学总结", {
+  ElMessageBox.prompt("请输入新的记录内容", "编辑教学记录", {
     inputModel: note.content,
     inputValidator: (value: string) => value.length > 0,
     inputErrorMessage: "记录内容不能为空",
