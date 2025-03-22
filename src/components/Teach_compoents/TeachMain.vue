@@ -103,6 +103,7 @@ const selectedBook = ref<Book | null>(null);
 const selectedVideo = ref<Video | null>(null);
 const isBookModalVisible = ref(false);
 const isVideoModalVisible = ref(false);
+const isTextModalVisible = ref(false);
 const isAddModalVisible = ref(false);
 
 const newBook = ref<NewBook>({

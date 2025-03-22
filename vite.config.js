@@ -1,11 +1,11 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
-import { string } from 'vite-plugin-string';
+import vitestring from 'vite-plugin-string';
 export default defineConfig({
   plugins: [
     vue(),
-    string({
+    vitestring({
       include: '**/*.doc',
     }),
   ],
