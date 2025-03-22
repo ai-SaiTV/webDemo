@@ -6,25 +6,24 @@
     </div>
     <!--班级选择和上传区域-->
     <el-row :gutter="20" class="mb-4">
-      <el-col :span="16">
+      <el-col :span="18">
         <el-card class="upload-card">
           <template #header>
             <div class="card-header">
-              <div>成绩单导入</div>
-              <el-select v-model="selectedClassId" placeholder="选择班级" @change="reloadClassData" style="width: 80%;">
+              <div>班级选择</div>
+              <el-select v-model="selectedClassId" @change="reloadClassData" style="width: 85%;">
                 <el-option v-for="class_ in classes" :key="class_.id" :label="`${class_.name}`" :value="class_.id" />
               </el-select>
-              <!-- <input ref="uploadMdRef" type="file" accept=".md" style="display: none" @change="handleExcelUpload" />
-              <el-button type="primary" @click="uploadMdRef.click()">
-                <el-icon>
-                  <Upload />
-                </el-icon>
-                上传试卷
-              </el-button> -->
             </div>
           </template>
           <div class="upload-area" v-if="selectedClassId">
-            <div class="upload-transcript">
+            <div class="chart-container">
+              <!-- 饼状图容器 -->
+              <div ref="pieChartRef" class="chart-box"></div>
+              <!-- 柱状图容器 -->
+              <div ref="barChartRef" class="chart-box"></div>
+            </div>
+            <div class="upload-buttons">
               <input ref="uploadMdRef" type="file" accept=".md" style="display: none" @change="handleFileUpload" />
               <el-button type="primary" @click="uploadMdRef.click()">
                 <el-icon><Upload /></el-icon>
@@ -38,20 +37,16 @@
             </div>
             <p class="upload-tip">试卷支持.md格式。成绩单支持.xlsx或.xls格式（确保第一列为学生姓名，后续列为题目分数）</p>
           </div>
-          <div class="upload-area" v-else>
-            <p class="upload-tip">请选择班级</p>
-          </div>
-
         </el-card>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="6">
         <el-card class="student-list-card">
           <template #header>
             <div class="card-header">
               <span>班级学生</span>
             </div>
           </template>
-          <el-scrollbar height="200px">
+          <el-scrollbar height = "485px">
             <div class="student-list">
               <div v-for="student in currentClassStudents" :key="student.id" class="student-item"
                 @click="viewStudentDetails(student)">
@@ -85,7 +80,6 @@
         <template #header>
           <div class="card-header">
             <span>成绩明细</span>
-
           </div>
         </template>
         <el-table :data="tableData" style="width: 100%" max-height="400">
@@ -118,41 +112,31 @@
             AI分析
           </el-button>
         </template>
-        <div  v-loading="isAnalyzing" class="ai-analysis-content">
-			<!-- {{ aiAnalysisResult.recommendations === ' ' }} -->
-			<div v-if="!(aiAnalysisResult.recommendations === ' ') ">
-
-				<div class="analysis-section">
-					<h4>整体分析</h4>
-					<p>{{ aiAnalysisResult.overallAnalysis }}</p>
-				</div>
-			
-				<div class="analysis-section">
-					<h4>关键发现</h4>
-					<ul>
-					<li v-for="(point, index) in aiAnalysisResult.keyPoints" :key="index">
-						{{ point }}
-					</li>
-					</ul>
-				</div>
-				<div class="analysis-section">
-					<h4>教学建议</h4>
-					<!-- <ul>
-					<li v-for="(rec, index) in aiAnalysisResult.recommendations" :key="index">
-						{{ rec }}
-					</li>
-					</ul> -->
-					<div class="markdown-container">
-					<!-- 渲染 Markdown 内容 -->
-					<div v-html="aiAnalysisResult.recommendations" class="markdown-content"></div>
-					</div>
-				</div>
-			</div>
-
-			<div v-else>
-				暂无学情分析
-			</div>
-		</div>
+        <div v-loading="isAnalyzing" class="ai-analysis-content">
+          <div v-if="!(aiAnalysisResult.recommendations === ' ')">
+            <div class="analysis-section">
+              <h4>整体分析</h4>
+              <p>{{ aiAnalysisResult.overallAnalysis }}</p>
+            </div>
+            <div class="analysis-section">
+              <h4>关键发现</h4>
+              <ul>
+                <li v-for="(point, index) in aiAnalysisResult.keyPoints" :key="index">
+                  {{ point }}
+                </li>
+              </ul>
+            </div>
+            <div class="analysis-section">
+              <h4>教学建议</h4>
+              <div class="markdown-container">
+                <div v-html="aiAnalysisResult.recommendations" class="markdown-content"></div>
+              </div>
+            </div>
+          </div>
+          <div v-else>
+            暂无学情分析
+          </div>
+        </div>
       </el-card>
     </template>
 
@@ -160,7 +144,6 @@
     <el-dialog v-model="showStudentDetails" :title="`${selectedStudent?.name || ''} - 学生详情`" width="80%">
       <div v-loading="isAnalyzing">
         <el-row :gutter="20">
-          <!-- 基本信息 -->
           <el-col :span="8">
             <el-card class="student-info-card">
               <div class="student-profile">
@@ -184,16 +167,12 @@
               </div>
             </el-card>
           </el-col>
-
-          <!-- 成绩趋势 -->
           <el-col :span="16">
             <el-card class="trend-card">
               <div ref="studentPerformanceChartRef" style="height: 300px;"></div>
             </el-card>
           </el-col>
         </el-row>
-
-        <!-- 个人分析 -->
         <el-row :gutter="20" class="mt-4">
           <el-col :span="12">
             <el-card>
@@ -230,18 +209,12 @@
             </el-card>
           </el-col>
         </el-row>
-
-        <!-- 学习建议 -->
         <el-card class="mt-4">
           <template #header>
             <div class="card-header">
               <span>学习建议</span>
             </div>
           </template>
-          <!-- <div class="markdown-container"> -->
-            <!-- 渲染 Markdown 内容 -->
-            <!-- <div v-html="studentAnalysis.recommendations" class="markdown-content"></div>
-          </div> -->
           <ul class="recommendation-list">
             <li v-for="(rec, index) in studentAnalysis.recommendations" :key="index">
               <el-icon><Star /></el-icon>
@@ -259,6 +232,7 @@ import { ref, onMounted, watch, computed} from "@vue/runtime-core";
 import * as echarts from "echarts";
 import * as XLSX from "xlsx";
 import { ElMessage } from "element-plus";
+
 
 interface Student {
   id: string;
@@ -291,13 +265,16 @@ const studentPerformanceChartRef = ref<HTMLElement>();
 const uploadExcelRef = ref();
 const uploadMdRef =ref()
 
+const pieChartRef = ref(null);
+const barChartRef = ref(null);
+
 const tableData = ref<Student[]>([]);
 const questions = ref<Question[]>([]);
 const showAIAnalysis = ref(false);
 const isAnalyzing = ref(false);
 const showStudentDetails = ref(false);
 const selectedStudent = ref<Student | null>(null);
-const selectedClassId = ref();
+const selectedClassId = ref("1-1");
 
 const classes = ref<Class[]>([
   {
@@ -445,6 +422,76 @@ const updateCharts = () => {
     return;
   }
 
+  if (pieChartRef.value && barChartRef.value) {
+    // 销毁旧实例
+    const pieChart = echarts.getInstanceByDom(pieChartRef.value);
+    const barChart = echarts.getInstanceByDom(barChartRef.value);
+
+    if (pieChart) pieChart.dispose();
+    if (barChart) barChart.dispose();
+
+    // 初始化新实例
+    const newPieChart = echarts.init(pieChartRef.value);
+    const newBarChart = echarts.init(barChartRef.value);
+
+    // 计算优秀学生、及格学生和不及格学生的数量
+  let excellentStudents = 0; // 优秀学生（>=80分）
+  let passStudents = 0; // 及格学生（60-79分）
+  let failStudents = 0; // 不及格学生（<60分）
+
+  currentClass.students.forEach(student => {
+    if (student.total >= 80) {
+      excellentStudents++;
+    } else if (student.total >= 60) {
+      passStudents++;
+    } else {
+      failStudents++;
+    }
+  });
+
+    // 饼状图数据
+    const performanceData = [
+      { value: excellentStudents, name: '优秀学生（>=80）' },
+      { value: passStudents, name: '及格学生（60-79）' },
+      { value: failStudents, name: '不及格学生（<60）' }
+    ];
+
+    // 饼状图配置
+    newPieChart.setOption({
+      title: { text: '学生成绩分布' },
+      tooltip: { trigger: 'item' },
+      legend: { orient: 'vertical', left : 'right' },
+      series: [
+        {
+          name: '学生人数',
+          type: 'pie',
+          radius: '50%',
+          data: performanceData,
+          emphasis: { itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.5)' } }
+        }
+      ]
+    });
+
+    // 柱状图数据
+    const questionData = currentClass.questions.map(q => ({
+      passed: q.correctRate >= 60 ? 1 : 0,
+      failed: q.correctRate < 60 ? 1 : 0
+    }));
+
+    // 柱状图配置
+    newBarChart.setOption({
+      title: { text: '题目得分情况' },
+      tooltip: { trigger: 'axis' },
+      legend: { data: ['及格', '不及格'] },
+      xAxis: { type: 'category', data: currentClass.questions.map(q => `题目${q.id}`) },
+      yAxis: { type: 'value' },
+      series: [
+        { name: '及格', type: 'bar', data: questionData.map(q => q.passed) },
+        { name: '不及格', type: 'bar', data: questionData.map(q => q.failed) }
+      ]
+    });
+  }
+
   if (performanceChartRef.value && questionAnalysisChartRef.value) {
     // 销毁旧实例
     const performanceChart = echarts.getInstanceByDom(performanceChartRef.value);
@@ -518,6 +565,7 @@ import { analysisService } from "@/services/storage/analysisResService";
 import type { analysisRes } from "@/types/analysisRes";
 
 import { parseMarkdown } from '../../utils/markdownUtils';
+import { Right } from "@element-plus/icons-vue";
 
 const DataThisSession_als = ref<analysisRes | null>(null);  // 会话数据
 const sessionId = ref("");
@@ -730,7 +778,7 @@ onMounted(() => {
 .analysis-container {
   .mb-4 {
     display: flex;
-    align-items: stretch; // 让子元素撑满容器
+    align-items: stretch;
   }
 
   .mt-4 {
@@ -741,8 +789,32 @@ onMounted(() => {
   .student-list-card {
     display: flex;
     flex-direction: column;
-    flex: 1; // 让两个卡片等高
-    height: 90%; // 确保高度一致
+    flex: 1;
+    height: 90%;
+  }
+
+  .chart-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .chart-box {
+    width: 49%;
+    height: 300px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    padding: 16px;
+  }
+
+  .upload-buttons {
+    display: flex;
+    flex-direction: center;
+    gap: 10px;
+    margin-top: 30px;
+    margin-bottom: 10px;
   }
 
   .plan-header {
@@ -770,25 +842,18 @@ onMounted(() => {
       align-items: center;
     }
 
-    .upload-transcript{
+    .upload-area {
+      height: 550px;
       flex: 1;
       display: flex;
-      flex-direction: row;
-      gap: 30px;
-
-    }
-
-    .upload-area {
-      flex: 1; // 让上传区域填充剩余空间
-      display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
 
       .upload-tip {
         color: #909399;
         font-size: 14px;
-        margin-top: 30px;
+        margin-top: 10px;
       }
     }
   }
@@ -796,6 +861,7 @@ onMounted(() => {
   .student-list-card {
     .student-list {
       .student-item {
+        height: auto;
         display: flex;
         align-items: center;
         padding: 8px;
@@ -813,7 +879,7 @@ onMounted(() => {
         }
 
         .el-scrollbar {
-          flex: 1; // 让滚动区域填充整个卡片
+          flex: 1;
         }
       }
     }
