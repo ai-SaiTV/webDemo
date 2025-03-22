@@ -173,6 +173,33 @@ const deleteText = async (text: Text) => {
         ElMessage.info('已取消删除');
     }
 };
+const handleResource = (resourceType: string,bookvalue?:any,videosvalue?:any,textsvalue?:any) => {
+    switch (resourceType) {
+        case 'books':
+            return bookvalue;
+        case 'videos':
+            return videosvalue;
+        case 'texts':
+            return textsvalue;
+        default:
+            return '';
+    }
+};
+const updateResource=(resourceType: string, value: any) =>{
+  switch (resourceType) {
+    case 'books':
+      newBook.value = value as NewBook;
+      break;
+    case 'videos':
+      newVideo.value = value as NewVideo;
+      break;
+    case 'texts':
+      newText.value = value as NewText;
+      break;
+    default:
+      break;
+  }
+};
 const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video') => {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
@@ -308,9 +335,9 @@ const handleTextError = () => {
             @close="isVideoModalVisible = false" @error="handleVideoError" />
         <TextModal v-if="selectedText" :text="selectedText" :visible="isTextModalVisible"
             @close="isTextModalVisible = false" @error="handleTextError" />
-        <AddResourceModal :visible="isAddModalVisible" :type="resourceType === 'books' ? 'book' : 'video'"
-            :model-value="resourceType === 'books' ? newBook : newVideo"
-            @update:model-value="resourceType === 'books' ? (v: NewBook) => newBook = v as NewBook : (v: NewVideo) => newVideo = v as NewVideo"
+        <AddResourceModal :visible="isAddModalVisible" :type="handleResource(resourceType,'book','video','text')"
+            :model-value="handleResource(resourceType, newBook, newVideo, newText)"
+            @update:model-value="updateResource(resourceType, $event)"
             @file-upload="handleFileUpload" @submit="handleSubmit" @close="isAddModalVisible = false" />
     </div>
 </template>
