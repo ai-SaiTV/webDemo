@@ -128,6 +128,33 @@
 }
 
 
+
+/* 自定义滚动条样式 */
+.markdown-content::-webkit-scrollbar {
+  width: 8px; /* 设置滚动条宽度 */
+}
+
+.markdown-content::-webkit-scrollbar-track {
+  background: transparent; /* 默认状态下滚动条轨道透明 */
+}
+
+.markdown-content::-webkit-scrollbar-thumb {
+  background: transparent; /* 默认状态下滚动条滑块透明 */
+  border-radius: 4px;
+}
+
+/* 滚动时显示滚动条 */
+.markdown-content:hover::-webkit-scrollbar-thumb {
+  background: #d4d4d4; /* 滚动时显示滚动条滑块 */
+}
+
+.markdown-content:hover::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 滚动时显示滚动条轨道 */
+}
+
+
+
+
 /* 自定义高亮类（在Markdown中用HTML标签实现） */
 .highlight {
   background-color: #fff3d4; /* 荧光黄底色 */
