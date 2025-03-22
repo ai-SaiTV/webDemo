@@ -158,7 +158,7 @@
 
     <!-- 学生详情对话框 -->
     <el-dialog v-model="showStudentDetails" :title="`${selectedStudent?.name || ''} - 学生详情`" width="80%">
-      <div v-loading="isAnalyzing">
+      <div v-loading="isAnalyzing_person">
         <el-row :gutter="20">
           <!-- 基本信息 -->
           <el-col :span="8">
@@ -295,6 +295,7 @@ const tableData = ref<Student[]>([]);
 const questions = ref<Question[]>([]);
 const showAIAnalysis = ref(false);
 const isAnalyzing = ref(false);
+const isAnalyzing_person = ref(false);
 const showStudentDetails = ref(false);
 const selectedStudent = ref<Student | null>(null);
 const selectedClassId = ref();
@@ -606,7 +607,7 @@ const generateAIAnalysis = async () => {
 
 // 生成学生个人分析
 const generateStudentAnalysis = async (student: Student) => {
-  isAnalyzing.value = true;
+  isAnalyzing_person.value = true;
 
   await new Promise((resolve) => setTimeout(resolve, 1500));
 
@@ -683,7 +684,7 @@ const generateStudentAnalysis = async (student: Student) => {
     });
   }
 
-  isAnalyzing.value = false;
+  isAnalyzing_person.value = false;
 };
 
 // 查看学生详情
