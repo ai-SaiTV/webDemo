@@ -6,11 +6,11 @@ export default defineConfig({
   plugins: [
     vue(),
     vitestring({
-      include: '**/*.doc',
+      include: '**/*.docx',
     }),
   ],
   assetsInclude: [
-    '**/*.doc'
+    '**/*.docx'
   ],
   resolve: {
     alias: {

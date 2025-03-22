@@ -19,6 +19,7 @@
     "fs": "^0.0.1-security",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.0",
+    "mammoth": "^1.9.0",
     "marked": "^15.0.7",
     "noisejs": "^2.1.0",
     "pdf-vue3": "^1.0.12",

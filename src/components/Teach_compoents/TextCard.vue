@@ -15,6 +15,7 @@ const emit = defineEmits<{
   <div class="Text-item" :data-id="text.id">
     <div class="Text-header">
       <img :src="text.image || defaultimg" :alt="text.title" />
+      <h3>{{ text.title }}</h3>
     </div>
     <button class="more-details" @click="emit('openModal', text)">更多详情</button>
     <button class="delete-button" @click="emit('delete', text)">删除</button>

@@ -7,6 +7,7 @@ import VideoList from './VideoList.vue';
 import TextList from './TextList.vue';
 import BookModal from './BookModal.vue';
 import VideoModal from './VideoModal.vue';
+import TextModal from './TextModal.vue';
 import AddResourceModal from './AddResourceModal.vue';
 import { Book, Video,Text,NewBook, NewVideo,NewText } from '@/types';
 
@@ -21,7 +22,7 @@ import Doc4 from '@/assets/Doc4.pdf';
 import Doc5 from '@/assets/Doc5.pdf';
 import Vid from '@/assets/田忌赛马.mp4';
 import Vid2 from '@/assets/两小儿辩日.mp4';
-import text1 from '@/assets/text1.doc';
+import text1 from '@/assets/text1.docx';
 import nullvideoimg from '@/assets/OIP-C.jpg';
 import nulltextimg from '@/assets/nulltext.jpg';
 const books = ref<Book[]>([
@@ -92,8 +93,8 @@ const videos = ref<Video[]>([
 const texts = ref<Text[]>([
     {
         id: 1,
-        title: '二年级上册教学大纲',
-        description: '一份关于二年级语文上册的教学大纲。',
+        title: '田忌赛马教学大纲',
+        description: '一份关于田忌赛马的教学大纲。',
         image: nulltextimg,
         words: text1,
     }
@@ -101,6 +102,7 @@ const texts = ref<Text[]>([
 const resourceType = ref('books');
 const selectedBook = ref<Book | null>(null);
 const selectedVideo = ref<Video | null>(null);
+const selectedText = ref<Text | null>(null);
 const isBookModalVisible = ref(false);
 const isVideoModalVisible = ref(false);
 const isTextModalVisible = ref(false);
@@ -264,6 +266,9 @@ const resetForm = () => {
 const handleVideoError = () => {
     ElMessage.error('视频加载失败，请检查文件格式或网络连接');
 };
+const handleTextError = () => {
+    ElMessage.error('文本加载失败，请检查文件格式或网络连接');
+};
 </script>
 
 <template>
@@ -301,7 +306,8 @@ const handleVideoError = () => {
 
         <VideoModal v-if="selectedVideo" :video="selectedVideo" :visible="isVideoModalVisible"
             @close="isVideoModalVisible = false" @error="handleVideoError" />
-
+        <TextModal v-if="selectedText" :text="selectedText" :visible="isTextModalVisible"
+            @close="isTextModalVisible = false" @error="handleTextError" />
         <AddResourceModal :visible="isAddModalVisible" :type="resourceType === 'books' ? 'book' : 'video'"
             :model-value="resourceType === 'books' ? newBook : newVideo"
             @update:model-value="resourceType === 'books' ? (v: NewBook) => newBook = v as NewBook : (v: NewVideo) => newVideo = v as NewVideo"
