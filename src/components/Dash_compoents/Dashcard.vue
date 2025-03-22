@@ -5,6 +5,28 @@
       <template #header>
         <div class="stat-header">
           <h3>历史学情分析反馈</h3>
+          
+
+            <el-card class="stat-card">
+              <template #header>
+                <!-- 原有header内容 -->
+              </template>
+
+              <!-- 新增扇形图 -->
+              <el-chart 
+                class="analysis-chart" 
+                :data="chartData" 
+                :options="chartOptions" 
+                :init-options="{ renderer: 'svg' }"
+              />
+
+              <!-- 原有 stat-grid -->
+              <div class="stat-grid">
+                ...
+              </div>
+            </el-card>
+
+
             <div class="markdown-container">
               <!-- 渲染 Markdown 内容 -->
               <div v-html="Pp_Html" class="markdown-content"></div>
@@ -38,6 +60,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from '@vue/runtime-core';
 import { parseMarkdown } from '@/utils/markdownUtils';
+import { ElCard } from 'element-plus';
 // const plan_Num = ref(12)
 // const resource_Num = ref(25)
 // const applause_rate = ref("98%")
@@ -67,15 +90,52 @@ const Generate_Prompt = ref(`
 
 const Pp_Html = ref('');
 
+
+const chartData = ref([
+  { value: 18, name: '优秀层' },
+  { value: 60, name: '中等层' },
+  { value: 22, name: '困难层' }
+]);
+
+const chartOptions = {
+  color: ['#5470C6', '#91CC75', '#FAC858'],
+  tooltip: {
+    trigger: 'item'
+  },
+  series: [{
+    type: 'pie',
+    radius: '70%',
+    center: ['50%', '60%'],
+    itemStyle: {
+      borderRadius: 5
+    },
+    label: {
+      show: true,
+      formatter: '{b}: {c}%',
+      position: 'outside'
+    }
+  }]
+};
+
 onMounted(() => {
   Pp_Html.value = parseMarkdown(Generate_Prompt.value).__html;
 });
 
-
-
 </script>
 
 <style scoped lang="scss">
+
+.analysis-chart {
+  height: 200px;
+  margin-bottom: 1rem;
+}
+
+.stat-grid {
+  margin-top: -20px; // 调整与图表间距（根据实际调整）
+}
+
+
+
 .stat-card,
   .recent-card {
     margin-bottom: 1.5rem;
