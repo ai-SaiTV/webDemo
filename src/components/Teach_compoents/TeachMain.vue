@@ -4,6 +4,7 @@ import { ElMessageBox, ElMessage } from 'element-plus';
 import ResourceHeader from './ResourceHeader.vue';
 import BookList from './BookList.vue';
 import VideoList from './VideoList.vue';
+import TextList from './TextList.vue';
 import BookModal from './BookModal.vue';
 import VideoModal from './VideoModal.vue';
 import AddResourceModal from './AddResourceModal.vue';
@@ -19,8 +20,10 @@ import Doc3 from '@/assets/Doc3.pdf';
 import Doc4 from '@/assets/Doc4.pdf';
 import Doc5 from '@/assets/Doc5.pdf';
 import Vid from '@/assets/田忌赛马.mp4';
+import Vid2 from '@/assets/两小儿辩日.mp4';
+import text1 from '@/assets/text1.doc';
 import nullvideoimg from '@/assets/OIP-C.jpg';
-
+import nulltextimg from '@/assets/nulltext.jpg';
 const books = ref<Book[]>([
     {
         id: 1,
@@ -83,7 +86,7 @@ const videos = ref<Video[]>([
         duration: '12:45',
         description: '一个关于两小儿辩日的教学视频。',
         image: nullvideoimg,
-        path: Vid
+        path: Vid2
     }
 ]);
 const texts = ref<Text[]>([
@@ -91,8 +94,8 @@ const texts = ref<Text[]>([
         id: 1,
         title: '二年级上册教学大纲',
         description: '一份关于二年级语文上册的教学大纲。',
-        image: nullvideoimg,
-        words: '一份关于二年级语文上册的教学大纲。',
+        image: nulltextimg,
+        words: text1,
     }
 ]);    
 const resourceType = ref('books');
@@ -119,6 +122,13 @@ const newVideo = ref<NewVideo>({
     image: null as File | null,
     video: null as File | string | null
 });
+
+const newText = ref<NewText>({
+    title: '',
+    description: '',
+    image: null as File | null,
+    words: null as File | string | null
+});
 const deleteBook = async (book: Book) => {
     try {
         await ElMessageBox.confirm(`确定要删除书籍《${book.title}》吗？`, '提示', {
@@ -141,6 +151,20 @@ const deleteVideo = async (video: Video) => {
             cancelButtonText: '取消',
         });
         videos.value = videos.value.filter((v) => v.id !== video.id);
+        ElMessage.success('删除成功');
+    } catch {
+        ElMessage.info('已取消删除');
+    }
+};
+
+const deleteText = async (text: Text) => {
+    try {
+        await ElMessageBox.confirm(`确定要删除文本《${text.title}》吗？`, '提示', {
+            type: 'warning',
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+        });
+        texts.value = texts.value.filter((t) => t.id !== text.id);
         ElMessage.success('删除成功');
     } catch {
         ElMessage.info('已取消删除');
@@ -261,6 +285,12 @@ const handleVideoError = () => {
             <VideoList v-if="resourceType === 'videos'" :videos="videos"
                 @open-video-modal="(video: NewVideo) => { selectedVideo = video; isVideoModalVisible = true; }"
                 @delete-video="deleteVideo" @open-add-video-modal="isAddVideoModalVisible = true" 
+                @open-add-modal="isAddModalVisible = true"
+                />
+            
+            <TextList v-if="resourceType === 'texts'" :texts="texts"
+                @open-text-modal="(text: NewText) => { selectedText = text; isTextModalVisible = true; }"
+                @delete-text="deleteText" @open-add-text-modal="isAddTextModalVisible = true" 
                 @open-add-modal="isAddModalVisible = true"
                 />
         </div>

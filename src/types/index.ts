@@ -44,9 +44,8 @@ export interface Book {
   }
 
   export interface NewText {
-    id: number;
     title: string;
     description: string;
-    image: string | null;
-    words: string | null | undefined;
+    image: File | null;
+    words: File | string | null;
   }
