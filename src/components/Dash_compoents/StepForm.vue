@@ -1,4 +1,5 @@
 <template>
+
   <div>
     <!-- 步骤1：to大纲生成 -->
     <div v-if="activeStep === 0" class="step-form">
@@ -30,17 +31,15 @@
           @dropdown-change="handleDropdownChange"
           @replace="handleReplace"
           @confirm="handleConfirm"
+          v-model:is-editing-textarea="localIsEditingTextarea" 
           />
           <el-form-item label=" ">
-            <div v-if="!isForm1Editing">
-              <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;">
-              </div>
+            <div v-if="!localIsEditingTextarea">
+              <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;"></div>
             </div>
             <div v-else>
-              <textarea v-model="form1.requirements" rows="10" placeholder="请输入具体的教学要求和注意事项..."
+              <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
                 class="custom-textarea"></textarea>
-            </div>
-            <div class="form-buttons">
             </div>
           </el-form-item>
         </el-row>
@@ -61,14 +60,16 @@
           @dropdown-change="handleDropdownChange"
           @replace="handleReplace"
           @confirm="handleConfirm"
+          v-model:is-editing-textarea="localIsEditingTextarea" 
           />
           <el-form-item label=" ">
-            <div v-if="!isForm1Editing">
+            <div v-if="!localIsEditingTextarea">
+              
               <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;">
               </div>
             </div>
             <div v-else>
-              <textarea v-model="form1.requirements" rows="10" placeholder="暂无" class="custom-textarea"></textarea>
+              <textarea v-model="form1.requirements" rows="50" placeholder="暂无" class="custom-textarea"></textarea>
             </div>
             <div class="form-buttons">
             </div>
@@ -103,7 +104,7 @@
         <el-row :gutter="24" justify="center">
           <el-col :span="12">
             <el-form-item label=" ">
-              <div v-if="!isForm1Editing">
+              <div v-if="!localIsEditingTextarea">
                 <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;">
                 </div>
               </div>
@@ -157,6 +158,8 @@ import { activeStep, EditSubmit, EditZoneContent,
 
 //Edit OptimizeButton
 import OptimizeButton from './EditDropDown.vue';
+
+const localIsEditingTextarea = ref(false);
 
 
 //scss
