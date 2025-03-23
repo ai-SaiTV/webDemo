@@ -36,10 +36,10 @@ const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video' |'te
       <h3>{{ title }}</h3>
       <form @submit.prevent="emit('submit')">
         <div class="input-group">
-          <label for="title">{{ isBook ? '书名' : '标题' }}：</label>
+          <label for="title">{{ isBook ? '书名' : isVideo ? '视频标题' : '文本标题' }}：</label>
           <el-input 
             v-model="(formData as any).title" 
-            :placeholder="isBook ? '请输入书名' : '请输入视频标题'"
+            :placeholder="isBook ? '请输入书名' : isVideo ? '请输入视频标题' : '请输入文本标题'"
           />
         </div>
         
@@ -108,7 +108,7 @@ const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video' |'te
           <input 
             type="file" 
             @change="(e:any) => handleFileUpload(e, isBook ? 'pdf' : isVideo ? 'video' : 'text')" 
-            :accept="isBook ? 'application/pdf' : isVideo ? 'video/*' : '.docx'" 
+            :accept="isBook ? 'application/pdf' : isVideo ? 'video/*' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'" 
           />
         </div>
 
