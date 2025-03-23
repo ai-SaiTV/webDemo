@@ -23,6 +23,7 @@ import Doc5 from '@/assets/Doc5.pdf';
 import Vid from '@/assets/田忌赛马.mp4';
 import Vid2 from '@/assets/两小儿辩日.mp4';
 import text1 from '@/assets/text1.docx';
+import text2 from '@/assets/text2.docx';
 import nullvideoimg from '@/assets/OIP-C.jpg';
 import nulltextimg from '@/assets/nulltext.jpg';
 const books = ref<Book[]>([
@@ -97,7 +98,14 @@ const texts = ref<Text[]>([
         description: '一份关于田忌赛马的教学大纲。',
         image: nulltextimg,
         words: text1,
-    }
+    },
+    {
+        id: 2,
+        title: '两小儿辩日教学大纲',
+        description: '一份关于两小儿辩日的教学大纲。',
+        image: nulltextimg,
+        words: text2,
+    },
 ]);    
 const resourceType = ref('books');
 const selectedBook = ref<Book | null>(null);
