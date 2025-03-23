@@ -356,6 +356,44 @@ const handleExcelUpload = (event: Event) => {
   }
 };
 
+// '@/assets/files/scores.xlsx'
+// 在系统初始化时读取并处理Excel文件
+onMounted(async () => {
+  try {
+    // 使用 public 目录中的文件
+    const response = await fetch('scores.xlsx');
+    if (!response.ok) {
+      throw new Error("Failed to fetch the Excel file");
+    }
+
+    // 读取文件内容
+    const data = await response.arrayBuffer();
+    const workbook = XLSX.read(data, { type: "array" });
+
+    // 检查是否有工作表
+    if (workbook.SheetNames.length === 0) {
+      throw new Error("No sheets found in the Excel file");
+    }
+
+    // 解析第一个工作表
+    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+    if (jsonData.length === 0) {
+      throw new Error("No data found in the Excel file");
+    }
+
+    // 处理 Excel 数据
+    processExcelData(jsonData);
+
+    // 更新图表和分析
+    reloadClassData(selectedClassId.value);
+    updateCharts();
+  } catch (error) {
+    console.error("Error loading default Excel file:", error);
+  }
+});
+
 // 处理Excel数据
 const processExcelData = (data: any[]) => {
   const questionCount = Object.keys(data[0]).length - 1; // 第一列是姓名，其余是题目分数
@@ -417,6 +455,7 @@ const processExcelData = (data: any[]) => {
 
   // 更新全局数据
   tableData.value = currentClass.students;
+  questions.value = currentClass.questions;
 
   // 更新图表和分析
   updateCharts();
@@ -559,7 +598,6 @@ const updateCharts = () => {
     });
   }
 };
-
 
 let stopPollingWatch: (() => void) | null = null;
 let isUpdatingStep = ref(false); // 状态锁
@@ -774,7 +812,8 @@ const reloadClassData = (classId: string) => {
 };
 
 // 初始化时加载默认班级的数据
-onMounted(() => {
+onMounted(async () => {
+  
   reloadClassData(selectedClassId.value);
   updateCharts();
 });
