@@ -361,7 +361,7 @@ const handleExcelUpload = (event: Event) => {
 onMounted(async () => {
   try {
     // 使用 public 目录中的文件
-    const response = await fetch('scores.xlsx');
+    const response = await fetch('src/assets/files/scores.xlsx');
     if (!response.ok) {
       throw new Error("Failed to fetch the Excel file");
     }
