@@ -10,9 +10,13 @@
         <el-card class="upload-card">
           <template #header>
             <div class="card-header">
-              <div>班级选择</div>
-              <el-select v-model="selectedClassId" @change="reloadClassData" style="width: 85%;">
-                <el-option v-for="class_ in classes" :key="class_.id" :label="`${class_.name}`" :value="class_.id" />
+              <!-- <div>选择班级</div>
+              <el-select v-model="selectedClassId" @change="reloadClassData" style="width: 90%;">
+                <el-option v-for="class_ in classes" :key="class_.id" :label="class_.papername" :value="class_.id" />
+              </el-select> -->
+              <div>选择试卷</div>
+              <el-select v-model="selectedClassId" @change="reloadClassData" style="width: 90%;">
+                <el-option v-for="class_ in classes" :key="class_.id" :label="class_.papername" :value="class_.id" />
               </el-select>
             </div>
           </template>
@@ -234,6 +238,7 @@ import * as XLSX from "xlsx";
 import { ElMessage } from "element-plus";
 
 
+
 interface Student {
   id: string;
   name: string;
@@ -253,7 +258,7 @@ interface Question {
 
 interface Class {
   id: string;
-  name: string;
+  papername: string;
   grade: string;
   students: Student[];
   questions: Question[]; 
@@ -270,6 +275,7 @@ const barChartRef = ref(null);
 
 const tableData = ref<Student[]>([]);
 const questions = ref<Question[]>([]);
+
 const showAIAnalysis = ref(false);
 const isAnalyzing = ref(false);
 const showStudentDetails = ref(false);
@@ -279,31 +285,31 @@ const selectedClassId = ref("1-1");
 const classes = ref<Class[]>([
   {
     id: "1-1",
-    name: "一年级一班",
-    grade: "一年级",
+    papername: "一年级一班",
+    grade: "一年级一班",
     students: [],
-    questions: [], // 初始化为空数组
+    questions: [], 
   },
   {
     id: "2-3",
-    name: "二年级三班",
-    grade: "二年级",
+    papername: "二年级三班",
+    grade: "二年级三班",
     students: [],
-    questions: [], // 初始化为空数组
+    questions: [], 
   },
   {
     id: "3-1",
-    name: "三年级一班",
-    grade: "三年级",
+    papername: "三年级一班",
+    grade: "三年级一班",
     students: [],
-    questions: [], // 初始化为空数组
+    questions: [], 
   },
   {
     id: "4-2",
-    name: "四年级二班",
-    grade: "四年级",
+    papername: "四年级二班",
+    grade: "四年级二班",
     students: [],
-    questions: [], // 初始化为空数组
+    questions: [], 
   },
 ]);
 
@@ -565,7 +571,6 @@ import { analysisService } from "@/services/storage/analysisResService";
 import type { analysisRes } from "@/types/analysisRes";
 
 import { parseMarkdown } from '../../utils/markdownUtils';
-import { Right } from "@element-plus/icons-vue";
 
 const DataThisSession_als = ref<analysisRes | null>(null);  // 会话数据
 const sessionId = ref("");
@@ -839,6 +844,7 @@ onMounted(() => {
     .card-header {
       display: flex;
       justify-content: flex-start;
+      flex-wrap: wrap;
       align-items: center;
     }
 

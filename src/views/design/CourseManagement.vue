@@ -8,7 +8,7 @@
     <el-card class="main-card">
       <!-- 班级选择器 -->
       <div class="class-selector">
-        <el-select v-model="selectedClassId" placeholder="请选择班级" @change="loadClassDetails" class="input-field">
+        <el-select v-model="selectedClassId"  @change="loadClassDetails" class="input-field">
           <el-option v-for="course in courses" :key="course.id"
             :label="`${course.grade} ${course.subject} - ${course.name}`" :value="course.id" />
         </el-select>
@@ -157,25 +157,25 @@ const courses = ref<Course[]>([
       {
         title: "第一章：认识汉子",
         status: "已完成",
-        date: "2025/02/20",
+        date: "2025/2/20",
         description: "学习并掌握汉字的读音和书写。",
       },
       {
         title: "第二章：基础语法",
         status: "进行中",
-        date: "2025/02/25",
+        date: "2025/2/25",
         description: "学习汉字基础语法结构。",
       },
       {
         title: "第三章：口语表达",
         status: "已准备",
-        date: "2025/03/01",
+        date: "2025/3/1",
         description: "进行口语练习，提升语文口语能力。",
       },
     ],
     notes: [
-      { date: "2025/02/20", content: "今天讲解了字母的发音，学生反应积极。" },
-      { date: "2025/02/25", content: "进行了基础语法练习，部分学生掌握较好。" },
+      { date: "2025/2/20", content: "今天讲解了字母的发音，学生反应积极。" },
+      { date: "2025/2/25", content: "进行了基础语法练习，部分学生掌握较好。" },
     ],
   },
   {
@@ -191,12 +191,12 @@ const courses = ref<Course[]>([
       {
         title: "数学挑战赛",
         status: "已准备",
-        date: "2025/06/12",
+        date: "2025/6/12",
         description: "进行数学思维挑战，激发学生兴趣。",
       },
     ],
     notes: [
-      { date: "2025/02/26", content: "学生参与度较高，下一步计划进行更多思维训练。" },
+      { date: "2025/2/26", content: "学生参与度较高，下一步计划进行更多思维训练。" },
     ],
   },
   {
@@ -212,25 +212,25 @@ const courses = ref<Course[]>([
       {
         title: "第一章：名词和代词",
         status: "已完成",
-        date: "2025/02/27",
+        date: "2025/2/27",
         description: "学习名词的分类和代词的使用。",
       },
       {
         title: "第二章：动词的时态",
         status: "进行中",
-        date: "2025/03/04",
+        date: "2025/3/4",
         description: "讲解一般现在时、一般过去时和一般将来时。",
       },
       {
         title: "第三章：形容词和副词",
         status: "已准备",
-        date: "2025/03/11",
+        date: "2025/3/11",
         description: "学习形容词和副词的用法及比较级和最高级。",
       },
     ],
     notes: [
-      { date: "2025/02/27", content: "学生对名词和代词的区分理解较好。" },
-      { date: "2025/03/04", content: "动词时态讲解后，部分学生需要额外练习。" },
+      { date: "2025/2/27", content: "学生对名词和代词的区分理解较好。" },
+      { date: "2025/3/4", content: "动词时态讲解后，部分学生需要额外练习。" },
     ],
   },
   {
@@ -246,25 +246,25 @@ const courses = ref<Course[]>([
       {
         title: "实验一：水的三态变化",
         status: "已完成",
-        date: "2025/02/22",
+        date: "2025/2/22",
         description: "通过实验观察水的固态、液态和气态变化。",
       },
       {
         title: "实验二：植物的生长过程",
         status: "进行中",
-        date: "2025/03/05",
+        date: "2025/3/5",
         description: "观察并记录植物从种子到幼苗的生长过程。",
       },
       {
         title: "实验三：简单电路的搭建",
         status: "已准备",
-        date: "2025/03/10",
+        date: "2025/3/10",
         description: "学习电路基础知识，搭建简单的串联和并联电路。",
       },
     ],
     notes: [
-      { date: "2025/02/22", content: "学生对水的三态变化实验表现出浓厚兴趣。" },
-      { date: "2025/03/05", content: "部分学生记录植物生长过程时需要更多指导。" },
+      { date: "2025/2/22", content: "学生对水的三态变化实验表现出浓厚兴趣。" },
+      { date: "2025/3/5", content: "部分学生记录植物生长过程时需要更多指导。" },
     ],
   },
 ]);
