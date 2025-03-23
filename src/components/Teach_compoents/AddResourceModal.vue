@@ -1,29 +1,31 @@
 <script setup lang="ts">
 import { computed } from '@vue/runtime-core';
-import { NewBook, NewVideo } from '@/types';
+import { NewBook, NewText, NewVideo } from '@/types';
 
 const props = defineProps<{
   visible: boolean;
-  type: 'book' | 'video';
-  modelValue: NewBook | NewVideo;
+  type: 'book' | 'video'| 'text';
+  modelValue: NewBook | NewVideo | NewText;
 }>();
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: NewBook | NewVideo): void;
+  (e: 'update:modelValue', value: NewBook | NewVideo | NewText): void;
   (e: 'close'): void;
   (e: 'submit'): void;
-  (e: 'fileUpload', event: Event, fileType: 'image' | 'pdf' | 'video'): void;
+  (e: 'fileUpload', event: Event, fileType: 'image' | 'pdf' | 'video'| 'text'): void;
 }>();
 
-const title = computed(() => props.type === 'book' ? '添加新教材' : '添加新视频');
+const title = computed(() => props.type === 'book' ? '添加新教材' : props.type === 'video' ? '添加新视频' : '添加新文本');
 
 const isBook = computed(() => props.type === 'book');
+const isVideo = computed(() => props.type === 'video');
+const isText = computed(() => props.type === 'text');
 const formData = computed({
   get: () => props.modelValue,
   set: (value) => emit('update:modelValue', value)
 });
 
-const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video') => {
+const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video' |'text') => {
   emit('fileUpload', event, fileType);
 };
 </script>
@@ -34,10 +36,10 @@ const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video') => 
       <h3>{{ title }}</h3>
       <form @submit.prevent="emit('submit')">
         <div class="input-group">
-          <label for="title">{{ isBook ? '书名' : '标题' }}：</label>
+          <label for="title">{{ isBook ? '书名' : isVideo ? '视频标题' : '文本标题' }}：</label>
           <el-input 
             v-model="(formData as any).title" 
-            :placeholder="isBook ? '请输入书名' : '请输入视频标题'"
+            :placeholder="isBook ? '请输入书名' : isVideo ? '请输入视频标题' : '请输入文本标题'"
           />
         </div>
         
@@ -65,7 +67,7 @@ const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video') => 
           </div>
         </template>
 
-        <template v-else>
+        <template v-if="isVideo">
           <div class="input-group">
             <label for="duration">时长：</label>
             <el-input 
@@ -74,13 +76,21 @@ const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video') => 
             />
           </div>
         </template>
-
+        <template v-if="isText">
+          <div class="input-group">
+            <label for="words">文本路径：</label>
+            <el-input 
+              v-model="(formData as NewText).words" 
+              placeholder="请输入文本路径"
+            />
+          </div>
+        </template>
         <div class="input-group">
           <label for="description">描述：</label>
           <el-input
             type="textarea"
             v-model="(formData as any).description"
-            :placeholder="isBook ? '请输入书籍描述' : '请输入视频描述'"
+            :placeholder="isBook ? '请输入书籍描述' : isVideo ? '请输入视频描述' : '请输入文本描述'"
           />
         </div>
 
@@ -88,17 +98,17 @@ const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video') => 
           <label for="image">封面图片：</label>
           <input 
             type="file" 
-            @change="(e) => handleFileUpload(e, 'image')" 
+            @change="(e: any) => handleFileUpload(e, 'image')" 
             accept="image/*" 
           />
         </div>
 
         <div class="input-group">
-          <label>{{ isBook ? '教材PDF' : '视频文件' }}：</label>
+          <label>{{ isBook ? '教材PDF' : isVideo ? '视频文件' : 'docx文件' }}：</label>
           <input 
             type="file" 
-            @change="(e) => handleFileUpload(e, isBook ? 'pdf' : 'video')" 
-            :accept="isBook ? 'application/pdf' : 'video/*'" 
+            @change="(e:any) => handleFileUpload(e, isBook ? 'pdf' : isVideo ? 'video' : 'text')" 
+            :accept="isBook ? 'application/pdf' : isVideo ? 'video/*' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'" 
           />
         </div>
 
@@ -151,7 +161,7 @@ const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video') => 
 }
 
 .submit-btn {
-  background-color: #4CAF50;
+  background-color: #007BFF;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -160,7 +170,7 @@ const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video') => 
 }
 
 .submit-btn:hover {
-  background-color: #45a049;
+  background-color: #0056b3;
 }
 
 .cancel-btn {

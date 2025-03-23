@@ -1,4 +1,5 @@
 {
+    "$schema": "./tsconfig.schema.json",
     "files": [],
     "references": [
       { "path": "./tsconfig.app.json" },
@@ -17,8 +18,14 @@
         "@/*": [
           "src/*"
         ]
-      }
-  }
-  
+      },
+      "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ]
+  },
+  "include": [
+    "/src/types/**/*.d.ts"
+  ]
 }
   

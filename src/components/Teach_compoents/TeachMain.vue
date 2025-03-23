@@ -4,10 +4,12 @@ import { ElMessageBox, ElMessage } from 'element-plus';
 import ResourceHeader from './ResourceHeader.vue';
 import BookList from './BookList.vue';
 import VideoList from './VideoList.vue';
+import TextList from './TextList.vue';
 import BookModal from './BookModal.vue';
 import VideoModal from './VideoModal.vue';
+import TextModal from './TextModal.vue';
 import AddResourceModal from './AddResourceModal.vue';
-import { Book, Video, NewBook, NewVideo } from '@/types';
+import { Book, Video, Text, NewBook, NewVideo, NewText } from '@/types';
 
 // Import assets
 import zh2vo from '@/assets/zh2vo.png';
@@ -19,8 +21,11 @@ import Doc3 from '@/assets/Doc3.pdf';
 import Doc4 from '@/assets/Doc4.pdf';
 import Doc5 from '@/assets/Doc5.pdf';
 import Vid from '@/assets/田忌赛马.mp4';
+import Vid2 from '@/assets/两小儿辩日.mp4';
+import text1 from '@/assets/text1.docx';
+import text2 from '@/assets/text2.docx';
 import nullvideoimg from '@/assets/OIP-C.jpg';
-
+import nulltextimg from '@/assets/nulltext.jpg';
 const books = ref<Book[]>([
     {
         id: 1,
@@ -83,15 +88,32 @@ const videos = ref<Video[]>([
         duration: '12:45',
         description: '一个关于两小儿辩日的教学视频。',
         image: nullvideoimg,
-        path: Vid
+        path: Vid2
     }
 ]);
-
+const texts = ref<Text[]>([
+    {
+        id: 1,
+        title: '田忌赛马教学大纲',
+        description: '一份关于田忌赛马的教学大纲。',
+        image: nulltextimg,
+        words: text1,
+    },
+    {
+        id: 2,
+        title: '两小儿辩日教学大纲',
+        description: '一份关于两小儿辩日的教学大纲。',
+        image: nulltextimg,
+        words: text2,
+    },
+]);
 const resourceType = ref('books');
 const selectedBook = ref<Book | null>(null);
 const selectedVideo = ref<Video | null>(null);
+const selectedText = ref<Text | null>(null);
 const isBookModalVisible = ref(false);
 const isVideoModalVisible = ref(false);
+const isTextModalVisible = ref(false);
 const isAddModalVisible = ref(false);
 
 const newBook = ref<NewBook>({
@@ -110,6 +132,13 @@ const newVideo = ref<NewVideo>({
     description: '',
     image: null as File | null,
     video: null as File | string | null
+});
+
+const newText = ref<NewText>({
+    title: '',
+    description: '',
+    image: null as File | null,
+    words: null as File | string | null
 });
 const deleteBook = async (book: Book) => {
     try {
@@ -138,8 +167,50 @@ const deleteVideo = async (video: Video) => {
         ElMessage.info('已取消删除');
     }
 };
-const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video') => {
+
+const deleteText = async (text: Text) => {
+    try {
+        await ElMessageBox.confirm(`确定要删除文本《${text.title}》吗？`, '提示', {
+            type: 'warning',
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+        });
+        texts.value = texts.value.filter((t) => t.id !== text.id);
+        ElMessage.success('删除成功');
+    } catch {
+        ElMessage.info('已取消删除');
+    }
+};
+const handleResource = (resourceType: string, bookvalue?: any, videosvalue?: any, textsvalue?: any) => {
+    switch (resourceType) {
+        case 'books':
+            return bookvalue;
+        case 'videos':
+            return videosvalue;
+        case 'texts':
+            return textsvalue;
+        default:
+            return '';
+    }
+};
+const updateResource = (resourceType: string, value: any) => {
+    switch (resourceType) {
+        case 'books':
+            newBook.value = value as NewBook;
+            break;
+        case 'videos':
+            newVideo.value = value as NewVideo;
+            break;
+        case 'texts':
+            newText.value = value as NewText;
+            break;
+        default:
+            break;
+    }
+};
+const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video' | 'text') => {
     const file = (event.target as HTMLInputElement).files?.[0];
+    console.log(file);
     if (!file) return;
 
     switch (true) {
@@ -167,69 +238,119 @@ const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video') => 
                 ElMessage.error('请上传正确的视频格式');
             }
             break;
-
+        case resourceType.value === 'texts' && fileType === 'image':
+            newText.value.image = file;
+            break;
+        case resourceType.value === 'texts' && fileType === 'text':
+            if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                newText.value.words = file;
+            } else {
+                ElMessage.error('请上传正确的.docx格式');
+            }
+            break;
         default:
             ElMessage.error('文件类型不匹配');
             break;
     }
 };
 const handleSubmit = () => {
-    if (resourceType.value === 'books') {
-        const book: Book = {
-            id: Date.now(),
-            title: newBook.value.title,
-            author: newBook.value.author,
-            isbn: newBook.value.isbn,
-            owner: newBook.value.owner,
-            description: newBook.value.description,
-            image: newBook.value.image ? URL.createObjectURL(newBook.value.image) : null,
-            pdf: newBook.value.pdf ? newBook.value.pdf as string : null,
-            showDetails: false,
-        };
-        books.value.push(book);
-        ElMessage.success('添加成功');
-    } else {
-        if (newVideo.value.video && newVideo.value.video instanceof File) {
-            const video: Video = {
+    // console.log(resourceType.value)
+    switch (resourceType.value) {
+        case 'books':
+            const book: Book = {
                 id: Date.now(),
-                title: newVideo.value.title,
-                duration: newVideo.value.duration,
-                description: newVideo.value.description,
-                image: newVideo.value.image ? URL.createObjectURL(newVideo.value.image) : null,
-                path: URL.createObjectURL(newVideo.value.video)
+                title: newBook.value.title,
+                author: newBook.value.author,
+                isbn: newBook.value.isbn,
+                owner: newBook.value.owner,
+                description: newBook.value.description,
+                image: newBook.value.image ? URL.createObjectURL(newBook.value.image) : null,
+                pdf: newBook.value.pdf ? newBook.value.pdf as string : null,
+                showDetails: false,
             };
-            videos.value.push(video);
-            ElMessage.success('新增视频成功');
-        } else {
-            ElMessage.error('请上传视频文件');
-        }
+            books.value.push(book);
+            ElMessage.success('添加成功');
+            break;
+        case 'videos':
+            if (newVideo.value.video && newVideo.value.video instanceof File) {
+                const video: Video = {
+                    id: Date.now(),
+                    title: newVideo.value.title,
+                    duration: newVideo.value.duration,
+                    description: newVideo.value.description,
+                    image: newVideo.value.image ? URL.createObjectURL(newVideo.value.image) : nullvideoimg,
+                    path: URL.createObjectURL(newVideo.value.video)
+                };
+                videos.value.push(video);
+                ElMessage.success('新增视频成功');
+                break;
+            } else {
+                ElMessage.error('请上传视频文件');
+                break;
+            }
+        case 'texts':
+            if (newText.value.words && newText.value.words instanceof File) {
+                const text: Text = {
+                    id: Date.now(),
+                    title: newText.value.title,
+                    description: newText.value.description,
+                    image: newText.value.image ? URL.createObjectURL(newText.value.image) : nulltextimg,
+                    words: URL.createObjectURL(newText.value.words)
+                };
+                texts.value.push(text);
+                ElMessage.success('新增文本成功');
+                break;
+            } else {
+                ElMessage.error('请上传文本文件');
+                break;
+            }
+        default:
+            break;
     }
     isAddModalVisible.value = false;
     resetForm();
 };
 const resetForm = () => {
-    if (resourceType.value === 'books') {
-        newBook.value = {
-            title: '',
-            author: '',
-            isbn: '',
-            owner: '',
-            description: '',
-            image: null,
-            pdf: null,
-        };
-    } else {
-        newVideo.value = {
-            title: '',
-            duration: '',
-            description: '',
-            image: null,
-            video: null,
-        };
+    switch (resourceType.value) {
+        case 'books':
+            newBook.value = {
+                title: '',
+                author: '',
+                isbn: '',
+                owner: '',
+                description: '',
+                image: null,
+                pdf: null,
+            };
+            break;
+        case 'videos':
+            newVideo.value = {
+                title: '',
+                duration: '',
+                description: '',
+                image: null,
+                video: null,
+            };
+
+            break;
+        case 'texts':
+            newText.value = {
+                title: '',
+                description: '',
+                image: null,
+                words: null,
+            };
+
+            break;
+        default:
+            break;
     }
 };
 const handleVideoError = () => {
     ElMessage.error('视频加载失败，请检查文件格式或网络连接');
+};
+const handleTextError = () => {
+    ElMessage.error('文本加载失败，请检查文件格式或网络连接');
 };
 </script>
 
@@ -241,19 +362,23 @@ const handleVideoError = () => {
             <el-select v-model="resourceType" placeholder="请选择资源类型" class="resource-selector">
                 <el-option label="教材" value="books"></el-option>
                 <el-option label="视频" value="videos"></el-option>
+                <el-option label="文本大纲" value="texts"></el-option>
             </el-select>
 
             <BookList v-if="resourceType === 'books'" :books="books"
                 @open-book-modal="(book: NewBook) => { selectedBook = book; isBookModalVisible = true; }"
-                @delete-book="deleteBook" @open-add-book-modal="isAddBookModalVisible = true" 
-                @open-add-modal="isAddModalVisible = true"
-                />
+                @delete-book="deleteBook" @open-add-book-modal="isAddBookModalVisible = true"
+                @open-add-modal="isAddModalVisible = true" />
 
             <VideoList v-if="resourceType === 'videos'" :videos="videos"
                 @open-video-modal="(video: NewVideo) => { selectedVideo = video; isVideoModalVisible = true; }"
-                @delete-video="deleteVideo" @open-add-video-modal="isAddVideoModalVisible = true" 
-                @open-add-modal="isAddModalVisible = true"
-                />
+                @delete-video="deleteVideo" @open-add-video-modal="isAddVideoModalVisible = true"
+                @open-add-modal="isAddModalVisible = true" />
+
+            <TextList v-if="resourceType === 'texts'" :texts="texts"
+                @open-text-modal="(text: NewText) => { selectedText = text; isTextModalVisible = true; }"
+                @delete-text="deleteText" @open-add-text-modal="isAddTextModalVisible = true"
+                @open-add-modal="isAddModalVisible = true" />
         </div>
 
         <BookModal v-if="selectedBook" :book="selectedBook" :visible="isBookModalVisible"
@@ -261,11 +386,12 @@ const handleVideoError = () => {
 
         <VideoModal v-if="selectedVideo" :video="selectedVideo" :visible="isVideoModalVisible"
             @close="isVideoModalVisible = false" @error="handleVideoError" />
-
-        <AddResourceModal :visible="isAddModalVisible" :type="resourceType === 'books' ? 'book' : 'video'"
-            :model-value="resourceType === 'books' ? newBook : newVideo"
-            @update:model-value="resourceType === 'books' ? (v: NewBook) => newBook = v as NewBook : (v: NewVideo) => newVideo = v as NewVideo"
-            @file-upload="handleFileUpload" @submit="handleSubmit" @close="isAddModalVisible = false" />
+        <TextModal v-if="selectedText" :text="selectedText" :visible="isTextModalVisible"
+            @close="isTextModalVisible = false" @error="handleTextError" />
+        <AddResourceModal :visible="isAddModalVisible" :type="handleResource(resourceType, 'book', 'video', 'text')"
+            :model-value="handleResource(resourceType, newBook, newVideo, newText)"
+            @update:model-value="updateResource(resourceType, $event)" @file-upload="handleFileUpload"
+            @submit="handleSubmit" @close="isAddModalVisible = false" />
     </div>
 </template>
 

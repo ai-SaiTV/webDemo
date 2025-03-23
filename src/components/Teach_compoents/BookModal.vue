@@ -2,7 +2,7 @@
 import { ref } from '@vue/runtime-core';
 import { Book } from '@/types';
 
-const props = defineProps<{
+defineProps<{
   book: Book;
   visible: boolean;
 }>();
