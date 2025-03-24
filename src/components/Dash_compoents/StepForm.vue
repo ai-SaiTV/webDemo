@@ -83,11 +83,11 @@
           <el-col :span="12">
             <el-form-item label=" ">
               <div v-if="!localIsEditingTextarea">
-                <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;">
+                <div v-html="form1.requirements" class="markdown-content" style="max-height: 450px; overflow-y: auto;">
                 </div>
               </div>
               <div v-else>
-                <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
+                <textarea v-model="form1.requirements" rows="20" placeholder="请输入具体的教学要求和注意事项..."
                   class="custom-textarea"></textarea>
               </div>
             </el-form-item>
