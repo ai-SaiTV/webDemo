@@ -10,9 +10,13 @@
         <el-card class="upload-card">
           <template #header>
             <div class="card-header">
-              <div>班级选择</div>
-              <el-select v-model="selectedClassId" @change="reloadClassData" style="width: 85%;">
-                <el-option v-for="class_ in classes" :key="class_.id" :label="`${class_.name}`" :value="class_.id" />
+              <!-- <div>选择班级</div>
+              <el-select v-model="selectedClassId" @change="reloadClassData" style="width: 90%;">
+                <el-option v-for="class_ in classes" :key="class_.id" :label="class_.papername" :value="class_.id" />
+              </el-select> -->
+              <div>选择试卷</div>
+              <el-select v-model="selectedClassId" @change="reloadClassData" style="width: 90%;">
+                <el-option v-for="class_ in classes" :key="class_.id" :label="class_.papername" :value="class_.id" />
               </el-select>
             </div>
           </template>
@@ -234,6 +238,7 @@ import * as XLSX from "xlsx";
 import { ElMessage } from "element-plus";
 
 
+
 interface Student {
   id: string;
   name: string;
@@ -253,7 +258,7 @@ interface Question {
 
 interface Class {
   id: string;
-  name: string;
+  papername: string;
   grade: string;
   students: Student[];
   questions: Question[]; 
@@ -270,6 +275,7 @@ const barChartRef = ref(null);
 
 const tableData = ref<Student[]>([]);
 const questions = ref<Question[]>([]);
+
 const showAIAnalysis = ref(false);
 const isAnalyzing = ref(false);
 const isAnalyzing_person = ref(false);
@@ -280,31 +286,31 @@ const selectedClassId = ref("1-1");
 const classes = ref<Class[]>([
   {
     id: "1-1",
-    name: "一年级一班",
-    grade: "一年级",
+    papername: "一年级一班",
+    grade: "一年级一班",
     students: [],
-    questions: [], // 初始化为空数组
+    questions: [], 
   },
   {
     id: "2-3",
-    name: "二年级三班",
-    grade: "二年级",
+    papername: "二年级三班",
+    grade: "二年级三班",
     students: [],
-    questions: [], // 初始化为空数组
+    questions: [], 
   },
   {
     id: "3-1",
-    name: "三年级一班",
-    grade: "三年级",
+    papername: "三年级一班",
+    grade: "三年级一班",
     students: [],
-    questions: [], // 初始化为空数组
+    questions: [], 
   },
   {
     id: "4-2",
-    name: "四年级二班",
-    grade: "四年级",
+    papername: "四年级二班",
+    grade: "四年级二班",
     students: [],
-    questions: [], // 初始化为空数组
+    questions: [], 
   },
 ]);
 
@@ -349,6 +355,44 @@ const handleExcelUpload = (event: Event) => {
     reader.readAsArrayBuffer(file);
   }
 };
+
+// '@/assets/files/scores.xlsx'
+// 在系统初始化时读取并处理Excel文件
+onMounted(async () => {
+  try {
+    // 使用 public 目录中的文件
+    const response = await fetch('src/assets/files/scores.xlsx');
+    if (!response.ok) {
+      throw new Error("Failed to fetch the Excel file");
+    }
+
+    // 读取文件内容
+    const data = await response.arrayBuffer();
+    const workbook = XLSX.read(data, { type: "array" });
+
+    // 检查是否有工作表
+    if (workbook.SheetNames.length === 0) {
+      throw new Error("No sheets found in the Excel file");
+    }
+
+    // 解析第一个工作表
+    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+    if (jsonData.length === 0) {
+      throw new Error("No data found in the Excel file");
+    }
+
+    // 处理 Excel 数据
+    processExcelData(jsonData);
+
+    // 更新图表和分析
+    reloadClassData(selectedClassId.value);
+    updateCharts();
+  } catch (error) {
+    console.error("Error loading default Excel file:", error);
+  }
+});
 
 // 处理Excel数据
 const processExcelData = (data: any[]) => {
@@ -411,6 +455,7 @@ const processExcelData = (data: any[]) => {
 
   // 更新全局数据
   tableData.value = currentClass.students;
+  questions.value = currentClass.questions;
 
   // 更新图表和分析
   updateCharts();
@@ -554,7 +599,6 @@ const updateCharts = () => {
   }
 };
 
-
 let stopPollingWatch: (() => void) | null = null;
 let isUpdatingStep = ref(false); // 状态锁
 
@@ -566,7 +610,6 @@ import { analysisService } from "@/services/storage/analysisResService";
 import type { analysisRes } from "@/types/analysisRes";
 
 import { parseMarkdown } from '../../utils/markdownUtils';
-import { Right } from "@element-plus/icons-vue";
 
 const DataThisSession_als = ref<analysisRes | null>(null);  // 会话数据
 const sessionId = ref("");
@@ -769,7 +812,8 @@ const reloadClassData = (classId: string) => {
 };
 
 // 初始化时加载默认班级的数据
-onMounted(() => {
+onMounted(async () => {
+  
   reloadClassData(selectedClassId.value);
   updateCharts();
 });
@@ -840,6 +884,7 @@ onMounted(() => {
     .card-header {
       display: flex;
       justify-content: flex-start;
+      flex-wrap: wrap;
       align-items: center;
     }
 
