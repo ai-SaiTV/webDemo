@@ -84,6 +84,7 @@
               <a :href="exercise.preview" download="file.pdf">
                 <el-button type="primary" link size="small">下载</el-button>
               </a>
+              <el-button type="primary" size = "small" style="margin-left: 15px;">布置</el-button>
             </div>
           </div>
         </div>
@@ -319,6 +320,7 @@ onMounted(() => {
 
   .exercises {
     .exercise-item {
+      display: flex;
       padding: 1rem;
       border-bottom: 1px solid #0a1d42;
 
@@ -347,6 +349,8 @@ onMounted(() => {
 
       .exercise-footer {
         display: flex;
+        margin-left: 40px;
+        column-gap: 3px;
         justify-content: space-between;
         align-items: center;
         margin-top: 0.5rem;

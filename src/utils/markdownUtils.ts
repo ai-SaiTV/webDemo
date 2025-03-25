@@ -36,16 +36,17 @@ export function parseMarkdownList_re(markdown: string): { type: string, title: s
 }
 
 
-export function parseMarkdownList_ex(markdown: string): {title: string, url: string }[] {
-  const regex = /- \[(.*?)\]\((.*?)\)/g;
+export function parseMarkdownList_ex(markdown: string): { title: string, url: string }[] {
+  const regex = /- #([^#]*)#(.*)/g; // 新正则表达式
   const matches = [];
   let match;
 
   while ((match = regex.exec(markdown)) !== null) {
-      matches.push({
-          title: match[1],
-          url: match[2]
-      });
+    // match[1] 是类型，match[2] 是 URL
+    matches.push({
+      title: match[1], // 类型作为标题
+      url: match[2].trim(), // 去除 URL 末尾的空格
+    });
   }
 
   return matches;
