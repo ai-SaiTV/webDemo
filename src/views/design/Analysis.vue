@@ -10,10 +10,6 @@
         <el-card class="upload-card">
           <template #header>
             <div class="card-header">
-              <!-- <div>选择班级</div>
-              <el-select v-model="selectedClassId" @change="reloadClassData" style="width: 90%;">
-                <el-option v-for="class_ in classes" :key="class_.id" :label="class_.papername" :value="class_.id" />
-              </el-select> -->
               <div>选择试卷</div>
               <el-select v-model="selectedClassId" @change="reloadClassData" style="width: 90%;">
                 <el-option v-for="class_ in classes" :key="class_.id" :label="class_.papername" :value="class_.id" />
@@ -27,7 +23,7 @@
               <!-- 柱状图容器 -->
               <div ref="barChartRef" class="chart-box"></div>
             </div>
-            <div class="upload-buttons">
+            <!-- <div class="upload-buttons">
               <input ref="uploadMdRef" type="file" accept=".md" style="display: none" @change="handleFileUpload" />
               <el-button type="primary" @click="uploadMdRef.click()">
                 <el-icon><Upload /></el-icon>
@@ -39,42 +35,19 @@
                 上传成绩单
               </el-button>
             </div>
-            <p class="upload-tip">试卷支持.md格式。成绩单支持.xlsx或.xls格式（确保第一列为学生姓名，后续列为题目分数）</p>
+            <p class="upload-tip">试卷支持.md格式。成绩单支持.xlsx或.xls格式（确保第一列为学生姓名，后续列为题目分数）</p> -->
           </div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card class="student-list-card">
-          <template #header>
-            <div class="card-header">
-              <span>班级学生</span>
-            </div>
-          </template>
-          <el-scrollbar height = "485px">
-            <div class="student-list">
-              <div v-for="student in currentClassStudents" :key="student.id" class="student-item"
-                @click="viewStudentDetails(student)">
-                <el-avatar :size="32">{{ student.name.charAt(0) }}</el-avatar>
-                <span class="student-name">{{ student.name }}</span>
-                <el-button type="primary" link size="small">查看详情</el-button>
-              </div>
-            </div>
-          </el-scrollbar>
-        </el-card>
-      </el-col>
-    </el-row>
-    <!-- 数据分析区域 -->
-    <template v-if="selectedClassId">
+          <template v-if="selectedClassId">
       <!-- 图表分析 -->
-      <el-row :gutter="20" class="chart-row">
+      <el-row :gutter="18" class="chart-row">
         <el-col :span="12">
           <el-card class="chart-card">
-            <div ref="performanceChartRef" style="height: 400px;"></div>
+            <div ref="performanceChartRef" style="height: 300px;"></div>
           </el-card>
         </el-col>
         <el-col :span="12">
           <el-card class="chart-card">
-            <div ref="questionAnalysisChartRef" style="height: 400px;"></div>
+            <div ref="questionAnalysisChartRef" style="height: 300px;"></div>
           </el-card>
         </el-col>
       </el-row>
@@ -143,6 +116,51 @@
         </div>
       </el-card>
     </template>
+        </el-card>
+      </el-col>
+
+      <el-col :span="6">
+        <el-card class="student-list-card">
+          <!-- 班级学生 -->
+          <div class="student-list">
+            <el-card class="custom-scrollbar">
+              <template #header>
+                <div class="card-header">
+                  <span>班级学生</span>
+                </div>
+              </template>
+              <el-scrollbar class="custom-scrollbar" style="height: 600px;">
+                <div class="student-list">
+                  <div v-for="student in currentClassStudents" :key="student.id" class="student-item"
+                    @click="viewStudentDetails(student)">
+                    <el-avatar :size="32">{{ student.name.charAt(0) }}</el-avatar>
+                    <span class="student-name">{{ student.name }}</span>
+                    <el-button type="primary" link size="small">查看详情</el-button>
+                  </div>
+                </div>
+              </el-scrollbar>
+            </el-card>
+          </div>
+          <!-- 学生反馈框 -->
+          <div class="student-feedback">
+            <el-card class="feedback-card">
+              <template #header>
+                <div class="card-header">
+                  <span>学生反馈</span>
+                </div>
+              </template>
+              <el-scrollbar class="custom-scrollbar" style="height: 600px;">
+                <div v-for="(feedback, index) in studentFeedbacks" :key="index" class="feedback-item">
+                  <h4>{{ feedback.studentName }}</h4>
+                  <p>{{ feedback.content }}</p>
+                </div>
+            </el-scrollbar>
+            </el-card>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+    
 
     <!-- 学生详情对话框 -->
     <el-dialog v-model="showStudentDetails" :title="`${selectedStudent?.name || ''} - 学生详情`" width="80%">
@@ -235,7 +253,7 @@
 import { ref, onMounted, watch, computed} from "@vue/runtime-core";
 import * as echarts from "echarts";
 import * as XLSX from "xlsx";
-import { ElMessage } from "element-plus";
+// import { ElMessage } from "element-plus";
 
 
 
@@ -267,8 +285,8 @@ interface Class {
 const performanceChartRef = ref<HTMLElement>();
 const questionAnalysisChartRef = ref<HTMLElement>();
 const studentPerformanceChartRef = ref<HTMLElement>();
-const uploadExcelRef = ref();
-const uploadMdRef =ref()
+// const uploadExcelRef = ref();
+// const uploadMdRef =ref()
 
 const pieChartRef = ref(null);
 const barChartRef = ref(null);
@@ -314,6 +332,42 @@ const classes = ref<Class[]>([
   },
 ]);
 
+// 学生反馈内容
+const studentFeedbacks = ref([
+  {
+    studentName: "张三",
+    content: "老师讲课很清晰，但希望能在课堂上多一些互动环节，让我们更积极参与。"
+  },
+  {
+    studentName: "李四",
+    content: "希望老师能提供更多课外练习题，帮助我们巩固课堂知识。"
+  },
+  {
+    studentName: "王五",
+    content: "老师布置的作业量有点多，希望能适当减少，给我们更多时间复习。"
+  },
+  {
+    studentName: "赵六",
+    content: "老师上课很有耐心，但希望能在讲解难题时再多一些实例分析。"
+  },
+  {
+    studentName: "孙七",
+    content: "希望老师能定期组织小组讨论，让我们在交流中学习。"
+  },
+  {
+    studentName: "周八",
+    content: "老师的教学方法很好，但希望能在考试前多安排一些复习课。"
+  },
+  {
+    studentName: "吴九",
+    content: "希望老师能在课堂上多一些实际应用的案例，帮助我们理解抽象的概念。"
+  },
+  {
+    studentName: "郑十",
+    content: "老师的讲解速度有点快，希望能适当放慢，给我们更多时间消化知识点。"
+  }
+]);
+
 const aiAnalysisResult = ref<{
   overallAnalysis: string;
   recommendations: string;
@@ -332,29 +386,29 @@ const studentAnalysis = ref({
 });
 
 // 处理Excel文件上传
-const handleExcelUpload = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  if (target.files) {
-    const file = target.files[0];
-    const reader = new FileReader();
+// const handleExcelUpload = (event: Event) => {
+//   const target = event.target as HTMLInputElement;
+//   if (target.files) {
+//     const file = target.files[0];
+//     const reader = new FileReader();
 
-    reader.onload = (e) => {
-      const data = e.target?.result;
-      if (!data) {
-        ElMessage.error("文件读取失败");
-        return;
-      }
+//     reader.onload = (e) => {
+//       const data = e.target?.result;
+//       if (!data) {
+//         ElMessage.error("文件读取失败");
+//         return;
+//       }
 
-      const workbook = XLSX.read(data as ArrayBuffer, { type: "array" });
-      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+//       const workbook = XLSX.read(data as ArrayBuffer, { type: "array" });
+//       const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+//       const jsonData = XLSX.utils.sheet_to_json(firstSheet);
 
-      processExcelData(jsonData);
-    };
+//       processExcelData(jsonData);
+//     };
 
-    reader.readAsArrayBuffer(file);
-  }
-};
+//     reader.readAsArrayBuffer(file);
+//   }
+// };
 
 // '@/assets/files/scores.xlsx'
 // 在系统初始化时读取并处理Excel文件
@@ -835,7 +889,7 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     flex: 1;
-    height: 90%;
+    height: 100%;
   }
 
   .chart-container {
@@ -889,7 +943,7 @@ onMounted(async () => {
     }
 
     .upload-area {
-      height: 550px;
+      height: auto;
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -905,7 +959,23 @@ onMounted(async () => {
   }
 
   .student-list-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
     .student-list {
+      flex: 1;
+      margin-bottom: 10px;
+
+      .custom-scrollbar {
+        height: 100%;
+        padding: 10px;
+
+        .el-scrollbar {
+          height: 100%;
+        }
+      }
+
       .student-item {
         height: auto;
         display: flex;
@@ -923,9 +993,45 @@ onMounted(async () => {
           margin-left: 12px;
           flex: 1;
         }
+      }
+    }
 
-        .el-scrollbar {
-          flex: 1;
+    .student-feedback {
+      flex: 1;
+
+      .feedback-card {
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+
+        .custom-scrollbar {
+          height: 100%;
+          padding: 10px;
+
+          .el-scrollbar {
+            height: 100%;
+          }
+        }
+
+        .feedback-item {
+          padding: 15px;
+          border-bottom: 1px solid #f0f0f0;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          h4 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: #333;
+          }
+
+          p {
+            margin: 0;
+            color: #666;
+            line-height: 1.6;
+          }
         }
       }
     }
