@@ -1,5 +1,4 @@
 <template>
-
   <div>
     <!-- 步骤1：to大纲生成 -->
     <div v-if="activeStep === 0" class="step-form">
@@ -13,6 +12,29 @@
                 <template #append>的教案</template>
               </el-input>
             </el-form-item>
+            <div class = "option-container">
+                <el-dropdown 
+                  trigger="hover"
+                  class="checkbox-dropdown"
+                >
+                  <template #default>
+                    <el-checkbox v-model="checked1" label="加入学情分析提示词"  border />
+                  </template>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      
+                        <div class = "fp_container" style = "overflow-y: auto; max-height: 300px;">
+                          <div v-html="fprompt_content"></div>
+                        </div>
+                        
+                      
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+                
+                <el-checkbox v-model="checked2" label="使用资源库"  border />
+
+            </div>
           </el-col>
         </el-row>
       </el-form>
@@ -75,27 +97,6 @@
             </div>
           </el-form-item>
         </el-row>
-
-
-        <!-- <el-row :gutter="24" justify="center">
-          <el-form-item label=" ">
-            <div v-if = "!isForm1Editing">
-              <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;"></div>
-            </div>
-            <div v-else>
-              <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
-              class="custom-textarea"></textarea>
-            </div>
-            <div class="form-buttons">
-              <el-button type="primary" @click="isForm1Editing = !isForm1Editing">
-              
-                <img :src="flash" alt="icon" style="width: 16px; height: 16px; margin-right: 8px;" />
-                <span class="gradient-text">{{ isForm1Editing ? '保存' : '优化' }}</span>
-
-              </el-button>
-            </div>
-          </el-form-item>
-        </el-row> -->
       </el-form>
     </div>
 
@@ -105,11 +106,11 @@
           <el-col :span="12">
             <el-form-item label=" ">
               <div v-if="!localIsEditingTextarea">
-                <div v-html="form1.requirements" class="markdown-content" style="max-height: 600px; overflow-y: auto;">
+                <div v-html="form1.requirements" class="markdown-content" style="max-height: 450px; overflow-y: auto;">
                 </div>
               </div>
               <div v-else>
-                <textarea v-model="form1.requirements" rows="50" placeholder="请输入具体的教学要求和注意事项..."
+                <textarea v-model="form1.requirements" rows="20" placeholder="请输入具体的教学要求和注意事项..."
                   class="custom-textarea"></textarea>
               </div>
             </el-form-item>
@@ -164,6 +165,7 @@ const localIsEditingTextarea = ref(false);
 
 //scss
 import '@/components/Dash_compoents/StepForm.scss';
+import { parseMarkdown } from '@/utils/markdownUtils';
 
 
 const props = defineProps({
@@ -210,6 +212,7 @@ const wheelOptions = { passive: true };
 onMounted(() => {
   const zoomedImageContainer = document.querySelector('.zoomed-image');
   zoomedImageContainer && zoomedImageContainer.addEventListener('wheel', onWheel, wheelOptions);
+  fprompt_content.value = parseMarkdown(fprompt_content.value).__html;
 });
 
 onBeforeUnmount(() => {
@@ -228,6 +231,46 @@ const imageStyle = computed(() => ({
   cursor: isHovering.value ? 'zoom-in' : 'default',
 }));
 
+const checked1 = ref(false)
+const checked2 = ref(false)
+
+const fprompt_content = ref(`
+**班级基础数据提示词：**
+- 班级规模：32人
+- 前置知识合格率：76%（达标线80分）
+- 成绩极差：95分（张三）↔58分（李四）
+- 最近三次测试均分波动：±3.5分
+
+**能力分层提示词：**
+1. 优秀层（18%/6人）：
+   - 典型表现：独立完成文言文字词翻译（如赵六95分案例）
+   - 高阶能力：古诗赏析得分率92%
+   
+2. 中等层（60%/19人）：
+   - 瓶颈领域：综合应用题失分率43%
+   - 典型案例：张三（82分）开放题平均失分8.3
+
+3. 困难层（22%/7人）：
+   - 知识缺口：基础知识正确率仅62%
+   - 高危表现：刘八（58分）阅读题错误率85%
+
+**学科短板提示词：**
+[简答题]
+- 得分率：7.2/15分（平均）
+- 错误结构：
+  ▸ 要点缺失（40%：平均漏答2.3个采分点）
+  ▸ 逻辑混乱（35%：因果倒置占18例）
+  ▸ 格式违规（25%：未分点占63次）
+
+[文言文]
+- 高频错误：
+  ▸ 虚词误译（"之"字错误率29%）
+  ▸ 倒装句识别失败（占错误样本61%）
+  ▸ 文化常识缺失（涉及12%失分）
+`);
+
+const input = ref(['tag1', 'tag2', 'tag3'])
+
 </script>
 
 
@@ -235,6 +278,18 @@ const imageStyle = computed(() => ({
 
 
 <style scoped lang="scss">
+.fp_container{
+  width: 100%;
+  padding: 30px;
+}
 
+.option-container{
+  margin-top: 5%;
+  display: flex;
+  flex-direction: row;
+  row-gap: 20px;
+  column-gap: 5px;
+  
+}
 
 </style>
