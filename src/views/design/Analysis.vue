@@ -253,7 +253,7 @@
 import { ref, onMounted, watch, computed} from "@vue/runtime-core";
 import * as echarts from "echarts";
 import * as XLSX from "xlsx";
-import { ElMessage } from "element-plus";
+// import { ElMessage } from "element-plus";
 
 
 
@@ -285,8 +285,8 @@ interface Class {
 const performanceChartRef = ref<HTMLElement>();
 const questionAnalysisChartRef = ref<HTMLElement>();
 const studentPerformanceChartRef = ref<HTMLElement>();
-const uploadExcelRef = ref();
-const uploadMdRef =ref()
+// const uploadExcelRef = ref();
+// const uploadMdRef =ref()
 
 const pieChartRef = ref(null);
 const barChartRef = ref(null);
@@ -386,29 +386,29 @@ const studentAnalysis = ref({
 });
 
 // 处理Excel文件上传
-const handleExcelUpload = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  if (target.files) {
-    const file = target.files[0];
-    const reader = new FileReader();
+// const handleExcelUpload = (event: Event) => {
+//   const target = event.target as HTMLInputElement;
+//   if (target.files) {
+//     const file = target.files[0];
+//     const reader = new FileReader();
 
-    reader.onload = (e) => {
-      const data = e.target?.result;
-      if (!data) {
-        ElMessage.error("文件读取失败");
-        return;
-      }
+//     reader.onload = (e) => {
+//       const data = e.target?.result;
+//       if (!data) {
+//         ElMessage.error("文件读取失败");
+//         return;
+//       }
 
-      const workbook = XLSX.read(data as ArrayBuffer, { type: "array" });
-      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+//       const workbook = XLSX.read(data as ArrayBuffer, { type: "array" });
+//       const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+//       const jsonData = XLSX.utils.sheet_to_json(firstSheet);
 
-      processExcelData(jsonData);
-    };
+//       processExcelData(jsonData);
+//     };
 
-    reader.readAsArrayBuffer(file);
-  }
-};
+//     reader.readAsArrayBuffer(file);
+//   }
+// };
 
 // '@/assets/files/scores.xlsx'
 // 在系统初始化时读取并处理Excel文件
