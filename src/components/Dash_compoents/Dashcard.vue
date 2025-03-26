@@ -1,7 +1,7 @@
 <!-- 教案生成侧边栏 -->
 <template>
   <el-col  v-if="!showResult" :span="8">
-    <el-card class="stat-card" style="padding: 4px;">
+    <el-card class="stat-card">
       <template #header>
         <div class="stat-header">
           <h3>历史学情分析反馈</h3>
