@@ -25,7 +25,7 @@ export const sessionId = ref<string>("-1");  // 会话ID
 export const DataThisSession = ref<StorageData | null>(null);  // 会话数据
 
 
-export const activeStep = ref(0);   //页面控制
+export const activeStep = ref(0);
 export const isGenerating = ref(false);
 export const showResult = ref(false);
 export const isProcessing = ref(false);
@@ -468,7 +468,6 @@ export const updateIsZoomed = (newZoomedStatus: boolean) => {
 export const updateTranslateY = (newTranslateY: number) => {
     translateY.value = newTranslateY;
 }; 
-
 
 
 

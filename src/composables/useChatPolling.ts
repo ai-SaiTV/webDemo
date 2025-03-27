@@ -1,4 +1,4 @@
-import { ref, onUnmounted } from '@vue/runtime-core';
+import { ref, onUnmounted } from 'vue';
 import { chatApi } from '@/services/api/chatApi';
 import type { ChatResponse, ChatMessagesResponse } from '@/types/api';
 import { POLLING_INTERVAL, CHAT_STATUS } from '@/utils/constants';
