@@ -148,6 +148,9 @@ const generatedContent = ref({
   exercises: []
 });
 
+import mmPic from '@/assets/files/mmPic.jpeg';
+
+
 // 初始化数据函数
 const initializeData = async () => {
   if (DataThisSession.value) {
@@ -155,7 +158,9 @@ const initializeData = async () => {
     const teachingPlan = DataThisSession.value.resources.teaching_plan?.text || '';
 
     // 获取思维导图
-    const mindMap = DataThisSession.value.resources.tp_MindMap?.url || '';
+    //const mindMap = DataThisSession.value.resources.tp_MindMap?.url || '';
+    const mindMap = mmPic;
+
 
 
     // 解析资源列表

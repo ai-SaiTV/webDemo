@@ -231,7 +231,7 @@ export const handleKeydown = (event: KeyboardEvent) => {
 };
 
 import { parseMarkdown } from '@/utils/markdownUtils';
-
+import mmPic from '@/assets/files/mmPic.jpeg';
 
 const turnStep = async (step: number) => {
     if (step === 0) {         //教学大纲Res -->> 课堂设计Pre
@@ -251,7 +251,9 @@ const turnStep = async (step: number) => {
     } else if (step === 2) {
         await nextTick(() => {})
         if (DataThisSession.value?.resources?.tp_MindMap?.url) {
-            Mindimgsrc.value = DataThisSession.value.resources.tp_MindMap.url
+            // Mindimgsrc.value = parseMarkdownList_mm(DataThisSession.value.resources.tp_MindMap.url)[0].url
+            // Mindimgsrc.value = DataThisSession.value.resources.tp_MindMap.url
+            Mindimgsrc.value = mmPic;
         }
         return '1';
     } else if (step === steps.length - 1) {
