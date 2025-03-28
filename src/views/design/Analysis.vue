@@ -279,6 +279,8 @@ interface Question {
   correctRate: number;
   averageScore: number;
   maxScore: number;
+  aboveAverageCount: number;
+  belowAverageCount: number;
 }
 
 interface Class {
@@ -503,6 +505,8 @@ const processExcelData = (data: any[]) => {
     correctRate: 0,
     averageScore: 0,
     maxScore: 0,
+    aboveAverageCount: 0, 
+    belowAverageCount: 0,
   }));
 
   // 遍历 Excel 数据，填充新数据
@@ -535,6 +539,14 @@ const processExcelData = (data: any[]) => {
   currentClass.questions.forEach((q) => {
     q.averageScore /= data.length;
     q.correctRate = (q.averageScore / q.maxScore) * 100; // 计算正确率
+
+    // 统计高于和低于平均分的人数
+    q.aboveAverageCount = currentClass.students.filter(
+      (student) => student.scores[q.id - 1] > q.averageScore
+    ).length;
+    q.belowAverageCount = currentClass.students.filter(
+      (student) => student.scores[q.id - 1] <= q.averageScore
+    ).length;
   });
 
   // 重新计算学生排名
@@ -610,23 +622,24 @@ const updateCharts = () => {
 
     // 柱状图数据
     const questionData = currentClass.questions.map(q => ({
-      passed: q.correctRate >= 60 ? 1 : 0,
-      failed: q.correctRate < 60 ? 1 : 0
+      aboveAverage: q.aboveAverageCount,
+      belowAverage: q.belowAverageCount
     }));
 
     // 柱状图配置
     newBarChart.setOption({
       title: { text: '题目得分情况' },
       tooltip: { trigger: 'axis' },
-      legend: { data: ['及格', '不及格'] },
+      legend: { data: ['高于平均分', '低于平均分'] },
       xAxis: { type: 'category', data: currentClass.questions.map(q => `题目${q.id}`) },
       yAxis: { type: 'value' },
       series: [
-        { name: '及格', type: 'bar', data: questionData.map(q => q.passed) },
-        { name: '不及格', type: 'bar', data: questionData.map(q => q.failed) }
+        { name: '高于平均分', type: 'bar', data: questionData.map(q => q.aboveAverage) },
+        { name: '低于平均分', type: 'bar', data: questionData.map(q => q.belowAverage) }
       ]
     });
   }
+
 
   if (performanceChartRef.value && questionAnalysisChartRef.value) {
     // 销毁旧实例
