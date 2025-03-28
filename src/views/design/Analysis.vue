@@ -607,7 +607,10 @@ const updateCharts = () => {
     // 饼状图配置
     newPieChart.setOption({
       title: { text: '学生成绩分布' },
-      tooltip: { trigger: 'item' },
+      tooltip: { 
+        trigger: 'item' ,
+        formatter: '{a} <br/>{b}: {c} ({d}%)'
+      },
       legend: { orient: 'vertical', left : 'right' },
       series: [
         {
@@ -655,7 +658,7 @@ const updateCharts = () => {
 
     // 更新题目得分分析图表
     newQuestionAnalysisChart.setOption({
-      title: { text: "题目得分分析" },
+      title: { text: "平均得分情况" },
       tooltip: { trigger: "axis" },
       legend: { data: ["平均得分"] },
       xAxis: {
@@ -686,7 +689,7 @@ const updateCharts = () => {
     });
 
     newPerformanceChart.setOption({
-      title: { text: "成绩分布" },
+      title: { text: "学生成绩统计" },
       tooltip: {},
       xAxis: { data: scoreRanges },
       yAxis: {},
