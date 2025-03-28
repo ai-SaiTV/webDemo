@@ -8,9 +8,13 @@
     <el-card class="main-card">
       <!-- 班级选择器 -->
       <div class="class-selector">
-        <el-select v-model="selectedClassId"  @change="loadClassDetails" class="input-field">
-          <el-option v-for="course in courses" :key="course.id"
-            :label="`${course.grade} ${course.subject} - ${course.name}`" :value="course.id" />
+        <el-select v-model="selectedClassId" @change="loadClassDetails" class="input-field">
+          <el-option
+            v-for="course in courses"
+            :key="course.id"
+            :label="`${course.grade} ${course.subject} - ${course.name}`"
+            :value="course.id"
+          />
         </el-select>
       </div>
 
@@ -41,7 +45,6 @@
                 <template #default="scope">
                   <el-button type="text" @click="editLesson(scope.row)" title="编辑课程">编辑</el-button>
                   <el-button type="text" @click="deleteLesson(scope.row)" title="删除课程">删除</el-button>
-
                 </template>
               </el-table-column>
             </el-table>
@@ -111,12 +114,51 @@
         <el-button type="primary" @click="addNote">确定</el-button>
       </template>
     </el-dialog>
+
+    <!-- 编辑课程进度对话框 -->
+    <el-dialog v-model="showEditLessonDialog" title="编辑课程进度">
+      <el-form :model="editLessonForm">
+        <el-form-item label="课程标题">
+          <el-input v-model="editLessonForm.title" />
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="editLessonForm.status">
+            <el-option label="已完成" value="已完成" />
+            <el-option label="进行中" value="进行中" />
+            <el-option label="已准备" value="已准备" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="上课日期">
+          <el-date-picker v-model="editLessonForm.date" type="date" placeholder="选择日期" />
+        </el-form-item>
+        <el-form-item label="课程描述">
+          <el-input v-model="editLessonForm.description" type="textarea" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showEditLessonDialog = false">取消</el-button>
+        <el-button type="primary" @click="saveEditLesson">确定</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 编辑教学记录对话框 -->
+    <el-dialog v-model="showEditNoteDialog" title="编辑教学记录">
+      <el-form :model="editNoteForm">
+        <el-form-item label="记录内容">
+          <el-input v-model="editNoteForm.content" type="textarea" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showEditNoteDialog = false">取消</el-button>
+        <el-button type="primary" @click="saveEditNote">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from "@vue/runtime-core";
-import { ElMessageBox } from "element-plus";
+import { ElMessageBox, ElMessage } from "element-plus";
 
 interface Lesson {
   title: string;
@@ -155,7 +197,7 @@ const courses = ref<Course[]>([
     lessonPlanCount: 5,
     lessons: [
       {
-        title: "第一章：认识汉子",
+        title: "第一章：认识汉字",
         status: "已完成",
         date: "2025/2/20",
         description: "学习并掌握汉字的读音和书写。",
@@ -269,8 +311,7 @@ const courses = ref<Course[]>([
   },
 ]);
 
-// const selectedClassId = ref<string | null>(null);
-const selectedClassId = ref("1")
+const selectedClassId = ref("1");
 const selectedClassDetails = computed(() => {
   if (!selectedClassId.value) return null;
   return courses.value.find((course) => course.id === selectedClassId.value) || null;
@@ -281,41 +322,69 @@ const showAddLessonDialog = ref(false);
 const newLesson = ref<Lesson>({
   title: "",
   status: "已完成",
-  date: "",
+  date: new Date().toLocaleDateString(),
   description: "",
 });
 
 const addLesson = () => {
   if (selectedClassDetails.value && newLesson.value.title) {
-    const lessonDate = newLesson.value.date ? new Date(newLesson.value.date).toLocaleDateString() : "";
-    selectedClassDetails.value.lessons.push({
-      ...newLesson.value,
-      date: lessonDate,
-    });
-    newLesson.value = { title: "", status: "已完成", date: "", description: "" };
+    selectedClassDetails.value.lessons.push({ ...newLesson.value });
+    newLesson.value = {
+      title: "",
+      status: "已完成",
+      date: new Date().toLocaleDateString(),
+      description: "",
+    };
     showAddLessonDialog.value = false;
+    ElMessage.success("课程进度新增成功！");
+  } else {
+    ElMessage.error("请填写完整的课程信息！");
   }
 };
 
 // 编辑课程进度
+const showEditLessonDialog = ref(false);
+const editLessonForm = ref<Lesson>({
+  title: "",
+  status: "已完成",
+  date: new Date().toLocaleDateString(),
+  description: "",
+});
+const currentEditLesson = ref<Lesson | null>(null);
+
 const editLesson = (lesson: Lesson) => {
-  ElMessageBox.prompt("请输入新的课程标题", "编辑课程进度", {
-    inputModel: lesson.title,
-    inputValidator: (value: string) => value.length > 0,
-    inputErrorMessage: "课程标题不能为空",
-  }).then(({ value }: { value: string }) => {
-    lesson.title = value;
-  });
+  editLessonForm.value = { ...lesson };
+  currentEditLesson.value = lesson;
+  showEditLessonDialog.value = true;
+};
+
+const saveEditLesson = () => {
+  if (currentEditLesson.value && editLessonForm.value.title) {
+    currentEditLesson.value.title = editLessonForm.value.title;
+    currentEditLesson.value.status = editLessonForm.value.status;
+    currentEditLesson.value.date = new Date(editLessonForm.value.date).toLocaleDateString();
+    currentEditLesson.value.description = editLessonForm.value.description;
+    currentEditLesson.value.date = new Date().toLocaleDateString(); // 更新课程日期为当前时间
+    showEditLessonDialog.value = false;
+    ElMessage.success("课程进度编辑成功！");
+  } else {
+    ElMessage.error("请填写完整的课程信息！");
+  }
 };
 
 // 删除课程进度
 const deleteLesson = (lesson: Lesson) => {
-  if (selectedClassDetails.value) {
-    const index = selectedClassDetails.value.lessons.indexOf(lesson);
-    if (index !== -1) {
-      selectedClassDetails.value.lessons.splice(index, 1);
+  ElMessageBox.confirm("确定要删除该课程进度吗？", "提示", {
+    type: "warning",
+  }).then(() => {
+    if (selectedClassDetails.value) {
+      const index = selectedClassDetails.value.lessons.indexOf(lesson);
+      if (index !== -1) {
+        selectedClassDetails.value.lessons.splice(index, 1);
+        ElMessage.success("课程进度删除成功！");
+      }
     }
-  }
+  });
 };
 
 // 新增教学记录
@@ -327,34 +396,56 @@ const newNote = ref<Note>({
 
 const addNote = () => {
   if (selectedClassDetails.value && newNote.value.content) {
-    const noteDate = newNote.value.date ? new Date(newNote.value.date).toLocaleDateString() : new Date().toLocaleDateString();
-    selectedClassDetails.value.notes.push({
-      ...newNote.value,
-      date: noteDate,
-    });
-    newNote.value = { date: new Date().toLocaleDateString(), content: "" };
+    selectedClassDetails.value.notes.push({ ...newNote.value });
+    newNote.value = {
+      date: new Date().toLocaleDateString(),
+      content: "",
+    };
     showAddNoteDialog.value = false;
+    ElMessage.success("教学记录新增成功！");
+  } else {
+    ElMessage.error("请填写教学记录内容！");
   }
 };
 
 // 编辑教学记录
+const showEditNoteDialog = ref(false);
+const editNoteForm = ref<Note>({
+  date: new Date().toLocaleDateString(),
+  content: "",
+});
+const currentEditNote = ref<Note | null>(null);
+
 const editNote = (note: Note) => {
-  ElMessageBox.prompt("请输入新的教学总结", "编辑教学总结", {
-    inputModel: note.content,
-    inputValidator: (value: string) => value.length > 0,
-    inputErrorMessage: "记录内容不能为空",
-  }).then(({ value }: { value: string }) => {
-    note.content = value;
-  });
+  editNoteForm.value = { ...note };
+  currentEditNote.value = note;
+  showEditNoteDialog.value = true;
 };
+
+const saveEditNote = () => {
+  if (currentEditNote.value && editNoteForm.value.content) {
+    currentEditNote.value.content = editNoteForm.value.content;
+    currentEditNote.value.date = new Date().toLocaleDateString(); // 更新记录日期为当前时间
+    showEditNoteDialog.value = false;
+    ElMessage.success("教学记录编辑成功！");
+  } else {
+    ElMessage.error("请填写教学记录内容！");
+  }
+};
+
 // 删除教学记录
 const deleteNote = (note: Note) => {
-  if (selectedClassDetails.value) {
-    const index = selectedClassDetails.value.notes.indexOf(note);
-    if (index !== -1) {
-      selectedClassDetails.value.notes.splice(index, 1);
+  ElMessageBox.confirm("确定要删除该教学记录吗？", "提示", {
+    type: "warning",
+  }).then(() => {
+    if (selectedClassDetails.value) {
+      const index = selectedClassDetails.value.notes.indexOf(note);
+      if (index !== -1) {
+        selectedClassDetails.value.notes.splice(index, 1);
+        ElMessage.success("教学记录删除成功！");
+      }
     }
-  }
+  });
 };
 </script>
 
