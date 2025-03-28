@@ -25,7 +25,7 @@ export const sessionId = ref<string>("-1");  // 会话ID
 export const DataThisSession = ref<StorageData | null>(null);  // 会话数据
 
 
-export const activeStep = ref(0);   //页面控制
+export const activeStep = ref(0);
 export const isGenerating = ref(false);
 export const showResult = ref(false);
 export const isProcessing = ref(false);
@@ -231,7 +231,7 @@ export const handleKeydown = (event: KeyboardEvent) => {
 };
 
 import { parseMarkdown } from '@/utils/markdownUtils';
-
+import mmPic from '@/assets/files/mmPic.jpeg';
 
 const turnStep = async (step: number) => {
     if (step === 0) {         //教学大纲Res -->> 课堂设计Pre
@@ -251,7 +251,9 @@ const turnStep = async (step: number) => {
     } else if (step === 2) {
         await nextTick(() => {})
         if (DataThisSession.value?.resources?.tp_MindMap?.url) {
-            Mindimgsrc.value = DataThisSession.value.resources.tp_MindMap.url
+            // Mindimgsrc.value = parseMarkdownList_mm(DataThisSession.value.resources.tp_MindMap.url)[0].url
+            // Mindimgsrc.value = DataThisSession.value.resources.tp_MindMap.url
+            Mindimgsrc.value = mmPic;
         }
         return '1';
     } else if (step === steps.length - 1) {
@@ -466,7 +468,6 @@ export const updateIsZoomed = (newZoomedStatus: boolean) => {
 export const updateTranslateY = (newTranslateY: number) => {
     translateY.value = newTranslateY;
 }; 
-
 
 
 

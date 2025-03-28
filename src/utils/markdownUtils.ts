@@ -18,34 +18,42 @@ export const parseMarkdown = (content: string): MarkdownParserResult => {
 
 // utils/markdownUtils.ts
 export function parseMarkdownList_re(markdown: string): { type: string, title: string, url: string }[]{
-  // 新正则表达式：匹配类型、名称、链接三部分
   const regex = /- #(.*?)#\[(.*?)\]\((.*?)\)/g;
   const matches = [];
   let match;
 
   while ((match = regex.exec(markdown)) !== null) {
-      // 匹配组顺序：match[1]=类型，match[2]=名称，match[3]=链接
       matches.push({
           type: match[1],
           title: match[2],
           url: match[3]
       });
   }
+  return matches;
+}
+export function parseMarkdownList_ex(markdown: string): { title: string, url: string }[] {
+  const regex = /- \[(.*?)\]\((.*?)\)/g;
+  const matches = [];
+  let match;
+  while ((match = regex.exec(markdown)) !== null) {
+    matches.push({
+      title: match[1], 
+      url: match[2].trim(), 
+    });
+  }
 
   return matches;
 }
 
-
-export function parseMarkdownList_ex(markdown: string): { title: string, url: string }[] {
-  const regex = /- #([^#]*)#(.*)/g; // 新正则表达式
-  const matches = [];
+//思维导图解析
+export function parseMarkdownList_mm(markdown: string): {url: string}[]{
+  const regex = /<(.*?)>/g;
+  const matches: {url: string }[] = [];
   let match;
 
   while ((match = regex.exec(markdown)) !== null) {
-    // match[1] 是类型，match[2] 是 URL
     matches.push({
-      title: match[1], // 类型作为标题
-      url: match[2].trim(), // 去除 URL 末尾的空格
+      url: match[0]
     });
   }
 
