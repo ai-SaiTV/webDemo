@@ -1,7 +1,7 @@
 <template>
   <div class="course-container">
     <div class="plan-header">
-      <h2>详情管理</h2>
+      <h2>课程管理</h2>
       <p class="subtitle">查看班级进度、教学内容和记录教学情况</p>
     </div>
 
@@ -38,7 +38,7 @@
           <el-card class="lesson-card">
             <el-table :data="selectedClassDetails.lessons" :bordered="true">
               <el-table-column label="课程标题" prop="title" />
-              <el-table-column label="状态" prop="status" />
+              <el-table-column label="上课状态" prop="status" />
               <el-table-column label="上课日期" prop="date" />
               <el-table-column label="课程描述" prop="description" />
               <el-table-column label="操作" width="180">
@@ -82,7 +82,7 @@
         <el-form-item label="课程标题">
           <el-input v-model="newLesson.title" />
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item label="上课状态">
           <el-select v-model="newLesson.status">
             <el-option label="已完成" value="已完成" />
             <el-option label="进行中" value="进行中" />
@@ -121,7 +121,7 @@
         <el-form-item label="课程标题">
           <el-input v-model="editLessonForm.title" />
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item label="上课状态">
           <el-select v-model="editLessonForm.status">
             <el-option label="已完成" value="已完成" />
             <el-option label="进行中" value="进行中" />
