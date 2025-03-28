@@ -1,7 +1,7 @@
 <template>
   <div class="course-container">
     <div class="plan-header">
-      <h2>详情管理</h2>
+      <h2>课程管理</h2>
       <p class="subtitle">查看班级进度、教学内容和记录教学情况</p>
     </div>
 
