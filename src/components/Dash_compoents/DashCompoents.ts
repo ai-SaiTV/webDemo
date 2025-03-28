@@ -133,6 +133,8 @@ export const generatedContent = ref({
     }
 });
 
+const analysisDataFetched = ref('');
+
 
 let stopPollingWatch: (() => void) | null = null;
 let isUpdatingStep = false; // 状态锁
@@ -158,16 +160,17 @@ export const nextStep = async () => {
 
     switch (activeStep.value) {
         case 0:
-            chatConfig.value.message = form.value.unit;
+            chatConfig.value.message = form.value.unit + (analysisDataFetched.value || "");
             break;
         case 1:
             chatConfig.value.message = DataThisSession.value?.resources.teaching_plan.text || "";
+        
             break;
         case 2:
             chatConfig.value.message = DataThisSession.value?.resources.class_design.text || "";
             break;
         default:
-            chatConfig.value.message = "你好嘛？"; // 默认值
+            chatConfig.value.message = ""; // 默认值
     }
 
     const result = await handleSubmit(sessionId.value, activeStep.value);
