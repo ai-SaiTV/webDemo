@@ -549,10 +549,18 @@ const processExcelData = (data: any[]) => {
     ).length;
   });
 
-  // 重新计算学生排名
+  // 重新计算学生排名（处理相同分数的排名）
   currentClass.students.sort((a, b) => b.total - a.total);
   currentClass.students.forEach((student, index) => {
-    student.rank = index + 1;
+    if (index === 0) {
+      student.rank = 1;
+    } else {
+      if (currentClass.students[index - 1].total === student.total) {
+        student.rank = currentClass.students[index - 1].rank;
+      } else {
+        student.rank = index + 1;
+      }
+    }
   });
 
   // 更新全局数据
