@@ -12,12 +12,11 @@ import AddResourceModal from './AddResourceModal.vue';
 import { Book, Video, Text, NewBook, NewVideo, NewText } from '@/types';
 
 // Import assets
-import zh2vo from '@/assets/zh2vo.png';
-import zh3vo from '@/assets/zh3vo.png';
+import yszz from '@/assets/yszz.jpg';
+import lxebr from '@/assets/lxebr.jpg';
 import zh4vo from '@/assets/zh4vo.png';
 import zh5vo from '@/assets/zh5vo.png';
-import Doc2 from '@/assets/Doc2.pdf';
-import Doc3 from '@/assets/Doc3.pdf';
+import lxrbr_pdf from '@/assets/lxrbr.pdf';
 import Doc4 from '@/assets/Doc4.pdf';
 import Doc5 from '@/assets/Doc5.pdf';
 import Vid from '@/assets/田忌赛马.mp4';
@@ -29,24 +28,24 @@ import nulltextimg from '@/assets/nulltext.jpg';
 const books = ref<Book[]>([
     {
         id: 1,
-        title: '二年级上册教师用书',
-        author: '人民教育出版社',
+        title: '杨氏之子课件',
+        author: '张老师',
         isbn: '123-456-789',
         owner: '张三',
-        description: '一本关于二年级语文上册的教师用书。',
-        image: zh2vo,
-        pdf: Doc2,
+        description: '关于杨氏之子的课件。',
+        image: yszz,
+        pdf: lxrbr_pdf,
         showDetails: false
     },
     {
         id: 2,
-        title: '三年级上册教师用书',
-        author: '人民教育出版社',
+        title: '两小儿辩日课件',
+        author: '李老师',
         isbn: '987-654-321',
         owner: '李四',
-        description: '一本关于三年级语文上册的教师用书。',
-        image: zh3vo,
-        pdf: Doc3,
+        description: '关于两小儿辩日的课件。',
+        image: lxebr,
+        pdf: lxrbr_pdf,
         showDetails: false
     },
     {

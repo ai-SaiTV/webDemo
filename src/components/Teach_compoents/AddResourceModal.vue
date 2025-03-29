@@ -52,13 +52,6 @@ const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video' |'te
             />
           </div>
           <div class="input-group">
-            <label for="isbn">ISBN：</label>
-            <el-input 
-              v-model="(formData as NewBook).isbn" 
-              placeholder="请输入ISBN"
-            />
-          </div>
-          <div class="input-group">
             <label for="owner">所有者：</label>
             <el-input 
               v-model="(formData as NewBook).owner" 

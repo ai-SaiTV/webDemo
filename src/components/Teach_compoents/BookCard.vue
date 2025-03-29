@@ -67,8 +67,8 @@ const emit = defineEmits<{
   opacity: 0.9;
 }
 
-.book-item img {
-  width: 259px;
+.book-header img {
+  width: 100%;
   height: 370px;
   object-fit: cover;
   border-radius: 8px;
