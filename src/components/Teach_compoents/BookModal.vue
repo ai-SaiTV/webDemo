@@ -25,7 +25,7 @@ const togglePDF = () => {
       <p><strong>所有者：</strong>{{ book.owner }}</p>
       <p><strong>描述：</strong>{{ book.description || '暂无描述' }}</p>
       <button v-if="book.pdf" @click="togglePDF">
-        {{ isPDFVisible ? '关闭教材' : '教材预览' }}
+        {{ isPDFVisible ? '关闭课件' : '课件预览' }}
       </button>
       <div v-if="isPDFVisible" class="pdf-container">
         <iframe v-if="book.pdf" :src="book.pdf" class="pdf-viewer" frameborder="0"></iframe>

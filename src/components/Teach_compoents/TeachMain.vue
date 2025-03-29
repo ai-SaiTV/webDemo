@@ -359,7 +359,7 @@ const handleTextError = () => {
 
         <div class="container">
             <el-select v-model="resourceType" placeholder="请选择资源类型" class="resource-selector">
-                <el-option label="教材" value="books"></el-option>
+                <el-option label="课件" value="books"></el-option>
                 <el-option label="视频" value="videos"></el-option>
                 <el-option label="文本大纲" value="texts"></el-option>
             </el-select>
