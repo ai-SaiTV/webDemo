@@ -21,22 +21,18 @@ const toggleText = () => {
   console.log('Text visibility:', isTextVisible.value);
   if (isTextVisible.value && props.text.words) {
     const cleanedPath = props.text.words.replace(/^export default\s+/, '').replace(/^["'\s]+|["'\s]+$/g, '');
-    // console.log(cleanedPath);
     fetchDocContent(cleanedPath);
   }
 };
 
 const fetchDocContent = async (words: string) => {
   try {
-    // console.log("Fetching DOCX file from:",words);
     const response = await fetch(words);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const arrayBuffer = await response.arrayBuffer();
-    // console.log("ArrayBuffer length:", arrayBuffer.byteLength);
     const result = await mammoth.convertToHtml({ arrayBuffer });
-    // console.log('DOCX file converted to HTML:', result.value);
     docContent.value = result.value;
   } catch (error) {
     emit('error');

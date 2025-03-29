@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from '@vue/runtime-core';
 import { Video } from '@/types';
+import axios from 'axios';
 
-const props = defineProps<{
+const props =  defineProps<{
   video: Video;
   visible: boolean;
 }>();
@@ -14,6 +15,13 @@ const emit = defineEmits<{
 
 const isVideoVisible = ref(false);
 
+const fetchAnalysis = () =>{
+  axios.get('http://localhost:8080/teachingmaterials', {
+    params: {
+      videoId: props.video.path,
+    },
+  })
+}
 const toggleVideo = () => {
   isVideoVisible.value = !isVideoVisible.value;
 };
@@ -33,6 +41,7 @@ const toggleVideo = () => {
           v-if="video.path" 
           :src="video.path" 
           controls 
+          @click="fetchAnalysis"
           @error="emit('error')" 
           class="video-viewer"
         ></video>
