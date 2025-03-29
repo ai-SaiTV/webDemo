@@ -12,41 +12,44 @@ import AddResourceModal from './AddResourceModal.vue';
 import { Book, Video, Text, NewBook, NewVideo, NewText } from '@/types';
 
 // Import assets
-import zh2vo from '@/assets/zh2vo.png';
-import zh3vo from '@/assets/zh3vo.png';
+import yszz from '@/assets/yszz.jpg';
+import lxebr from '@/assets/lxebr.jpg';
 import zh4vo from '@/assets/zh4vo.png';
 import zh5vo from '@/assets/zh5vo.png';
-import Doc2 from '@/assets/Doc2.pdf';
-import Doc3 from '@/assets/Doc3.pdf';
+import lxrbr_pdf from '@/assets/lxrbr.pdf';
 import Doc4 from '@/assets/Doc4.pdf';
 import Doc5 from '@/assets/Doc5.pdf';
-import Vid from '@/assets/田忌赛马.mp4';
-import Vid2 from '@/assets/两小儿辩日.mp4';
+// import Vid from '@/assets/田忌赛马.mp4';
+// import Vid2 from '@/assets/两小儿辩日.mp4';
 import text1 from '@/assets/text1.docx';
 import text2 from '@/assets/text2.docx';
+import word1 from '@/assets/word1.png';
+import word2 from '@/assets/word2.png';
 import nullvideoimg from '@/assets/OIP-C.jpg';
+import childsun from '@/assets/两小儿辩日公开课.jpg';
+import yangson from '@/assets/杨氏之子公开课.jpg';
 import nulltextimg from '@/assets/nulltext.jpg';
 const books = ref<Book[]>([
     {
         id: 1,
-        title: '二年级上册教师用书',
-        author: '人民教育出版社',
+        title: '杨氏之子课件',
+        author: '张老师',
         isbn: '123-456-789',
         owner: '张三',
-        description: '一本关于二年级语文上册的教师用书。',
-        image: zh2vo,
-        pdf: Doc2,
+        description: '关于杨氏之子的课件。',
+        image: yszz,
+        pdf: lxrbr_pdf,
         showDetails: false
     },
     {
         id: 2,
-        title: '三年级上册教师用书',
-        author: '人民教育出版社',
+        title: '两小儿辩日课件',
+        author: '李老师',
         isbn: '987-654-321',
         owner: '李四',
-        description: '一本关于三年级语文上册的教师用书。',
-        image: zh3vo,
-        pdf: Doc3,
+        description: '关于两小儿辩日的课件。',
+        image: lxebr,
+        pdf: lxrbr_pdf,
         showDetails: false
     },
     {
@@ -76,19 +79,19 @@ const books = ref<Book[]>([
 const videos = ref<Video[]>([
     {
         id: 1,
-        title: '田忌赛马',
-        duration: '15:30',
-        description: '一个关于田忌赛马的教学视频。',
-        image: nullvideoimg,
-        path: Vid
+        title: '杨氏之子',
+        duration: '36:44',
+        description: '一个关于杨氏之子的公开课。',
+        image: yangson,
+        path: 'https://upos-sz-mirrorcos.bilivideo.com/upgcxcode/88/48/744504888/744504888-1-16.mp4?e=ig8euxZM2rNcNbRVhwdVhwdlhWdVhwdVhoNvNC8BqJIzNbfq9rVEuxTEnE8L5F6VnEsSTx0vkX8fqJeYTj_lta53NCM=&uipk=5&nbs=1&deadline=1743231916&gen=playurlv2&os=cosbv&oi=1782024106&trid=b62ba61df8f94ebd976fc58f5b859abdh&mid=0&platform=html5&og=cos&upsig=628525130021dd204d6d709d2c806521&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform,og&bvc=vod&nettype=0&f=h_0_0&bw=34696&logo=80000000'
     },
     {
         id: 2,
         title: '两小儿辩日',
-        duration: '12:45',
-        description: '一个关于两小儿辩日的教学视频。',
-        image: nullvideoimg,
-        path: Vid2
+        duration: '38:36',
+        description: '一个关于两小儿辩日的公开课。',
+        image: childsun,
+        path: 'https://upos-sz-mirror08c.bilivideo.com/upgcxcode/82/29/1055972982/1055972982-1-16.mp4?e=ig8euxZM2rNcNbRVhwdVhwdlhWdVhwdVhoNvNC8BqJIzNbfq9rVEuxTEnE8L5F6VnEsSTx0vkX8fqJeYTj_lta53NCM=&uipk=5&nbs=1&deadline=1743232153&gen=playurlv2&os=08cbv&oi=1782024106&trid=b15f16668d1443438ee0005872f991f5h&mid=0&platform=html5&og=hw&upsig=a8965961d097cb9017041fa500907371&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform,og&bvc=vod&nettype=0&f=h_0_0&bw=19786&logo=80000000'
     }
 ]);
 const texts = ref<Text[]>([
@@ -96,14 +99,14 @@ const texts = ref<Text[]>([
         id: 1,
         title: '田忌赛马教学大纲',
         description: '一份关于田忌赛马的教学大纲。',
-        image: nulltextimg,
+        image: word1,
         words: text1,
     },
     {
         id: 2,
         title: '两小儿辩日教学大纲',
         description: '一份关于两小儿辩日的教学大纲。',
-        image: nulltextimg,
+        image: word2,
         words: text2,
     },
 ]);
@@ -360,7 +363,7 @@ const handleTextError = () => {
 
         <div class="container">
             <el-select v-model="resourceType" placeholder="请选择资源类型" class="resource-selector">
-                <el-option label="教材" value="books"></el-option>
+                <el-option label="课件" value="books"></el-option>
                 <el-option label="视频" value="videos"></el-option>
                 <el-option label="文本大纲" value="texts"></el-option>
             </el-select>

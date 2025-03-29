@@ -15,7 +15,7 @@ const emit = defineEmits<{
   (e: 'fileUpload', event: Event, fileType: 'image' | 'pdf' | 'video'| 'text'): void;
 }>();
 
-const title = computed(() => props.type === 'book' ? '添加新教材' : props.type === 'video' ? '添加新视频' : '添加新文本');
+const title = computed(() => props.type === 'book' ? '添加新课件' : props.type === 'video' ? '添加新视频' : '添加新文本');
 
 const isBook = computed(() => props.type === 'book');
 const isVideo = computed(() => props.type === 'video');
@@ -36,10 +36,10 @@ const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video' |'te
       <h3>{{ title }}</h3>
       <form @submit.prevent="emit('submit')">
         <div class="input-group">
-          <label for="title">{{ isBook ? '书名' : isVideo ? '视频标题' : '文本标题' }}：</label>
+          <label for="title">{{ isBook ? '课件名' : isVideo ? '视频标题' : '文本标题' }}：</label>
           <el-input 
             v-model="(formData as any).title" 
-            :placeholder="isBook ? '请输入书名' : isVideo ? '请输入视频标题' : '请输入文本标题'"
+            :placeholder="isBook ? '请输入课件名' : isVideo ? '请输入视频标题' : '请输入文本标题'"
           />
         </div>
         
@@ -49,13 +49,6 @@ const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video' |'te
             <el-input 
               v-model="(formData as NewBook).author" 
               placeholder="请输入作者"
-            />
-          </div>
-          <div class="input-group">
-            <label for="isbn">ISBN：</label>
-            <el-input 
-              v-model="(formData as NewBook).isbn" 
-              placeholder="请输入ISBN"
             />
           </div>
           <div class="input-group">
@@ -90,7 +83,7 @@ const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video' |'te
           <el-input
             type="textarea"
             v-model="(formData as any).description"
-            :placeholder="isBook ? '请输入书籍描述' : isVideo ? '请输入视频描述' : '请输入文本描述'"
+            :placeholder="isBook ? '请输入课件描述' : isVideo ? '请输入视频描述' : '请输入文本描述'"
           />
         </div>
 

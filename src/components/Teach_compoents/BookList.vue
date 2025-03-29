@@ -17,8 +17,8 @@ const emit = defineEmits<{
 <template>
   <div class="book-list">
     <AddResourceCard 
-      title="新增教材" 
-      description="点击添加新书籍" 
+      title="新增课件" 
+      description="点击添加新课件" 
       @click="emit('openAddModal')" 
     />
     <BookCard 
