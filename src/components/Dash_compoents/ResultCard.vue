@@ -84,6 +84,8 @@
               <a :href="exercise.preview" download="file.pdf">
                 <el-button type="primary" link size="small">下载</el-button>
               </a>
+              <el-button type="primary" size = "small" style="margin-left: 15px;">布置</el-button>
+
             </div>
           </div>
         </div>
@@ -100,6 +102,34 @@
       <!-- </div> -->
     </div>
   </div>
+
+    <!-- 悬浮 -->
+    <!-- 在template最后添加悬浮按钮 -->
+  <div class="rating-fab" @click="isRatingOpen = true">
+    <el-icon size="24"><Star/></el-icon>
+  </div>
+
+  <!-- 评分面板 -->
+  <div v-if="isRatingOpen" class="rating-panel">
+    <h4>教案生成模块评价</h4>
+    <el-rate
+      v-model="ratingValue"
+      :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
+      show-text
+      text-color="#ff9900"
+      :texts="['极差','一般','良好','优秀','完美']">
+    </el-rate>
+    <br>
+    <div class = "eval-bt">
+      <el-button  @click="submitRating"> 提交评价</el-button>
+    </div>
+    
+  </div>
+
+
+
+
+
 </template>
 
 <script setup>
@@ -202,6 +232,24 @@ const previewMindMap = () => {
   }
 };
 
+
+const isRatingOpen = ref(false)
+const ratingValue = ref(0)
+
+const submitRating = () => {
+  if (ratingValue.value > 0) {
+    console.log('提交评价:', ratingValue.value)
+    isRatingOpen.value = false
+  } else {
+    alert('请对教学资源准确率进行评价')
+  }
+};
+
+
+
+
+
+
 onMounted(() => {
   initializeData();
 });
@@ -280,6 +328,7 @@ onMounted(() => {
 
   .exercises {
     .exercise-item {
+      display: flex;
       padding: 1rem;
       border-bottom: 1px solid #0a1d42;
 
@@ -308,6 +357,8 @@ onMounted(() => {
 
       .exercise-footer {
         display: flex;
+        margin-left: 40px;
+        column-gap: 3px;
         justify-content: space-between;
         align-items: center;
         margin-top: 0.5rem;
@@ -347,5 +398,57 @@ onMounted(() => {
 .exercise-item {
   margin-bottom: 15px;
 }
+
+
+
+.rating-fab {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  width: 60px;
+  height: 60px;
+  background: #409EFF;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.3);
+  z-index: 2000;
+}
+
+.rating-panel {
+  position: fixed;
+  right: 30px;
+  bottom: 100px;
+  width: 300px;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 2000;
+  h4 {
+    margin-bottom: 15px;
+    color: #303133;
+  }
+  .eval-bt{
+    display: flex;
+    justify-content: end;
+    
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
 
 </style>
