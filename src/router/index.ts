@@ -8,7 +8,7 @@ import AppLayout from '../components/AppLayout.vue'
 import TeachingMaterials from '../views/design/TeachingMaterials.vue'
 import Login from '@/views/login/login.vue'
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory('/A03_DemoDeploy/'),
   routes: [
     {
       path: '/',
