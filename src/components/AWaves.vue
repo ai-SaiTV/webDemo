@@ -19,8 +19,8 @@ export default {
     async loadHtml() {
       try {
         const basePath = import.meta.env.MODE === 'production' 
-      ? '' 
-      : '../';
+          ? '' 
+          : '../';
 
         const response = await fetch(`${basePath}awaves.html`);
         this.htmlContent = await response.text();

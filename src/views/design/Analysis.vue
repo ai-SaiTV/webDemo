@@ -257,7 +257,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed} from "@vue/runtime-core";
+import { ref, onMounted, watch, computed,nextTick} from "@vue/runtime-core";
 import * as echarts from "echarts";
 import * as XLSX from "xlsx";
 // import { ElMessage } from "element-plus";
@@ -448,15 +448,16 @@ const studentAnalysis = ref({
 //   }
 // };
 
-// '@/assets/files/scores.xlsx'
 // 在系统初始化时读取并处理Excel文件
 onMounted(async () => {
   try {
     const basePath = import.meta.env.MODE === 'production' 
       ? '' 
       : '../';
+    await nextTick();
     // 使用 public 目录中的文件
     const response = await fetch(`${basePath}scores.xlsx`);
+
     if (!response.ok) {
       throw new Error("Failed to fetch the Excel file");
     }
