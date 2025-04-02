@@ -18,7 +18,11 @@ export default {
   methods: {
     async loadHtml() {
       try {
-        const response = await fetch("../awaves.html");
+        const basePath = import.meta.env.MODE === 'production' 
+      ? '' 
+      : '../';
+
+        const response = await fetch(`${basePath}awaves.html`);
         this.htmlContent = await response.text();
       } catch (error) {
         console.error("加载 HTML 失败:", error);
