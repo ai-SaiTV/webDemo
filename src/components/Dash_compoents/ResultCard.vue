@@ -5,12 +5,20 @@
       <el-card class="result-card" style="margin: 10px;">
         <template #header>
           <div class="card-header">
-            <h3>教学大纲</h3>
-            <el-button @click="exportPDF">导出教案</el-button>
+            
+            
+            
+            <div style="width: 100%; display: flex; justify-content: space-between;">
+              <h3>教学大纲</h3>
+              
+              <el-button @click="exportPDF" type="success">下载课程大纲</el-button>
+            </div>
             <el-button type="primary" link @click="initializeData">查看详情</el-button>
+            
+
             <div class="markdown-container">
               <!-- 渲染 Markdown 内容 -->
-              <div v-html="generatedContent.lessonPlan" class="markdown-content" style="width: 960px; max-height: 640px; overflow-y: auto; overflow-x: auto;"></div>
+              <div v-html="generatedContent.lessonPlan" class="markdown-content" style="width: 640px; max-height: 640px; overflow-y: auto;"></div>
             </div>
           </div>
         </template>
@@ -37,22 +45,41 @@
   <!-- 推荐资源卡片 -->
   <el-row :gutter="20" class="mt-20">
     <el-col :span="12">
-      <el-card class="result-card">
+      <el-card class="result-card" style="margin: 10px;">
         <template #header>
           <div class="card-header">
-            <h3>推荐教学视频</h3>
+            <div style="width: 100%; display: flex; justify-content: space-between;">
+              <h3>教学资源推荐</h3>
+              
+              <el-button type="success">收藏全部</el-button>
+            </div>
+            
             <el-button type="primary" link>查看更多</el-button>
           </div>
         </template>
         <div class="resources">
           <el-row :gutter="20">
-            <el-col v-for="(resource, index) in generatedContent.resources" :key="index" :span="12">
+            <el-col v-for="(resource, index) in generatedContent.resources" :key="index" :span="12" :style="{
+              // width: '20%',
+              border: '1px solid var(--el-border-color-light)',
+              borderRadius: 'var(--el-border-radius-base)',
+              padding: '16px',
+              boxShadow: 'var(--el-box-shadow-light)',
+              transition: 'all 0.3s var(--el-transition-function-ease-in-out-bezier)',
+              backgroundColor: 'var(--el-bg-color)',
+              marginBottom: '10px',
+            }">
               <div class="resource-card">
                 <div class="resource-info">
                   <a :href="resource.url" target="_blank" rel="noopener noreferrer" class = "resource-link">
-                    <h4>{{ resource.title }}</h4>
+                    <h4 style="color: black;">{{ resource.title }}</h4>
                   </a>
                   <el-tag size="small">{{ resource.type.toUpperCase() }}</el-tag>
+                  <div style="display: flex; justify-content: end;">
+                    
+                    <el-button type="primary" size = "small" style="margin-left: 4px;">收藏</el-button>
+                  </div>
+                 
                 </div>
               </div>
             </el-col>
@@ -63,7 +90,7 @@
 
     <!-- 练习题卡片 -->
     <el-col :span="12">
-      <el-card class="result-card">
+      <el-card class="result-card" style="margin: 10px;">
         <template #header>
           <div class="card-header">
             <h3>配套练习</h3>
@@ -71,7 +98,20 @@
           </div>
         </template>
         <div class="exercises">
-          <div v-for="(exercise, index) in generatedContent.exercises" :key="index" class="exercise-item">
+          <div 
+            v-for="(exercise, index) in generatedContent.exercises" 
+            :key="index"
+            class="exercise-item" 
+            :style="{
+              width: '80%',
+              border: '1px solid var(--el-border-color-light)',
+              borderRadius: 'var(--el-border-radius-base)',
+              padding: '16px',
+              boxShadow: 'var(--el-box-shadow-light)',
+              transition: 'all 0.3s var(--el-transition-function-ease-in-out-bezier)',
+              backgroundColor: 'var(--el-bg-color)'
+            }"
+          >
             <div class="exercise-header">
             <h4>{{ exercise.title }}</h4>
               
@@ -80,7 +120,7 @@
               </el-tag>
             </div>
             <!-- <p class="exercise-preview">{{ exercise.preview }}</p> -->
-            <div class="exercise-footer">
+            <div class="exercise-footer" style="display: flex; justify-content: end;">
               <!-- <span>{{ exercise.count }}道题目</span> -->
               <a :href="exercise.preview" download="file.pdf">
                 <el-button type="primary" link size="small">下载</el-button>
@@ -192,7 +232,7 @@ const initializeData = async () => {
       })),
       exercises: parsedExercise.map(exercise => ({
         title: exercise.title,
-        difficulty: '预备知识测验',
+        difficulty: exercise.type,
         preview: exercise.url,
         count: 5
       }))
@@ -264,13 +304,11 @@ const exportPDF = async () => {
     const canvas = await html2canvas(element, {
       scale: 1,
       useCORS: true,
-      width: element.scrollWidth,
+      width: 840,
       height: element.scrollHeight,
       windowWidth: element.scrollWidth,
       windowHeight: element.scrollHeight
     });
-
-    document.body.appendChild(canvas); // 临时插入页面查看渲染效果
 
     const pdfWidth = canvas.width / 3.78; 
     const pdfHeight = canvas.height / 3.78;
@@ -298,8 +336,7 @@ const exportPDF = async () => {
       }
     }
 
-    pdf.save('教学方案优化版.pdf');
-    window.open(pdf.output('bloburl')); // 直接浏览器预览PDF
+    pdf.save(`课程大纲.pdf`);
     console.log('元素尺寸:', {
       width: element.offsetWidth,
       scrollWidth: element.scrollWidth,
