@@ -2,14 +2,15 @@
   <!-- 教案内容卡片 -->
   <el-row :gutter="20">
     <el-col :span="12">
-      <el-card class="result-card">
+      <el-card class="result-card" style="margin: 10px;">
         <template #header>
           <div class="card-header">
             <h3>教学大纲</h3>
+            <el-button @click="exportPDF">导出教案</el-button>
             <el-button type="primary" link @click="initializeData">查看详情</el-button>
             <div class="markdown-container">
               <!-- 渲染 Markdown 内容 -->
-              <div v-html="generatedContent.lessonPlan" class="markdown-content" style="max-height: 950px; overflow-y: auto;"></div>
+              <div v-html="generatedContent.lessonPlan" class="markdown-content" style="width: 960px; max-height: 640px; overflow-y: auto; overflow-x: auto;"></div>
             </div>
           </div>
         </template>
@@ -18,7 +19,7 @@
 
     <!-- 思维导图卡片 -->
     <el-col :span="12">
-      <el-card class="result-card">
+      <el-card class="result-card" style="margin: 10px;">
         <template #header>
           <div class="card-header">
             <h3>环节设计思维导图</h3>
@@ -133,10 +134,12 @@
 </template>
 
 <script setup>
-import { defineProps, ref, computed, onMounted } from 'vue';
+import { defineProps, ref, computed, onMounted, nextTick} from 'vue';
 import { parseMarkdown, parseMarkdownList_ex, parseMarkdownList_re } from '@/utils/markdownUtils.ts';
 import { sessionId, DataThisSession } from './DashCompoents.ts';
 import { storageService } from '@/services/storage/storageService';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 const generatedContent = ref({
   lessonPlan: {
     objectives: [],
@@ -202,9 +205,9 @@ const initializeData = async () => {
 const showAllExercises = ref(false);
 
 // 直接在组件中定义 Markdown 内容
-const markdownContent = ref(`
-## 暂无
-`);
+// const markdownContent = ref(`
+// ## 暂无
+// `);
 
 // // 解析 Markdown 内容为 HTML
 // const parsedExercise = computed(() => {
@@ -241,6 +244,70 @@ const submitRating = () => {
     isRatingOpen.value = false
   } else {
     alert('请对教学资源准确率进行评价')
+  }
+};
+
+
+const markdownContent = ref(null);
+
+const exportPDF = async () => {
+  try {
+    await nextTick();
+    
+    // const element = markdownContent.value;
+    const element = document.querySelector('.markdown-content'); 
+    
+    // 重置元素样式
+    element.style.overflow = 'visible';
+    element.style.height = 'auto';
+    
+    const canvas = await html2canvas(element, {
+      scale: 1,
+      useCORS: true,
+      width: element.scrollWidth,
+      height: element.scrollHeight,
+      windowWidth: element.scrollWidth,
+      windowHeight: element.scrollHeight
+    });
+
+    document.body.appendChild(canvas); // 临时插入页面查看渲染效果
+
+    const pdfWidth = canvas.width / 3.78; 
+    const pdfHeight = canvas.height / 3.78;
+
+    const pdf = new jsPDF({
+      unit: 'mm',
+      format: [pdfWidth, pdfHeight],
+      orientation: pdfWidth > pdfHeight ? 'l' : 'p'
+    });
+    const imgData = canvas.toDataURL('image/png');
+    const imgWidth = 190;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    let position = 0;
+    let remainingHeight = imgHeight;
+
+    while (remainingHeight > 0) {
+      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+      remainingHeight -= pageHeight;
+      position -= pageHeight;
+
+      if (remainingHeight > 0) {
+        pdf.addPage();
+      }
+    }
+
+    pdf.save('教学方案优化版.pdf');
+    window.open(pdf.output('bloburl')); // 直接浏览器预览PDF
+    console.log('元素尺寸:', {
+      width: element.offsetWidth,
+      scrollWidth: element.scrollWidth,
+      height: element.offsetHeight,
+      scrollHeight: element.scrollHeight
+    });
+  } catch (error) {
+    console.error('导出失败:', error);
   }
 };
 
