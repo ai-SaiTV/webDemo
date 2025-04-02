@@ -3,8 +3,8 @@
 </template>
 
 <script>
-import "@/components/awaves.css";
-import "@/components/awaves.js";
+import "@/assets/awaves.css";
+import "@/assets/awaves.js";
 
 export default {
   data() {
@@ -18,7 +18,7 @@ export default {
   methods: {
     async loadHtml() {
       try {
-        const response = await fetch("@/components/awaves.html");
+        const response = await fetch("../awaves.html");
         this.htmlContent = await response.text();
       } catch (error) {
         console.error("加载 HTML 失败:", error);
