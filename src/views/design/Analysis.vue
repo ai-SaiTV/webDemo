@@ -452,8 +452,11 @@ const studentAnalysis = ref({
 // 在系统初始化时读取并处理Excel文件
 onMounted(async () => {
   try {
+    const basePath = import.meta.env.MODE === 'production' 
+      ? '' 
+      : '../';
     // 使用 public 目录中的文件
-    const response = await fetch('src/assets/files/scores.xlsx');
+    const response = await fetch(`${basePath}scores.xlsx`);
     if (!response.ok) {
       throw new Error("Failed to fetch the Excel file");
     }
