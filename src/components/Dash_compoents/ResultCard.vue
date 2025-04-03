@@ -9,7 +9,7 @@
             
             
             <div style="width: 100%; display: flex; justify-content: space-between;">
-              <h3>教学大纲</h3>
+              <h3>课程大纲</h3>
               
               <el-button @click="exportPDF" type="success">下载课程大纲</el-button>
             </div>

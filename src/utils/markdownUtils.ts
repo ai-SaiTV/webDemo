@@ -32,7 +32,7 @@ export function parseMarkdownList_re(markdown: string): { type: string, title: s
   return matches;
 }
 export function parseMarkdownList_ex(markdown: string): {  type: string, title: string, url: string }[] {
-  const regex = /- #(.*?)#\[(.*?)\]\((.*?)\)/g; //- #类型#[标题](URL)"
+  const regex = /- #(.*?)# \[(.*?)\]\((.*?)\)/g; //- #类型#[标题](URL)"
   const matches = [];
   let match;
 
