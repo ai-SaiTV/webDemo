@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from '@vue/runtime-core';
+import { onMounted, ref } from '@vue/runtime-core';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import ResourceHeader from './ResourceHeader.vue';
 import BookList from './BookList.vue';
@@ -10,7 +10,7 @@ import VideoModal from './VideoModal.vue';
 import TextModal from './TextModal.vue';
 import AddResourceModal from './AddResourceModal.vue';
 import { Book, Video, Text, NewBook, NewVideo, NewText } from '@/types';
-
+import { DataThisSession } from '../Dash_compoents/DashCompoents';
 // Import assets
 import yszz from '@/assets/yszz.jpg';
 import lxebr from '@/assets/lxebr.jpg';
@@ -29,6 +29,7 @@ import nullvideoimg from '@/assets/OIP-C.jpg';
 import childsun from '@/assets/两小儿辩日公开课.jpg';
 import yangson from '@/assets/杨氏之子公开课.jpg';
 import nulltextimg from '@/assets/nulltext.jpg';
+
 const books = ref<Book[]>([
     {
         id: 1,
@@ -142,6 +143,42 @@ const newText = ref<NewText>({
     description: '',
     image: null as File | null,
     words: null as File | string | null
+});
+onMounted(() => {
+    // Initialize data or perform any setup tasks here
+    // For example, you can fetch data from an API or set default values
+    if(DataThisSession.value) {
+        const resource = DataThisSession.value.resources.courseware.Courseware;
+        books.value = resource.map(resource =>({
+            id: Date.now() + Math.random(),
+            title: resource.name,
+            author: 'Unknown',
+            isbn: 'Unknown',
+            owner: 'Unknown',
+            description: 'No description available.',
+            image: null,
+            pdf: resource.url,
+            showDetails: false,
+        }));
+        const videosData = DataThisSession.value.resources.courseware.videos || [];
+        videos.value = videosData.map(video => ({
+            id: Date.now() + Math.random(),
+            title: video.title,
+            duration: video.duration || 'Unknown',
+            description: video.description || 'No description available.',
+            image: null,
+            path: video.url,
+        }));
+
+        const textsData = DataThisSession.value.resources.courseware.texts || [];
+        texts.value = textsData.map(text => ({
+            id: Date.now() + Math.random(),
+            title: text.title,
+            description: text.description || 'No description available.',
+            image: null,
+            words: text.url,
+        }));
+    }
 });
 const deleteBook = async (book: Book) => {
     try {
