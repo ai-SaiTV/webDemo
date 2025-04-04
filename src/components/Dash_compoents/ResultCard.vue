@@ -9,9 +9,9 @@
             
             
             <div style="width: 100%; display: flex; justify-content: space-between;">
-              <h3>课程大纲</h3>
+              <h3>教案大纲</h3>
               
-              <el-button @click="exportPDF" type="success">下载课程大纲</el-button>
+              <el-button @click="exportPDF" type="success">下载教案大纲</el-button>
             </div>
             <el-button type="primary" link @click="initializeData">查看详情</el-button>
             

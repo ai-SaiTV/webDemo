@@ -4,7 +4,7 @@ import { watch } from '@vue/runtime-core';
 
 
 
-// step 0 ： 教学大纲生成， step 1 ： 课堂设计， step 2 ： 导图生成， step 3 ： 教学资源推荐
+// step 0 ： 教案大纲生成， step 1 ： 课堂设计， step 2 ： 导图生成， step 3 ： 教学资源推荐
 
 
 
@@ -73,7 +73,7 @@ export const form = ref({
 });
 
 export const steps = [
-    { title: '教学大纲生成', description: '🥰一句话生成大纲' },
+    { title: '教案大纲生成', description: '🥰一句话生成教案大纲' },
     { title: '课堂设计', description: '⭐根据教学大纲和结合优秀教学案例生成课堂设计' },
     { title: '导图生成', description: '🗨️根据教学大纲生成思维导图' },
     { title: '教学资源推荐', description: '🔥根据教学大纲和课堂设计生成教学资源' },

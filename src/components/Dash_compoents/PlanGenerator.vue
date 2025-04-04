@@ -40,14 +40,6 @@ const gradientColor = computed(() => {
 
   return `rgb(${r}, ${g}, ${b})`;
 });
-
-// 步骤数据
-const steps = ref([
-  { title: '大纲生成', description: '输入课程名称，自动生成大纲' },
-  { title: '大纲修改', description: '调整和完善大纲内容' },
-  { title: '教学要求', description: '添加教学需求，优化方案' },
-  { title: '生成结果', description: '一键生成完整教案' }
-]);
 </script>
 
 <style scoped>
