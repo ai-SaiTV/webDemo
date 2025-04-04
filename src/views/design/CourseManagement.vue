@@ -20,7 +20,7 @@
 
       <!-- 动态显示班级详情 -->
       <div v-if="selectedClassDetails" class="class-details">
-        <h3>班级详情</h3>
+        <h3>课程详情</h3>
         <el-card class="details-card">
           <el-table :data="[selectedClassDetails]" :bordered="true">
             <el-table-column label="课程名称" prop="name" />
