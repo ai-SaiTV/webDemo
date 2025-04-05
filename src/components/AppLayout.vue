@@ -55,11 +55,11 @@ const toggleCollapse = () => {
       >
         <el-menu-item index="1">
           <el-icon><Document /></el-icon>
-          <span>教案生成</span>
+          <span>备课助手</span>
         </el-menu-item>
         <el-menu-item index="2">
           <el-icon><Collection /></el-icon>
-          <span>教学资源</span>
+          <span>资源库</span>
         </el-menu-item>
         <el-menu-item index="3">
           <el-icon><TrendCharts /></el-icon>

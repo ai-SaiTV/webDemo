@@ -6,10 +6,10 @@
         <template #header>
           <div class="card-header">
             <div style="width: 100%; display: flex; justify-content: space-between;">
-              <h3>教案大纲</h3>
+              <h3>教案</h3>
               <div>
                 <el-button  type="primary">收藏至资源库</el-button>
-                <el-button @click="exportPDF" type="success">下载教案大纲</el-button>
+                <el-button @click="exportPDF" type="success">下载教案</el-button>
               </div>
               
             </div>
@@ -278,6 +278,8 @@ const showAllExercises = ref(false);
 // const parsedExercise = computed(() => {
 //   return parseMarkdown(markdownContent.value);
 // });
+
+const activeTab = ref('design');
 
 const previewMindMap = () => {
   const mindMapWindow = window.open('', '_blank');

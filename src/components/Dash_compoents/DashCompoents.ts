@@ -73,65 +73,14 @@ export const form = ref({
 });
 
 export const steps = [
-    { title: '教案大纲生成', description: '🥰一句话生成教案大纲' },
-    { title: '课堂设计', description: '⭐根据教学大纲和结合优秀教学案例生成课堂设计' },
-    { title: '导图生成', description: '🗨️根据教学大纲生成思维导图' },
-    { title: '教学资源推荐', description: '🔥根据教学大纲和课堂设计生成教学资源' },
-    { title: '结果展示', description: '🎇整合展示备课资源' }
+    { title: '教案生成', description: '一句话生成教案' },
+    { title: '课堂设计', description: '根据教案和结合优秀教学案例生成课堂设计' },
+    { title: '导图生成', description: '生成课堂环节设计思维导图' },
+    { title: '教学资源推荐', description: '根据教案和课堂设计生成教学资源' },
+    { title: '结果整合', description: '整合展示备课助手生成结果' }
 ];
 
-export const generatedContent = ref({
-    lessonPlan: {
-        title: '认识分数',
-        objectives: [
-            '理解分数的基本概念',
-            '掌握分数的读写方法',
-            '能够运用分数解决简单的实际问题'
-        ],
-        steps: [
-            '导入：通过生活中的实例引入分数概念',
-            '讲解：分数的表示方法和意义',
-            '练习：基础练习和应用题',
-            '总结：归纳本节课重点'
-        ]
-    },
-    resources: [
-        {
-            title: '分数动画课件',
-            type: 'ppt',
-            url: '#',
-            preview: 'https://picsum.photos/300/200'
-        },
-        {
-            title: '分数教学视频',
-            type: 'video',
-            url: '#',
-            preview: 'https://picsum.photos/300/200'
-        }
-    ],
-    exercises: [
-        {
-            title: '基础练习',
-            count: 10,
-            difficulty: '简单',
-            preview: '1. 将下列图形中的阴影部分用分数表示...'
-        },
-        {
-            title: '提高练习',
-            count: 5,
-            difficulty: '中等',
-            preview: '1. 小明吃了一个苹果的3/4,小红吃了...'
-        }
-    ],
-    mindMap: {
-        preview: 'https://picsum.photos/800/400',
-        nodes: [
-            { id: 1, text: '分数的概念', x: 400, y: 200 },
-            { id: 2, text: '分数的读写', x: 300, y: 300 },
-            { id: 3, text: '分数的意义', x: 500, y: 300 }
-        ]
-    }
-});
+export const generatedContent = ref("");
 
 const analysisDataFetched = ref('');
 
@@ -452,7 +401,7 @@ export const imageStyle = computed(() => ({
 }));
 
 export const form1 = ref({
-    requirements: `网络超时，请检查网络设置😿`
+    requirements: `<h2>网络超时，请检查网络设置<h2>`
 });
 
 

@@ -1,9 +1,7 @@
 <template>
 
-  <h2>教案生成</h2>
-  <p class="subtitle">智能分析教学需求，快速生成专业教案</p>
-
-
+  <h2>备课助手</h2>
+  <p class="subtitle">智能分析教学需求，快速生成专业教案、推荐教学资源</p>
   <!-- 进度条 -->
   <StepProgress/>
 

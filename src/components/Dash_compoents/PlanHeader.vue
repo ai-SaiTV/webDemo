@@ -11,11 +11,11 @@ import { defineProps } from 'vue';
 const props = defineProps({
   header: {
     type: String,
-    default: '教案生成',
+    default: '备课助手',
   },
   subheader: {
     type: String,
-    default: '智能分析教学需求，快速生成专业教案',
+    default: '智能分析教学需求，快速生成教案、推荐教学资源',
   },
   });
 </script>
