@@ -30,6 +30,19 @@ import childsun from '@/assets/两小儿辩日公开课.jpg';
 import yangson from '@/assets/杨氏之子公开课.jpg';
 import nulltextimg from '@/assets/nulltext.jpg';
 
+interface Resource {
+    type: string;
+    title: string;
+    url: string;
+}
+
+interface Resources {
+    videos: Resource[];
+    coursewares: Resource[];
+    lessonPlans: Resource[];
+    images: Resource[];
+}
+
 const books = ref<Book[]>([
     {
         id: 1,
@@ -144,40 +157,68 @@ const newText = ref<NewText>({
     image: null as File | null,
     words: null as File | string | null
 });
+const extractResources = (input: string): void => {
+    const lines = input.split('\n').filter(line => line.trim() !== '');
+    let videoId = videos.value.length + 1;
+    let bookId = books.value.length + 1;
+    let textId = texts.value.length + 1;
+
+    lines.forEach(line => {
+        const typeMatch = line.match(/#(\S+?)#/);
+        const titleMatch = line.match(/\[(.*?)\]/);
+        const urlMatch = line.match(/\((.*?)\)/);
+
+        if (typeMatch && titleMatch && urlMatch) {
+            const resourceType = typeMatch[1];
+            const resourceTitle = titleMatch[1];
+            const resourceUrl = urlMatch[1];
+
+            switch (resourceType) {
+                case '视频':
+                    videos.value.push({
+                        id: videoId++,
+                        title: resourceTitle,
+                        duration: '00:00', // 这里可以根据实际数据设置时长
+                        description: '新视频的描述', // 这里可以填写新视频的描述
+                        image: null, // 这里可以设置默认图片路径
+                        path: resourceUrl,
+                    });
+                    break;
+                case '课件':
+                    books.value.push({
+                        id: bookId++,
+                        title: resourceTitle,
+                        author: '未知作者', // 这里可以根据实际数据设置作者
+                        isbn: '未知ISBN', // 这里可以根据实际数据设置ISBN
+                        owner: '未知所有者', // 这里可以根据实际数据设置所有者
+                        description: '新课件的描述', // 这里可以填写新课件的描述
+                        image: null, // 这里可以设置默认图片路径
+                        pdf: resourceUrl,
+                        showDetails: false,
+                    });
+                    break;
+                case '教案':
+                    texts.value.push({
+                        id: textId++,
+                        title: resourceTitle,
+                        description: '新教案的描述', // 这里可以填写新教案的描述
+                        image: null, // 这里可以设置默认图片路径
+                        words: resourceUrl,
+                    });
+                    break;
+                case '图片':
+                    // 处理图片链接
+                    // 这里可以根据实际需求处理图片链接，将其保存到相应的数据结构中
+                    break;
+            }
+        }
+    });
+};
 onMounted(() => {
     // Initialize data or perform any setup tasks here
     // For example, you can fetch data from an API or set default values
     if(DataThisSession.value) {
-        const resource = DataThisSession.value.resources.courseware.Courseware;
-        books.value = resource.map(resource =>({
-            id: Date.now() + Math.random(),
-            title: resource.name,
-            author: 'Unknown',
-            isbn: 'Unknown',
-            owner: 'Unknown',
-            description: 'No description available.',
-            image: null,
-            pdf: resource.url,
-            showDetails: false,
-        }));
-        const videosData = DataThisSession.value.resources.courseware.videos || [];
-        videos.value = videosData.map(video => ({
-            id: Date.now() + Math.random(),
-            title: video.title,
-            duration: video.duration || 'Unknown',
-            description: video.description || 'No description available.',
-            image: null,
-            path: video.url,
-        }));
-
-        const textsData = DataThisSession.value.resources.courseware.texts || [];
-        texts.value = textsData.map(text => ({
-            id: Date.now() + Math.random(),
-            title: text.title,
-            description: text.description || 'No description available.',
-            image: null,
-            words: text.url,
-        }));
+        extractResources(DataThisSession.value.resources.courseware.Courseware[0].url);
     }
 });
 const deleteBook = async (book: Book) => {
