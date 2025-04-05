@@ -2,7 +2,7 @@
 import { ref } from '@vue/runtime-core';
 import { Book } from '@/types';
 
-defineProps<{
+const props = defineProps<{
   book: Book;
   visible: boolean;
 }>();
@@ -15,6 +15,10 @@ const isPDFVisible = ref(false);
 
 const togglePDF = () => {
   isPDFVisible.value = !isPDFVisible.value;
+  if (isPDFVisible.value) {
+    // Open the PDF in a new tab
+    window.open(props.book.pdf, '_blank');
+  }
 };
 </script>
 
@@ -22,7 +26,7 @@ const togglePDF = () => {
   <div v-if="visible" class="modal-overlay">
     <div class="modal-content">
       <h3>{{ book.title }}</h3>
-      <p><strong>所有者：</strong>{{ book.owner }}</p>
+      <p><strong>作者：</strong>{{ book.author }}</p>
       <p><strong>描述：</strong>{{ book.description || '暂无描述' }}</p>
       <button v-if="book.pdf" @click="togglePDF">
         {{ isPDFVisible ? '关闭课件' : '课件预览' }}

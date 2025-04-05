@@ -14,7 +14,6 @@ const emit = defineEmits<{
 <template>
   <div class="book-item" :data-id="book.id">
     <div class="book-header">
-      <img :src="book.image || 'default.jpg'" :alt="book.title" />
       <h3>{{ book.title }}</h3>
       <p><strong>作者：</strong>{{ book.author }}</p>
     </div>
@@ -36,7 +35,7 @@ const emit = defineEmits<{
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
-  min-height: 470px;
+  /* min-height: 470px; */
   position: relative;
 }
 
