@@ -46,7 +46,7 @@ export default {
     </nav>
 
     <div class="hero-section">
-      <h1>智能教案生成系统</h1>
+      <h1>智慧备课平台</h1>
       <p class="subtitle">让备课更高效，让教学更智慧</p>
       <div class="cta-buttons">
         <el-button type="primary" size="large" @click="handleEnterSystem">开始使用</el-button>
