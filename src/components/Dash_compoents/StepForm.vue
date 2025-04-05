@@ -156,10 +156,10 @@
     </div>
     <!-- 步骤4：生成结果 -->
     <div v-if="activeStep === 4" class="generation-step">
-      <el-result icon="success" title="准备就绪" sub-title="根据教案、课堂设计和思维导图，推荐和生成资源">
+      <el-result icon="success" title="准备就绪" sub-title="整合教案、课堂设计、思维导图和教学资源">
         <template #extra>
           <el-button type="primary" size="large" :loading="isGenerating" @click="generateResource">
-            {{ isGenerating ? '正在生成...' : '开始生成' }}
+            {{ isGenerating ? '正在整合...' : '开始整合' }}
           </el-button>
         </template>
       </el-result>

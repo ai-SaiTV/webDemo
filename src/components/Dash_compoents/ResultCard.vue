@@ -5,23 +5,22 @@
       <el-card class="result-card" style="margin: 10px;">
         <template #header>
           <div class="card-header">
-            
-            
-            
             <div style="width: 100%; display: flex; justify-content: space-between;">
-              <h3>课程大纲</h3>
+              <h3>教案</h3>
+              <div>
+                <el-button  type="primary">收藏至资源库</el-button>
+                <el-button @click="exportPDF" type="success">下载教案</el-button>
+              </div>
               
-              <el-button @click="exportPDF" type="success">下载课程大纲</el-button>
             </div>
             <el-button type="primary" link @click="initializeData">查看详情</el-button>
-            
-
-            <div class="markdown-container">
+          </div>
+          <br><br>
+        </template>
+        <div class="markdown-container">
               <!-- 渲染 Markdown 内容 -->
               <div v-html="generatedContent.lessonPlan" class="markdown-content" style="width: 640px; max-height: 640px; overflow-y: auto;"></div>
             </div>
-          </div>
-        </template>
       </el-card>
     </el-col>
 
@@ -30,14 +29,36 @@
       <el-card class="result-card" style="margin: 10px;">
         <template #header>
           <div class="card-header">
-            <h3>环节设计思维导图</h3>
-            <el-button type="primary" link @click="previewMindMap">查看大图</el-button>
+            <div style="width: 100%; display: flex; justify-content: space-between;">
+              <h3>课堂环节设计</h3>
+              <div>
+                <el-button  type="primary">收藏至资源库</el-button>
+                <el-button @click="exportPDF" type="success">下载课堂环节设计</el-button>
+              </div>
+            </div>
           </div>
         </template>
-        <div class="mind-map">
+        <!-- <div class="mind-map">
           <img :src="generatedContent.mindMap.preview" alt="思维导图"
             @click="previewMindMap" style="width: 100%; height: auto; display: block;">
-        </div>
+        </div> -->
+        <el-tabs v-model="activeTab" type="card">
+          <el-tab-pane label="课堂环节设计" name="design">
+            <!-- 环节设计内容 -->
+            <div class="markdown-container">
+              <!-- 渲染 Markdown 内容 -->
+              <div v-html="generatedContent.classDesign" class="markdown-content" style="width: 640px; max-height: 680px; overflow-y: auto;"></div>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="思维导图" name="image">
+            <!-- 图片内容 -->
+            <el-button type="primary" link @click="previewMindMap">查看大图</el-button>
+            <div class="mind-map">
+              <img :src="generatedContent.mindMap.preview" alt="思维导图"
+                @click="previewMindMap" style="width: 100%; height: auto; display: block;">
+            </div>
+          </el-tab-pane>
+        </el-tabs>
       </el-card>
     </el-col>
   </el-row>
@@ -51,7 +72,7 @@
             <div style="width: 100%; display: flex; justify-content: space-between;">
               <h3>教学资源推荐</h3>
               
-              <el-button type="success">收藏全部</el-button>
+              <el-button type="primary">收藏全部</el-button>
             </div>
             
             <el-button type="primary" link>查看更多</el-button>
@@ -201,6 +222,9 @@ const initializeData = async () => {
     // 获取教案数据
     const teachingPlan = DataThisSession.value.resources.teaching_plan?.text || '';
 
+    // 获取课堂环节设计
+    const classDesign = DataThisSession.value.resources.class_design?.text || '';
+
     // 获取思维导图
     //const mindMap = DataThisSession.value.resources.tp_MindMap?.url || '';
     const mindMap = mmPic;
@@ -222,6 +246,7 @@ const initializeData = async () => {
     // 更新组件数据
     generatedContent.value = {
       lessonPlan: parseMarkdown(teachingPlan).__html,
+      classDesign: parseMarkdown(classDesign).__html,
       mindMap: {
         preview: mindMap
       },
@@ -253,6 +278,8 @@ const showAllExercises = ref(false);
 // const parsedExercise = computed(() => {
 //   return parseMarkdown(markdownContent.value);
 // });
+
+const activeTab = ref('design');
 
 const previewMindMap = () => {
   const mindMapWindow = window.open('', '_blank');
