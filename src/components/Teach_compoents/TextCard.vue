@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Text } from '@/types/index';
-import defaultimg from '@/assets/nulltext.jpg';
 defineProps<{
   text: Text;
 }>();
@@ -14,8 +13,8 @@ const emit = defineEmits<{
 <template>
   <div class="Text-item" :data-id="text.id">
     <div class="Text-header">
-      <img :src="text.image || defaultimg" :alt="text.title" />
       <h3>{{ text.title }}</h3>
+      <p><strong>描述：</strong>{{ text.description || '暂无描述' }}</p>
     </div>
     <button class="more-details" @click="emit('openModal', text)">更多详情</button>
     <button class="delete-button" @click="emit('delete', text)">删除</button>
@@ -35,7 +34,7 @@ const emit = defineEmits<{
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
-  min-height: 470px;
+  /* min-height: 470px; */
   position: relative;
 }
 

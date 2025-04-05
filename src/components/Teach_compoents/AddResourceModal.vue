@@ -51,24 +51,8 @@ const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video' |'te
               placeholder="请输入作者"
             />
           </div>
-          <div class="input-group">
-            <label for="owner">所有者：</label>
-            <el-input 
-              v-model="(formData as NewBook).owner" 
-              placeholder="请输入所有者"
-            />
-          </div>
         </template>
 
-        <template v-if="isVideo">
-          <div class="input-group">
-            <label for="duration">时长：</label>
-            <el-input 
-              v-model="(formData as NewVideo).duration" 
-              placeholder="请输入视频时长"
-            />
-          </div>
-        </template>
         <template v-if="isText">
           <div class="input-group">
             <label for="words">文本路径：</label>
@@ -84,15 +68,6 @@ const handleFileUpload = (event: Event, fileType: 'image' | 'pdf' | 'video' |'te
             type="textarea"
             v-model="(formData as any).description"
             :placeholder="isBook ? '请输入课件描述' : isVideo ? '请输入视频描述' : '请输入文本描述'"
-          />
-        </div>
-
-        <div class="input-group">
-          <label for="image">封面图片：</label>
-          <input 
-            type="file" 
-            @change="(e: any) => handleFileUpload(e, 'image')" 
-            accept="image/*" 
           />
         </div>
 
