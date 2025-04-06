@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from '@vue/runtime-core';
+import { onMounted, ref } from '@vue/runtime-core';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import ResourceHeader from './ResourceHeader.vue';
 import BookList from './BookList.vue';
@@ -10,7 +10,7 @@ import VideoModal from './VideoModal.vue';
 import TextModal from './TextModal.vue';
 import AddResourceModal from './AddResourceModal.vue';
 import { Book, Video, Text, NewBook, NewVideo, NewText } from '@/types';
-
+import { DataThisSession } from '../Dash_compoents/DashCompoents';
 // Import assets
 import yszz from '@/assets/yszz.jpg';
 import lxebr from '@/assets/lxebr.jpg';
@@ -29,6 +29,20 @@ import nullvideoimg from '@/assets/OIP-C.jpg';
 import childsun from '@/assets/两小儿辩日公开课.jpg';
 import yangson from '@/assets/杨氏之子公开课.jpg';
 import nulltextimg from '@/assets/nulltext.jpg';
+
+interface Resource {
+    type: string;
+    title: string;
+    url: string;
+}
+
+interface Resources {
+    videos: Resource[];
+    coursewares: Resource[];
+    lessonPlans: Resource[];
+    images: Resource[];
+}
+
 const books = ref<Book[]>([
     {
         id: 1,
@@ -142,6 +156,70 @@ const newText = ref<NewText>({
     description: '',
     image: null as File | null,
     words: null as File | string | null
+});
+const extractResources = (input: string): void => {
+    const lines = input.split('\n').filter(line => line.trim() !== '');
+    let videoId = videos.value.length + 1;
+    let bookId = books.value.length + 1;
+    let textId = texts.value.length + 1;
+
+    lines.forEach(line => {
+        const typeMatch = line.match(/#(\S+?)#/);
+        const titleMatch = line.match(/\[(.*?)\]/);
+        const urlMatch = line.match(/\((.*?)\)/);
+
+        if (typeMatch && titleMatch && urlMatch) {
+            const resourceType = typeMatch[1];
+            const resourceTitle = titleMatch[1];
+            const resourceUrl = urlMatch[1];
+
+            switch (resourceType) {
+                case '视频':
+                    videos.value.push({
+                        id: videoId++,
+                        title: resourceTitle,
+                        duration: '00:00', // 这里可以根据实际数据设置时长
+                        description: '新视频的描述', // 这里可以填写新视频的描述
+                        image: null, // 这里可以设置默认图片路径
+                        path: resourceUrl,
+                    });
+                    break;
+                case '课件':
+                    books.value.push({
+                        id: bookId++,
+                        title: resourceTitle,
+                        author: '未知作者', // 这里可以根据实际数据设置作者
+                        isbn: '未知ISBN', // 这里可以根据实际数据设置ISBN
+                        owner: '未知所有者', // 这里可以根据实际数据设置所有者
+                        description: '新课件的描述', // 这里可以填写新课件的描述
+                        image: null, // 这里可以设置默认图片路径
+                        pdf: resourceUrl,
+                        showDetails: false,
+                    });
+                    break;
+                case '教案':
+                    texts.value.push({
+                        id: textId++,
+                        title: resourceTitle,
+                        description: '新教案的描述', // 这里可以填写新教案的描述
+                        image: null, // 这里可以设置默认图片路径
+                        words: resourceUrl,
+                    });
+                    break;
+                case '图片':
+                    // 处理图片链接
+                    // 这里可以根据实际需求处理图片链接，将其保存到相应的数据结构中
+                    break;
+            }
+        }
+    });
+};
+onMounted(() => {
+    // Initialize data or perform any setup tasks here
+    // For example, you can fetch data from an API or set default values
+    if(DataThisSession.value) {
+        extractResources(DataThisSession.value.resources.courseware.Courseware[0].url);
+    }
 });
 const deleteBook = async (book: Book) => {
     try {
@@ -359,29 +437,30 @@ const handleTextError = () => {
 
 <template>
     <div>
-        <ResourceHeader title="教学资源" subtitle="针对具体教学需求，辅助生成专业教案" />
+        <ResourceHeader title="教学资源库" subtitle="存储备课助手生成的备课资源,便于查看调用。" />
 
         <div class="container">
-            <el-select v-model="resourceType" placeholder="请选择资源类型" class="resource-selector">
-                <el-option label="课件" value="books"></el-option>
-                <el-option label="视频" value="videos"></el-option>
-                <el-option label="文本大纲" value="texts"></el-option>
-            </el-select>
-
-            <BookList v-if="resourceType === 'books'" :books="books"
-                @open-book-modal="(book: NewBook) => { selectedBook = book; isBookModalVisible = true; }"
-                @delete-book="deleteBook" @open-add-book-modal="isAddBookModalVisible = true"
-                @open-add-modal="isAddModalVisible = true" />
-
-            <VideoList v-if="resourceType === 'videos'" :videos="videos"
-                @open-video-modal="(video: NewVideo) => { selectedVideo = video; isVideoModalVisible = true; }"
-                @delete-video="deleteVideo" @open-add-video-modal="isAddVideoModalVisible = true"
-                @open-add-modal="isAddModalVisible = true" />
-
-            <TextList v-if="resourceType === 'texts'" :texts="texts"
-                @open-text-modal="(text: NewText) => { selectedText = text; isTextModalVisible = true; }"
-                @delete-text="deleteText" @open-add-text-modal="isAddTextModalVisible = true"
-                @open-add-modal="isAddModalVisible = true" />
+            <!-- 使用 el-tabs 替换 el-select -->
+            <el-tabs v-model="resourceType" class="resource-tabs">
+                <el-tab-pane label="课件" name="books">
+                    <BookList :books="books"
+                        @open-book-modal="(book: NewBook) => { selectedBook = book; isBookModalVisible = true; }"
+                        @delete-book="deleteBook" @open-add-book-modal="isAddBookModalVisible = true"
+                        @open-add-modal="isAddModalVisible = true" />
+                </el-tab-pane>
+                <el-tab-pane label="视频" name="videos">
+                    <VideoList :videos="videos"
+                        @open-video-modal="(video: NewVideo) => { selectedVideo = video; isVideoModalVisible = true; }"
+                        @delete-video="deleteVideo" @open-add-video-modal="isAddVideoModalVisible = true"
+                        @open-add-modal="isAddModalVisible = true" />
+                </el-tab-pane>
+                <el-tab-pane label="文本大纲" name="texts">
+                    <TextList :texts="texts"
+                        @open-text-modal="(text: NewText) => { selectedText = text; isTextModalVisible = true; }"
+                        @delete-text="deleteText" @open-add-text-modal="isAddTextModalVisible = true"
+                        @open-add-modal="isAddModalVisible = true" />
+                </el-tab-pane>
+            </el-tabs>
         </div>
 
         <BookModal v-if="selectedBook" :book="selectedBook" :visible="isBookModalVisible"

@@ -36,9 +36,10 @@ export interface StorageData {
             }[],
 
             exercises: {
-                name: string,
-                url: string
-            }[]
+                title: string;
+                url: string;
+            }[];
+
         },
     }
     metadata: {

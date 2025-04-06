@@ -14,9 +14,8 @@ const emit = defineEmits<{
 <template>
   <div class="video-item" :data-id="video.id">
     <div class="video-header">
-      <img :src="video.image || 'default.jpg'" :alt="video.title" />
       <h3>{{ video.title }}</h3>
-      <p><strong>时长：</strong>{{ video.duration }}</p>
+      <p><strong>描述：</strong>{{ video.description || '暂无描述' }}</p>
     </div>
     <button class="more-details" @click="emit('openModal', video)">更多详情</button>
     <button class="delete-button" @click="emit('delete', video)">删除</button>
@@ -36,7 +35,7 @@ const emit = defineEmits<{
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
-  min-height: 470px;
+  /* min-height: 470px; */
   position: relative;
 }
 

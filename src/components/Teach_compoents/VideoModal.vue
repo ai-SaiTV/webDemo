@@ -31,7 +31,6 @@ const toggleVideo = () => {
   <div v-if="visible" class="modal-overlay">
     <div class="modal-content">
       <h3>{{ video.title }}</h3>
-      <p><strong>时长：</strong>{{ video.duration }}</p>
       <p><strong>描述：</strong>{{ video.description || '暂无描述' }}</p>
       <button @click="toggleVideo">
         {{ isVideoVisible ? '关闭视频' : '视频预览' }}
