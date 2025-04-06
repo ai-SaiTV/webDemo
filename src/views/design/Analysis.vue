@@ -257,12 +257,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed,nextTick} from "@vue/runtime-core";
+import { ref, onMounted, watch, computed, nextTick } from "@vue/runtime-core";
 import * as echarts from "echarts";
 import * as XLSX from "xlsx";
-// import { ElMessage } from "element-plus";
-
-
 
 interface Student {
   id: string;
@@ -288,10 +285,10 @@ interface Class {
   paper: Paper[];
   grade: string;
   students: Student[];
-  questions: Question[]; 
+  questions: Question[];
 }
 
-interface Paper{
+interface Paper {
   paperid: string;
   papername: string;
   students: Student[];
@@ -301,9 +298,6 @@ interface Paper{
 const performanceChartRef = ref<HTMLElement>();
 const questionAnalysisChartRef = ref<HTMLElement>();
 const studentPerformanceChartRef = ref<HTMLElement>();
-// const uploadExcelRef = ref();
-// const uploadMdRef =ref()
-
 const pieChartRef = ref(null);
 const barChartRef = ref(null);
 
@@ -316,57 +310,133 @@ const isAnalyzing_person = ref(false);
 const showStudentDetails = ref(false);
 const selectedStudent = ref<Student | null>(null);
 const selectedClassId = ref("1-1");
-const selectedPaper = ref("1")
+const selectedPaper = ref("1");
 
 const papers = ref<Paper[]>([
   {
-    paperid:"1",
+    paperid: "1",
     papername: "试卷一",
     students: [],
     questions: [],
   },
   {
-    paperid:"2",
+    paperid: "2",
     papername: "试卷二",
     students: [],
     questions: [],
   },
   {
-    paperid:"3",
+    paperid: "3",
     papername: "试卷三",
     students: [],
     questions: [],
   },
-])
+]);
 
 const classes = ref<Class[]>([
   {
     id: "1-1",
-    paper: [],
+    paper: [
+      {
+        paperid: "1",
+        papername: "试卷一",
+        students: [],
+        questions: [],
+      },
+      {
+        paperid: "2",
+        papername: "试卷二",
+        students: [],
+        questions: [],
+      },
+      {
+        paperid: "3",
+        papername: "试卷三",
+        students: [],
+        questions: [],
+      },
+    ],
     grade: "一年级一班",
     students: [],
-    questions: [], 
+    questions: [],
   },
   {
     id: "2-3",
-    paper: [],
+    paper: [
+      {
+        paperid: "1",
+        papername: "试卷一",
+        students: [],
+        questions: [],
+      },
+      {
+        paperid: "2",
+        papername: "试卷二",
+        students: [],
+        questions: [],
+      },
+      {
+        paperid: "3",
+        papername: "试卷三",
+        students: [],
+        questions: [],
+      },
+    ],
     grade: "二年级三班",
     students: [],
-    questions: [], 
+    questions: [],
   },
   {
     id: "3-1",
-    paper: [],
+    paper: [
+      {
+        paperid: "1",
+        papername: "试卷一",
+        students: [],
+        questions: [],
+      },
+      {
+        paperid: "2",
+        papername: "试卷二",
+        students: [],
+        questions: [],
+      },
+      {
+        paperid: "3",
+        papername: "试卷三",
+        students: [],
+        questions: [],
+      },
+    ],
     grade: "三年级一班",
     students: [],
-    questions: [], 
+    questions: [],
   },
   {
     id: "4-2",
-    paper: [],
+    paper: [
+      {
+        paperid: "1",
+        papername: "试卷一",
+        students: [],
+        questions: [],
+      },
+      {
+        paperid: "2",
+        papername: "试卷二",
+        students: [],
+        questions: [],
+      },
+      {
+        paperid: "3",
+        papername: "试卷三",
+        students: [],
+        questions: [],
+      },
+    ],
     grade: "四年级二班",
     students: [],
-    questions: [], 
+    questions: [],
   },
 ]);
 
@@ -374,36 +444,36 @@ const classes = ref<Class[]>([
 const studentFeedbacks = ref([
   {
     studentName: "王明",
-    content: "老师讲课很清晰，但希望能在课堂上多一些互动环节，让我们更积极参与。"
+    content: "老师讲课很清晰，但希望能在课堂上多一些互动环节，让我们更积极参与。",
   },
   {
     studentName: "李昊",
-    content: "希望老师能提供更多课外练习题，帮助我们巩固课堂知识。"
+    content: "希望老师能提供更多课外练习题，帮助我们巩固课堂知识。",
   },
   {
     studentName: "徐一",
-    content: "老师布置的作业量有点多，希望能适当减少，给我们更多时间复习。"
+    content: "老师布置的作业量有点多，希望能适当减少，给我们更多时间复习。",
   },
   {
     studentName: "轩七",
-    content: "老师上课很有耐心，但希望能在讲解难题时再多一些实例分析。"
+    content: "老师上课很有耐心，但希望能在讲解难题时再多一些实例分析。",
   },
   {
     studentName: "钱行",
-    content: "希望老师能定期组织小组讨论，让我们在交流中学习。"
+    content: "希望老师能定期组织小组讨论，让我们在交流中学习。",
   },
   {
     studentName: "张杨",
-    content: "老师的教学方法很好，但希望能在考试前多安排一些复习课。"
+    content: "老师的教学方法很好，但希望能在考试前多安排一些复习课。",
   },
   {
     studentName: "何飞",
-    content: "希望老师能在课堂上多一些实际应用的案例，帮助我们理解抽象的概念。"
+    content: "希望老师能在课堂上多一些实际应用的案例，帮助我们理解抽象的概念。",
   },
   {
     studentName: "路一",
-    content: "老师的讲解速度有点快，希望能适当放慢，给我们更多时间消化知识点。"
-  }
+    content: "老师的讲解速度有点快，希望能适当放慢，给我们更多时间消化知识点。",
+  },
 ]);
 
 const aiAnalysisResult = ref<{
@@ -424,29 +494,97 @@ const studentAnalysis = ref({
 });
 
 // 处理Excel文件上传
-// const handleExcelUpload = (event: Event) => {
-//   const target = event.target as HTMLInputElement;
-//   if (target.files) {
-//     const file = target.files[0];
-//     const reader = new FileReader();
+const processExcelData = (data: any[]) => {
+  const questionCount = Object.keys(data[0]).length - 1; // 第一列是姓名，其余是题目分数
 
-//     reader.onload = (e) => {
-//       const data = e.target?.result;
-//       if (!data) {
-//         ElMessage.error("文件读取失败");
-//         return;
-//       }
+  // 获取当前班级
+  const currentClass = classes.value.find((c) => c.id === selectedClassId.value);
+  if (!currentClass) {
+    return;
+  }
 
-//       const workbook = XLSX.read(data as ArrayBuffer, { type: "array" });
-//       const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-//       const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+  // 获取当前选中的试卷
+  const currentPaper = currentClass.paper.find((p) => p.paperid === selectedPaper.value);
+  if (!currentPaper) {
+    return;
+  }
 
-//       processExcelData(jsonData);
-//     };
+  // 清空当前试卷的旧数据
+  currentPaper.students = [];
+  currentPaper.questions = []; // 清空旧的题目得分分析数据
 
-//     reader.readAsArrayBuffer(file);
-//   }
-// };
+  // 初始化当前试卷的题目数据
+  currentPaper.questions = Array.from({ length: questionCount }, (_, i) => ({
+    id: i + 1,
+    correctRate: 0,
+    averageScore: 0,
+    maxScore: 0,
+    aboveAverageCount: 0,
+    belowAverageCount: 0,
+  }));
+
+  // 遍历 Excel 数据，填充新数据
+  data.forEach((row, rowIndex) => {
+    const scores = Array.from({ length: questionCount }, (_, i) =>
+      Number(row[`题目${i + 1}`] || 0)
+    );
+    const total = scores.reduce((a, b) => a + b, 0);
+
+    // 新增学生数据
+    const newStudent: Student = {
+      id: String(rowIndex + 1),
+      name: row["姓名"],
+      class: selectedClassId.value,
+      scores,
+      total,
+      average: total / questionCount,
+      rank: 0,
+    };
+    currentPaper.students.push(newStudent);
+
+    // 更新当前试卷的题目数据
+    scores.forEach((score, index) => {
+      currentPaper.questions[index].maxScore = Math.max(currentPaper.questions[index].maxScore, score);
+      currentPaper.questions[index].averageScore += score;
+    });
+  });
+
+  // 重新计算当前试卷的题目平均得分
+  currentPaper.questions.forEach((q) => {
+    q.averageScore /= data.length;
+    q.correctRate = (q.averageScore / q.maxScore) * 100; // 计算正确率
+
+    // 统计高于和低于平均分的人数
+    q.aboveAverageCount = currentPaper.students.filter(
+      (student) => student.scores[q.id - 1] > q.averageScore
+    ).length;
+    q.belowAverageCount = currentPaper.students.filter(
+      (student) => student.scores[q.id - 1] <= q.averageScore
+    ).length;
+  });
+
+  // 重新计算学生排名（处理相同分数的排名）
+  currentPaper.students.sort((a, b) => b.total - a.total);
+  currentPaper.students.forEach((student, index) => {
+    if (index === 0) {
+      student.rank = 1;
+    } else {
+      if (currentPaper.students[index - 1].total === student.total) {
+        student.rank = currentPaper.students[index - 1].rank;
+      } else {
+        student.rank = index + 1;
+      }
+    }
+  });
+
+  // 更新全局数据
+  tableData.value = currentPaper.students;
+  questions.value = currentPaper.questions;
+
+  // 更新图表和分析
+  updateCharts();
+  //generateAIAnalysis();
+};
 
 // 在系统初始化时读取并处理Excel文件
 onMounted(async () => {
@@ -490,95 +628,15 @@ onMounted(async () => {
   }
 });
 
-// 处理Excel数据
-const processExcelData = (data: any[]) => {
-  const questionCount = Object.keys(data[0]).length - 1; // 第一列是姓名，其余是题目分数
-  // 获取当前班级
+// 更新图表
+const updateCharts = () => {
   const currentClass = classes.value.find((c) => c.id === selectedClassId.value);
   if (!currentClass) {
     return;
   }
 
-  // 清空当前班级的旧数据
-  currentClass.students = [];
-  currentClass.questions = []; // 清空旧的题目得分分析数据
-
-  // 初始化当前班级的题目数据
-  currentClass.questions = Array.from({ length: questionCount }, (_, i) => ({
-    id: i + 1,
-    correctRate: 0,
-    averageScore: 0,
-    maxScore: 0,
-    aboveAverageCount: 0, 
-    belowAverageCount: 0,
-  }));
-
-  // 遍历 Excel 数据，填充新数据
-  data.forEach((row, rowIndex) => {
-    const scores = Array.from({ length: questionCount }, (_, i) =>
-      Number(row[`题目${i + 1}`] || 0)
-    );
-    const total = scores.reduce((a, b) => a + b, 0);
-
-    // 新增学生数据
-    const newStudent: Student = {
-      id: String(rowIndex + 1),
-      name: row["姓名"],
-      class: selectedClassId.value,
-      scores,
-      total,
-      average: total / questionCount,
-      rank: 0,
-    };
-    currentClass.students.push(newStudent);
-
-    // 更新当前班级的题目数据
-    scores.forEach((score, index) => {
-      currentClass.questions[index].maxScore = Math.max(currentClass.questions[index].maxScore, score);
-      currentClass.questions[index].averageScore += score;
-    });
-  });
-
-  // 重新计算当前班级的题目平均得分
-  currentClass.questions.forEach((q) => {
-    q.averageScore /= data.length;
-    q.correctRate = (q.averageScore / q.maxScore) * 100; // 计算正确率
-
-    // 统计高于和低于平均分的人数
-    q.aboveAverageCount = currentClass.students.filter(
-      (student) => student.scores[q.id - 1] > q.averageScore
-    ).length;
-    q.belowAverageCount = currentClass.students.filter(
-      (student) => student.scores[q.id - 1] <= q.averageScore
-    ).length;
-  });
-
-  // 重新计算学生排名（处理相同分数的排名）
-  currentClass.students.sort((a, b) => b.total - a.total);
-  currentClass.students.forEach((student, index) => {
-    if (index === 0) {
-      student.rank = 1;
-    } else {
-      if (currentClass.students[index - 1].total === student.total) {
-        student.rank = currentClass.students[index - 1].rank;
-      } else {
-        student.rank = index + 1;
-      }
-    }
-  });
-
-  // 更新全局数据
-  tableData.value = currentClass.students;
-  questions.value = currentClass.questions;
-
-  // 更新图表和分析
-  updateCharts();
-  // generateAIAnalysis();
-};
-// 更新图表
-const updateCharts = () => {
-  const currentClass = classes.value.find((c) => c.id === selectedClassId.value);
-  if (!currentClass) {
+  const currentPaper = currentClass.paper.find((p) => p.paperid === selectedPaper.value);
+  if (!currentPaper) {
     return;
   }
 
@@ -595,19 +653,19 @@ const updateCharts = () => {
     const newBarChart = echarts.init(barChartRef.value);
 
     // 计算优秀学生、及格学生和不及格学生的数量
-  let excellentStudents = 0; // 优秀学生（>=80分）
-  let passStudents = 0; // 及格学生（60-79分）
-  let failStudents = 0; // 不及格学生（<60分）
+    let excellentStudents = 0; // 优秀学生（>=80分）
+    let passStudents = 0; // 及格学生（60-79分）
+    let failStudents = 0; // 不及格学生（<60分）
 
-  currentClass.students.forEach(student => {
-    if (student.total >= 80) {
-      excellentStudents++;
-    } else if (student.total >= 60) {
-      passStudents++;
-    } else {
-      failStudents++;
-    }
-  });
+    currentPaper.students.forEach(student => {
+      if (student.total >= 80) {
+        excellentStudents++;
+      } else if (student.total >= 60) {
+        passStudents++;
+      } else {
+        failStudents++;
+      }
+    });
 
     // 饼状图数据
     const performanceData = [
@@ -636,7 +694,7 @@ const updateCharts = () => {
     });
 
     // 柱状图数据
-    const questionData = currentClass.questions.map(q => ({
+    const questionData = currentPaper.questions.map(q => ({
       aboveAverage: q.aboveAverageCount,
       belowAverage: q.belowAverageCount
     }));
@@ -646,7 +704,7 @@ const updateCharts = () => {
       title: { text: '题目得分情况' },
       tooltip: { trigger: 'axis' },
       legend: { data: ['高于平均分', '低于平均分'] },
-      xAxis: { type: 'category', data: currentClass.questions.map(q => `题目${q.id}`) },
+      xAxis: { type: 'category', data: currentPaper.questions.map(q => `题目${q.id}`) },
       yAxis: { type: 'value' },
       series: [
         { name: '高于平均分', type: 'bar', data: questionData.map(q => q.aboveAverage) },
@@ -654,7 +712,6 @@ const updateCharts = () => {
       ]
     });
   }
-
 
   if (performanceChartRef.value && questionAnalysisChartRef.value) {
     // 销毁旧实例
@@ -675,14 +732,14 @@ const updateCharts = () => {
       legend: { data: ["平均得分"] },
       xAxis: {
         type: "category",
-        data: currentClass.questions.map((q) => `题目${q.id}`),
+        data: currentPaper.questions.map((q) => `题目${q.id}`),
       },
       yAxis: { type: "value" },
       series: [
         {
           name: "平均得分",
           type: "line",
-          data: currentClass.questions.map((q) => q.averageScore.toFixed(2)),
+          data: currentPaper.questions.map((q) => q.averageScore.toFixed(2)),
         },
       ],
     });
@@ -691,7 +748,7 @@ const updateCharts = () => {
     const scoreRanges = ["90-100", "80-89", "70-79", "60-69", "60以下"];
     const scoreCounts = new Array(5).fill(0);
 
-    currentClass.students.forEach((student) => {
+    currentPaper.students.forEach((student) => {
       const total = student.total;
       if (total >= 90) scoreCounts[0]++;
       else if (total >= 80) scoreCounts[1]++;
@@ -717,25 +774,8 @@ const updateCharts = () => {
   }
 };
 
-let stopPollingWatch: (() => void) | null = null;
-let isUpdatingStep = ref(false); // 状态锁
-
-//api------------------------------------------------------------->>
-
-//api
-import { chatConfig, handleSubmit_analysis, isPolling } from "@/components/api_compoents/api_handler.ts";
-import { analysisService } from "@/services/storage/analysisResService";
-import type { analysisRes } from "@/types/analysisRes";
-
-import { parseMarkdown } from '../../utils/markdownUtils';
-
-const DataThisSession_als = ref<analysisRes | null>(null);  // 会话数据
-const sessionId = ref("");
-
-
 // 生成AI分析
 const generateAIAnalysis = async () => {
-
   // 计算题目正确率和平均分
   questions.value.forEach((q) => {
     q.correctRate = (q.averageScore / q.maxScore) * 100;
@@ -758,149 +798,20 @@ const generateAIAnalysis = async () => {
     .map((q) => `${q.question}的平均得分为${q.averageScore.toFixed(2)}分，正确率为${q.correctRate.toFixed(1)}%。`);
 
   // 教学建议：针对这些题目提出建议
-  const recommendations = ref("");
-
-  //api
-  if (stopPollingWatch) {
-    stopPollingWatch();
-    stopPollingWatch = null;
-  }
-
-  if (DataThisSession_als.value === null) {
-    sessionId.value = await analysisService.createSession();
-  }
-
-  isAnalyzing.value = true;
-  showAIAnalysis.value = true;
-
-
-  chatConfig.value.message = overallAnalysis;
-
-  const result = await handleSubmit_analysis(sessionId.value, 6);
-
-  console.log("await finished! ", result);
-  DataThisSession_als.value = result || null;
-  const html_res = parseMarkdown(result?.analysis || "");
-  recommendations.value = html_res.__html || "无建议";
-
-
-  stopPollingWatch = watch(() => isPolling.value, async (newPolling: boolean) => {
-    if (newPolling) {
-      setTimeout((): void => {
-        isAnalyzing.value = false;
-        // 安全递增步骤
-        // 清理监听器并释放锁
-        if (stopPollingWatch) {
-          stopPollingWatch();
-          stopPollingWatch = null;
-        }
-        isUpdatingStep.value = false;
-      }, 500);
-
-    }
-  }, { immediate: true });
-
+  const recommendations = ref("无建议");
 
   aiAnalysisResult.value = {
     overallAnalysis,
     keyPoints,
     recommendations: recommendations.value,
   };
-
-  isAnalyzing.value = false;
-};
-
-// const markdownContent = ref(`
-// ## 暂无
-// `);
-
-// 生成学生个人分析
-const generateStudentAnalysis = async (student: Student) => {
-  isAnalyzing_person.value = true;
-
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-
-  // 计算学生在每个题目的得分情况
-  const studentScores = student.scores.map((score, index) => ({
-    question: `题目${index + 1}`,
-    score,
-    maxScore: questions.value[index].maxScore,
-    correctRate: questions.value[index].correctRate,
-  }));
-
-  // 优势分析：得分高于平均分的题目
-  const strengths = studentScores
-    .filter((q) => q.score > q.maxScore * 0.8)
-    .map((q) => `${q.question}得分较高，为${q.score}分，表现优秀。`);
-
-  // 待提升项：得分低于平均分的题目
-  const weaknesses = studentScores
-    .filter((q) => q.score < q.maxScore * 0.5)
-    .map((q) => `${q.question}得分较低，为${q.score}分，需要加强练习。`);
-
-  // 学习建议：针对待提升的题目提出建议
-  const recommendations = [
-    `针对得分较低的题目，建议多做相关练习题，巩固知识点。`,
-    `保持在得分较高的题目的优势，继续提升解题技巧。`,
-    `建议定期复习错题，总结解题思路，避免重复错误。`,
-  ];
-
-  studentAnalysis.value = {
-    strengths,
-    weaknesses,
-    trend: [
-      { date: "2024-01", score: 85 },
-      { date: "2024-02", score: 88 },
-      { date: "2024-03", score: 92 },
-    ],
-    recommendations: [],
-  };
-
-  studentAnalysis.value.recommendations = recommendations;
-
-  if (studentPerformanceChartRef.value) {
-    const chart = echarts.init(studentPerformanceChartRef.value);
-    chart.setOption({
-      title: { text: "成绩趋势" },
-      tooltip: { trigger: "axis" },
-      xAxis: {
-        type: "category",
-        data: studentAnalysis.value.trend.map((item) => item.date),
-      },
-      yAxis: { type: "value", min: 60 },
-      series: [
-        {
-          name: "成绩",
-          type: "line",
-          data: studentAnalysis.value.trend.map((item) => item.score),
-          smooth: true,
-          itemStyle: { color: "#1890ff" },
-          areaStyle: {
-            color: {
-              type: "linear",
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [
-                { offset: 0, color: "rgba(24,144,255,0.3)" },
-                { offset: 1, color: "rgba(24,144,255,0.1)" },
-              ],
-            },
-          },
-        },
-      ],
-    });
-  }
-
-  isAnalyzing_person.value = false;
 };
 
 // 查看学生详情
 const viewStudentDetails = (student: Student) => {
   selectedStudent.value = student;
   showStudentDetails.value = true;
-  generateStudentAnalysis(student);
+  // generateStudentAnalysis(student);
 };
 
 // 获取当前选中班级的学生列表
@@ -924,8 +835,15 @@ watch(selectedPaper, (newPaperId) => {
 const reloadClassData = (classId: string) => {
   const currentClass = classes.value.find((c) => c.id === classId);
   if (currentClass) {
-    tableData.value = currentClass.students;
-    updateCharts();
+    // 默认加载第一个试卷的数据
+    if (currentClass.paper.length > 0) {
+      selectedPaper.value = currentClass.paper[0].paperid;
+      reloadPaperData(selectedPaper.value);
+    } else {
+      tableData.value = [];
+      questions.value = [];
+      showAIAnalysis.value = false;
+    }
   } else {
     tableData.value = [];
     questions.value = [];
@@ -937,26 +855,18 @@ const reloadClassData = (classId: string) => {
 const reloadPaperData = (paperId: string) => {
   const currentClass = classes.value.find((c) => c.id === selectedClassId.value);
   if (currentClass) {
-    // 假设 currentClass.paper 是一个数组，包含该班级的所有试卷数据
     const currentPaper = currentClass.paper.find((p) => p.paperid === paperId);
     if (currentPaper) {
-      // 使用 currentPaper 的数据更新图表
-      questions.value = currentPaper.questions || [];
+      tableData.value = currentPaper.students;
+      questions.value = currentPaper.questions;
       updateCharts();
     } else {
-      // 如果未找到对应试卷的数据，清空图表
+      tableData.value = [];
       questions.value = [];
-      updateCharts();
+      showAIAnalysis.value = false;
     }
   }
 };
-
-// 初始化时加载默认班级的数据
-onMounted(async () => {
-  
-  reloadClassData(selectedClassId.value);
-  updateCharts();
-});
 </script>
 
 <style scoped lang="scss">
