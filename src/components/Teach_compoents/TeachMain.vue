@@ -437,29 +437,30 @@ const handleTextError = () => {
 
 <template>
     <div>
-        <ResourceHeader title="教学资源" subtitle="针对具体教学需求，辅助生成专业教案" />
+        <ResourceHeader title="教学资源库" subtitle="存储备课助手生成的备课资源,便于查看调用。" />
 
         <div class="container">
-            <el-select v-model="resourceType" placeholder="请选择资源类型" class="resource-selector">
-                <el-option label="课件" value="books"></el-option>
-                <el-option label="视频" value="videos"></el-option>
-                <el-option label="文本大纲" value="texts"></el-option>
-            </el-select>
-
-            <BookList v-if="resourceType === 'books'" :books="books"
-                @open-book-modal="(book: NewBook) => { selectedBook = book; isBookModalVisible = true; }"
-                @delete-book="deleteBook" @open-add-book-modal="isAddBookModalVisible = true"
-                @open-add-modal="isAddModalVisible = true" />
-
-            <VideoList v-if="resourceType === 'videos'" :videos="videos"
-                @open-video-modal="(video: NewVideo) => { selectedVideo = video; isVideoModalVisible = true; }"
-                @delete-video="deleteVideo" @open-add-video-modal="isAddVideoModalVisible = true"
-                @open-add-modal="isAddModalVisible = true" />
-
-            <TextList v-if="resourceType === 'texts'" :texts="texts"
-                @open-text-modal="(text: NewText) => { selectedText = text; isTextModalVisible = true; }"
-                @delete-text="deleteText" @open-add-text-modal="isAddTextModalVisible = true"
-                @open-add-modal="isAddModalVisible = true" />
+            <!-- 使用 el-tabs 替换 el-select -->
+            <el-tabs v-model="resourceType" class="resource-tabs">
+                <el-tab-pane label="课件" name="books">
+                    <BookList :books="books"
+                        @open-book-modal="(book: NewBook) => { selectedBook = book; isBookModalVisible = true; }"
+                        @delete-book="deleteBook" @open-add-book-modal="isAddBookModalVisible = true"
+                        @open-add-modal="isAddModalVisible = true" />
+                </el-tab-pane>
+                <el-tab-pane label="视频" name="videos">
+                    <VideoList :videos="videos"
+                        @open-video-modal="(video: NewVideo) => { selectedVideo = video; isVideoModalVisible = true; }"
+                        @delete-video="deleteVideo" @open-add-video-modal="isAddVideoModalVisible = true"
+                        @open-add-modal="isAddModalVisible = true" />
+                </el-tab-pane>
+                <el-tab-pane label="文本大纲" name="texts">
+                    <TextList :texts="texts"
+                        @open-text-modal="(text: NewText) => { selectedText = text; isTextModalVisible = true; }"
+                        @delete-text="deleteText" @open-add-text-modal="isAddTextModalVisible = true"
+                        @open-add-modal="isAddModalVisible = true" />
+                </el-tab-pane>
+            </el-tabs>
         </div>
 
         <BookModal v-if="selectedBook" :book="selectedBook" :visible="isBookModalVisible"
