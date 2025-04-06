@@ -22,6 +22,7 @@ const toggleText = () => {
   if (isTextVisible.value && props.text.words) {
     const cleanedPath = props.text.words.replace(/^export default\s+/, '').replace(/^["'\s]+|["'\s]+$/g, '');
     fetchDocContent(cleanedPath);
+    window.open(props.text.words, '_blank');
   }
 };
 

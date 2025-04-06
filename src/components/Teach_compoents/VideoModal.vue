@@ -24,6 +24,9 @@ const fetchAnalysis = () =>{
 }
 const toggleVideo = () => {
   isVideoVisible.value = !isVideoVisible.value;
+  if (isVideoVisible.value) {
+    window.open(props.video.path, '_blank');
+  }
 };
 </script>
 
