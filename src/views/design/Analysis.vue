@@ -541,6 +541,7 @@ const processExcelData = (data: any[]) => {
       rank: 0,
     };
     currentPaper.students.push(newStudent);
+    currentClass.students.push(newStudent);
 
     // 更新当前试卷的题目数据
     scores.forEach((score, index) => {
@@ -774,8 +775,25 @@ const updateCharts = () => {
   }
 };
 
+let stopPollingWatch: (() => void) | null = null;
+let isUpdatingStep = ref(false); // 状态锁
+
+//api------------------------------------------------------------->>
+
+//api
+import { chatConfig, handleSubmit_analysis, isPolling } from "@/components/api_compoents/api_handler.ts";
+import { analysisService } from "@/services/storage/analysisResService";
+import type { analysisRes } from "@/types/analysisRes";
+
+import { parseMarkdown } from '../../utils/markdownUtils';
+
+const DataThisSession_als = ref<analysisRes | null>(null);  // 会话数据
+const sessionId = ref("");
+
+
 // 生成AI分析
 const generateAIAnalysis = async () => {
+
   // 计算题目正确率和平均分
   questions.value.forEach((q) => {
     q.correctRate = (q.averageScore / q.maxScore) * 100;
@@ -798,20 +816,149 @@ const generateAIAnalysis = async () => {
     .map((q) => `${q.question}的平均得分为${q.averageScore.toFixed(2)}分，正确率为${q.correctRate.toFixed(1)}%。`);
 
   // 教学建议：针对这些题目提出建议
-  const recommendations = ref("无建议");
+  const recommendations = ref("");
+
+  //api
+  if (stopPollingWatch) {
+    stopPollingWatch();
+    stopPollingWatch = null;
+  }
+
+  if (DataThisSession_als.value === null) {
+    sessionId.value = await analysisService.createSession();
+  }
+
+  isAnalyzing.value = true;
+  showAIAnalysis.value = true;
+
+
+  chatConfig.value.message = overallAnalysis;
+
+  const result = await handleSubmit_analysis(sessionId.value, 6);
+
+  console.log("await finished! ", result);
+  DataThisSession_als.value = result || null;
+  const html_res = parseMarkdown(result?.analysis || "");
+  recommendations.value = html_res.__html || "无建议";
+
+
+  stopPollingWatch = watch(() => isPolling.value, async (newPolling: boolean) => {
+    if (newPolling) {
+      setTimeout((): void => {
+        isAnalyzing.value = false;
+        // 安全递增步骤
+        // 清理监听器并释放锁
+        if (stopPollingWatch) {
+          stopPollingWatch();
+          stopPollingWatch = null;
+        }
+        isUpdatingStep.value = false;
+      }, 500);
+
+    }
+  }, { immediate: true });
+
 
   aiAnalysisResult.value = {
     overallAnalysis,
     keyPoints,
     recommendations: recommendations.value,
   };
+
+  isAnalyzing.value = false;
+};
+
+// const markdownContent = ref(`
+// ## 暂无
+// `);
+
+// 生成学生个人分析
+const generateStudentAnalysis = async (student: Student) => {
+  isAnalyzing_person.value = true;
+
+  await new Promise((resolve) => setTimeout(resolve, 1500));
+
+  // 计算学生在每个题目的得分情况
+  const studentScores = student.scores.map((score, index) => ({
+    question: `题目${index + 1}`,
+    score,
+    maxScore: questions.value[index].maxScore,
+    correctRate: questions.value[index].correctRate,
+  }));
+
+  // 优势分析：得分高于平均分的题目
+  const strengths = studentScores
+    .filter((q) => q.score > q.maxScore * 0.8)
+    .map((q) => `${q.question}得分较高，为${q.score}分，表现优秀。`);
+
+  // 待提升项：得分低于平均分的题目
+  const weaknesses = studentScores
+    .filter((q) => q.score < q.maxScore * 0.5)
+    .map((q) => `${q.question}得分较低，为${q.score}分，需要加强练习。`);
+
+  // 学习建议：针对待提升的题目提出建议
+  const recommendations = [
+    `针对得分较低的题目，建议多做相关练习题，巩固知识点。`,
+    `保持在得分较高的题目的优势，继续提升解题技巧。`,
+    `建议定期复习错题，总结解题思路，避免重复错误。`,
+  ];
+
+  studentAnalysis.value = {
+    strengths,
+    weaknesses,
+    trend: [
+      { date: "2024-01", score: 85 },
+      { date: "2024-02", score: 88 },
+      { date: "2024-03", score: 92 },
+    ],
+    recommendations: [],
+  };
+
+  studentAnalysis.value.recommendations = recommendations;
+
+  if (studentPerformanceChartRef.value) {
+    const chart = echarts.init(studentPerformanceChartRef.value);
+    chart.setOption({
+      title: { text: "成绩趋势" },
+      tooltip: { trigger: "axis" },
+      xAxis: {
+        type: "category",
+        data: studentAnalysis.value.trend.map((item) => item.date),
+      },
+      yAxis: { type: "value", min: 60 },
+      series: [
+        {
+          name: "成绩",
+          type: "line",
+          data: studentAnalysis.value.trend.map((item) => item.score),
+          smooth: true,
+          itemStyle: { color: "#1890ff" },
+          areaStyle: {
+            color: {
+              type: "linear",
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                { offset: 0, color: "rgba(24,144,255,0.3)" },
+                { offset: 1, color: "rgba(24,144,255,0.1)" },
+              ],
+            },
+          },
+        },
+      ],
+    });
+  }
+
+  isAnalyzing_person.value = false;
 };
 
 // 查看学生详情
 const viewStudentDetails = (student: Student) => {
   selectedStudent.value = student;
   showStudentDetails.value = true;
-  // generateStudentAnalysis(student);
+  generateStudentAnalysis(student);
 };
 
 // 获取当前选中班级的学生列表
