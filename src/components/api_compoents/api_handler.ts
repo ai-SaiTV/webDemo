@@ -312,7 +312,6 @@ export const handleSubmitParallel = async (sessionId: string, botIndices: number
         return null;
     }
 };
-
 export const handleEditZoneReplace = async (sessionId: string, data: {
     type: 'teaching_plan' | 'class_design' | 'None',
     text: string
@@ -349,14 +348,6 @@ export const handleEditZoneReplace = async (sessionId: string, data: {
 
 
 };
-
-
-
-
-
-
-
-
 
 export const handleSubmit_analysis = async (sessionId: string, botid: number): Promise<analysisRes | null> => {
     if (!sessionId) {

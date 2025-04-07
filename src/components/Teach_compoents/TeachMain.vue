@@ -454,8 +454,20 @@ const handleTextError = () => {
                         @delete-video="deleteVideo" @open-add-video-modal="isAddVideoModalVisible = true"
                         @open-add-modal="isAddModalVisible = true" />
                 </el-tab-pane>
-                <el-tab-pane label="文本大纲" name="texts">
+                <el-tab-pane label="教案" name="texts">
                     <TextList :texts="texts"
+                        @open-text-modal="(text: NewText) => { selectedText = text; isTextModalVisible = true; }"
+                        @delete-text="deleteText" @open-add-text-modal="isAddTextModalVisible = true"
+                        @open-add-modal="isAddModalVisible = true" />
+                </el-tab-pane>
+                <el-tab-pane label="课堂环节设计" name="design">
+                    <TextList :texts="design"
+                        @open-text-modal="(text: NewText) => { selectedText = text; isTextModalVisible = true; }"
+                        @delete-text="deleteText" @open-add-text-modal="isAddTextModalVisible = true"
+                        @open-add-modal="isAddModalVisible = true" />
+                </el-tab-pane>
+                <el-tab-pane label="练习题" name="exercises">
+                    <TextList :texts="exercises"
                         @open-text-modal="(text: NewText) => { selectedText = text; isTextModalVisible = true; }"
                         @delete-text="deleteText" @open-add-text-modal="isAddTextModalVisible = true"
                         @open-add-modal="isAddModalVisible = true" />
