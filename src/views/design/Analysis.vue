@@ -260,6 +260,11 @@
 import { ref, onMounted, watch, computed, nextTick } from "@vue/runtime-core";
 import * as echarts from "echarts";
 import * as XLSX from "xlsx";
+import { chatConfig, handleSubmit_analysis, isPolling } from "@/components/api_compoents/api_handler.ts";
+import { analysisService } from "@/services/storage/analysisResService";
+import type { analysisRes } from "@/types/analysisRes";
+
+import { parseMarkdown } from '../../utils/markdownUtils';
 
 interface Student {
   id: string;
@@ -511,17 +516,27 @@ const processExcelData = (data: any[]) => {
 
   // 清空当前试卷的旧数据
   currentPaper.students = [];
-  currentPaper.questions = []; // 清空旧的题目得分分析数据
 
-  // 初始化当前试卷的题目数据
-  currentPaper.questions = Array.from({ length: questionCount }, (_, i) => ({
-    id: i + 1,
-    correctRate: 0,
-    averageScore: 0,
-    maxScore: 0,
-    aboveAverageCount: 0,
-    belowAverageCount: 0,
-  }));
+  // 动态调整 questions 数组的长度
+  if (currentPaper.questions.length !== questionCount) {
+    currentPaper.questions = Array.from({ length: questionCount }, (_, i) => ({
+      id: i + 1,
+      correctRate: 0,
+      averageScore: 0,
+      maxScore: 0,
+      aboveAverageCount: 0,
+      belowAverageCount: 0,
+    }));
+  } else {
+    // 重置现有 questions 数据
+    currentPaper.questions.forEach(q => {
+      q.correctRate = 0;
+      q.averageScore = 0;
+      q.maxScore = 0;
+      q.aboveAverageCount = 0;
+      q.belowAverageCount = 0;
+    });
+  }
 
   // 遍历 Excel 数据，填充新数据
   data.forEach((row, rowIndex) => {
@@ -590,42 +605,40 @@ const processExcelData = (data: any[]) => {
 // 在系统初始化时读取并处理Excel文件
 onMounted(async () => {
   try {
-    const basePath = import.meta.env.MODE === 'production' 
-      ? '' 
-      : '../';
-    await nextTick();
-    // 使用 public 目录中的文件
-    const response = await fetch(`${basePath}scores.xlsx`);
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch the Excel file");
+    // 加载试卷一的数据
+    const response1 = await fetch(`/scores.xlsx`);
+    if (!response1.ok) {
+      throw new Error("Failed to fetch scores.xlsx");
     }
+    const data1 = await response1.arrayBuffer();
+    const workbook1 = XLSX.read(data1, { type: "array" });
+    const firstSheet1 = workbook1.Sheets[workbook1.SheetNames[0]];
+    const jsonData1 = XLSX.utils.sheet_to_json(firstSheet1);
 
-    // 读取文件内容
-    const data = await response.arrayBuffer();
-    const workbook = XLSX.read(data, { type: "array" });
+    // 处理试卷一的数据
+    selectedPaper.value = "1"; // 切换到试卷一
+    processExcelData(jsonData1);
 
-    // 检查是否有工作表
-    if (workbook.SheetNames.length === 0) {
-      throw new Error("No sheets found in the Excel file");
+    // 加载试卷二的数据
+    const response2 = await fetch("/scores2.xlsx");
+    if (!response2.ok) {
+      throw new Error("Failed to fetch scores2.xlsx");
     }
+    const data2 = await response2.arrayBuffer();
+    const workbook2 = XLSX.read(data2, { type: "array" });
+    const firstSheet2 = workbook2.Sheets[workbook2.SheetNames[0]];
+    const jsonData2 = XLSX.utils.sheet_to_json(firstSheet2);
 
-    // 解析第一个工作表
-    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+    // 处理试卷二的数据
+    selectedPaper.value = "2"; // 切换到试卷二
+    processExcelData(jsonData2);
 
-    if (jsonData.length === 0) {
-      throw new Error("No data found in the Excel file");
-    }
-
-    // 处理 Excel 数据
-    processExcelData(jsonData);
-
-    // 更新图表和分析
+    // 默认显示试卷一的数据
+    selectedPaper.value = "1";
     reloadClassData(selectedClassId.value);
     updateCharts();
   } catch (error) {
-    console.error("Error loading default Excel file:", error);
+    console.error("Error loading Excel files:", error);
   }
 });
 
@@ -781,11 +794,6 @@ let isUpdatingStep = ref(false); // 状态锁
 //api------------------------------------------------------------->>
 
 //api
-import { chatConfig, handleSubmit_analysis, isPolling } from "@/components/api_compoents/api_handler.ts";
-import { analysisService } from "@/services/storage/analysisResService";
-import type { analysisRes } from "@/types/analysisRes";
-
-import { parseMarkdown } from '../../utils/markdownUtils';
 
 const DataThisSession_als = ref<analysisRes | null>(null);  // 会话数据
 const sessionId = ref("");
