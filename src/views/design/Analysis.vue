@@ -257,7 +257,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed, nextTick } from "@vue/runtime-core";
+import { ref, onMounted, watch, computed } from "@vue/runtime-core";
+// import { ref, onMounted, watch, computed, nextTick } from "@vue/runtime-core";
 import * as echarts from "echarts";
 import * as XLSX from "xlsx";
 import { chatConfig, handleSubmit_analysis, isPolling } from "@/components/api_compoents/api_handler.ts";
