@@ -89,7 +89,7 @@ let stopPollingWatch: (() => void) | null = null;
 let isUpdatingStep = false; // 状态锁
 let progressInterval: ReturnType<typeof setInterval> | null = null; // 用来保存定时器引用，便于清除
 export const nextStep = async () => {
-    // if (activeStep.value == 3) activeStep.value = 4;
+    if (activeStep.value == 3) activeStep.value = 4;
     if (activeStep.value >= steps.length - 1 || isUpdatingStep) return;
     isUpdatingStep = true;
 
@@ -348,7 +348,7 @@ export const generateResource = async () => {
     isGenerating.value = true;
     try {
 
-        chatConfig.value.message = DataThisSession.value?.resources?.teaching_plan?.text || '';   //Message为 教学大纲
+        chatConfig.value.message = DataThisSession.value?.resources?.teaching_plan?.text || '';   //Message为 课程教案
         // console.log('DashCompoents 266:', chatConfig.value.message);
 
         isProcessing.value = true;
