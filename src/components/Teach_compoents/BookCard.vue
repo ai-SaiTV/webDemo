@@ -74,33 +74,4 @@ const emit = defineEmits<{
   margin-bottom: 15px;
 }
 
-.more-details,
-.delete-button {
-  margin-top: 15px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  color: #fff;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  width: 100%;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.more-details {
-  background: linear-gradient(145deg, #007BFF, #0056b3);
-}
-
-.more-details:hover {
-  background: linear-gradient(145deg, #0056b3, #003d80);
-  transform: scale(1.05);
-}
-
-.delete-button {
-  background: linear-gradient(145deg, #FF3B30, #e60000);
-}
-
-.delete-button:hover {
-  background: linear-gradient(145deg, #e60000, #cc0000);
-}
 </style>

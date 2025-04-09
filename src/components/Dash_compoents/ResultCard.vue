@@ -8,7 +8,7 @@
             <div style="width: 100%; display: flex; justify-content: space-between;">
               <h3>教案</h3>
               <div>
-                <el-button  type="primary">收藏至资源库</el-button>
+                <el-button  @click = "() => ElMessage(' ⭐收藏成功')" type="primary">收藏至资源库</el-button>
                 <el-button @click="exportPDF" type="success">下载教案</el-button>
               </div>
               
@@ -32,7 +32,7 @@
             <div style="width: 100%; display: flex; justify-content: space-between;">
               <h3>课堂环节设计</h3>
               <div>
-                <el-button  type="primary">收藏至资源库</el-button>
+                <el-button @click = "() => ElMessage(' ⭐收藏成功')" type="primary">收藏至资源库</el-button>
                 <el-button @click="exportPDF" type="success">下载课堂环节设计</el-button>
               </div>
             </div>
@@ -72,7 +72,7 @@
             <div style="width: 100%; display: flex; justify-content: space-between;">
               <h3>教学资源推荐</h3>
               
-              <el-button type="primary">收藏全部</el-button>
+              <el-button @click = "() => ElMessage(' ⭐收藏成功')" type="primary">收藏全部</el-button>
             </div>
             
             <el-button type="primary" link>查看更多</el-button>
@@ -98,7 +98,7 @@
                   <el-tag size="small">{{ resource.type.toUpperCase() }}</el-tag>
                   <div style="display: flex; justify-content: end;">
                     
-                    <el-button type="primary" size = "small" style="margin-left: 4px;">收藏</el-button>
+                    <el-button  @click = "() => ElMessage(' ⭐收藏成功')" type="primary" size = "small" style="margin-left: 4px;">收藏</el-button>
                   </div>
                  
                 </div>
@@ -146,7 +146,7 @@
               <a :href="exercise.preview" download="file.pdf">
                 <el-button type="primary" link size="small">下载</el-button>
               </a>
-              <el-button type="primary" size = "small" style="margin-left: 15px;">布置</el-button>
+              <el-button @click = "() => ElMessage('📜布置成功')"  type="primary" size = "small" style="margin-left: 15px;">布置</el-button>
 
             </div>
           </div>
@@ -214,6 +214,7 @@ const generatedContent = ref({
 });
 
 import mmPic from '@/assets/files/mmPic.jpeg';
+import { ElMessage } from 'element-plus';
 
 
 // 初始化数据函数
@@ -374,10 +375,6 @@ const exportPDF = async () => {
     console.error('导出失败:', error);
   }
 };
-
-
-
-
 
 
 onMounted(() => {

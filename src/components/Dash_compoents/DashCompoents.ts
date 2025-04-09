@@ -348,7 +348,7 @@ export const generateResource = async () => {
     isGenerating.value = true;
     try {
 
-        chatConfig.value.message = DataThisSession.value?.resources?.teaching_plan?.text || '';   //Message为 教学大纲
+        chatConfig.value.message = DataThisSession.value?.resources?.teaching_plan?.text || '';   //Message为 课程教案
         // console.log('DashCompoents 266:', chatConfig.value.message);
 
         isProcessing.value = true;
