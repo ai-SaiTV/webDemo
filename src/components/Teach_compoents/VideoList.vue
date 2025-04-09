@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Video } from '@/types';
 import VideoCard from './VideoCard.vue';
-import AddResourceCard from './AddResourceCard.vue';
+// import AddResourceCard from './AddResourceCard.vue';
 
 defineProps<{
   videos: Video[];
@@ -16,11 +16,11 @@ const emit = defineEmits<{
 
 <template>
   <div class="video-list">
-    <AddResourceCard 
+    <!-- <AddResourceCard 
       title="新增视频" 
       description="点击添加新视频" 
       @click="emit('openAddModal')" 
-    />
+    /> -->
     <VideoCard 
       v-for="video in videos" 
       :key="video.id" 

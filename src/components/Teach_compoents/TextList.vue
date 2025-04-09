@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Text } from '@/types';
 import TextCard from './TextCard.vue';
-import AddResourceCard from './AddResourceCard.vue';
+// import AddResourceCard from './AddResourceCard.vue';
 
 defineProps<{
   texts: Text[];
@@ -16,11 +16,11 @@ const emit = defineEmits<{
 
 <template>
   <div class="Text-list">
-    <AddResourceCard 
+    <!-- <AddResourceCard 
       title="新增文本大纲" 
       description="点击添加新大纲" 
       @click="emit('openAddModal')" 
-    />
+    /> -->
     <TextCard 
       v-for="text in texts" 
       :key="text.id" 

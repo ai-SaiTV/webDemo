@@ -93,17 +93,17 @@ const books = ref<Book[]>([
 const videos = ref<Video[]>([
     {
         id: 1,
-        title: '杨氏之子',
+        title: '田忌赛马优质公开课',
         duration: '36:44',
-        description: '一个关于杨氏之子的公开课。',
+        description: '一个关于田忌赛马的公开课。',
         image: yangson,
         path: 'https://upos-sz-mirrorcos.bilivideo.com/upgcxcode/88/48/744504888/744504888-1-16.mp4?e=ig8euxZM2rNcNbRVhwdVhwdlhWdVhwdVhoNvNC8BqJIzNbfq9rVEuxTEnE8L5F6VnEsSTx0vkX8fqJeYTj_lta53NCM=&uipk=5&nbs=1&deadline=1743231916&gen=playurlv2&os=cosbv&oi=1782024106&trid=b62ba61df8f94ebd976fc58f5b859abdh&mid=0&platform=html5&og=cos&upsig=628525130021dd204d6d709d2c806521&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform,og&bvc=vod&nettype=0&f=h_0_0&bw=34696&logo=80000000'
     },
     {
         id: 2,
-        title: '两小儿辩日',
+        title: '田忌赛马名师公开课',
         duration: '38:36',
-        description: '一个关于两小儿辩日的公开课。',
+        description: '一个关于田忌赛马的公开课。',
         image: childsun,
         path: 'https://upos-sz-mirror08c.bilivideo.com/upgcxcode/82/29/1055972982/1055972982-1-16.mp4?e=ig8euxZM2rNcNbRVhwdVhwdlhWdVhwdVhoNvNC8BqJIzNbfq9rVEuxTEnE8L5F6VnEsSTx0vkX8fqJeYTj_lta53NCM=&uipk=5&nbs=1&deadline=1743232153&gen=playurlv2&os=08cbv&oi=1782024106&trid=b15f16668d1443438ee0005872f991f5h&mid=0&platform=html5&og=hw&upsig=a8965961d097cb9017041fa500907371&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform,og&bvc=vod&nettype=0&f=h_0_0&bw=19786&logo=80000000'
     }

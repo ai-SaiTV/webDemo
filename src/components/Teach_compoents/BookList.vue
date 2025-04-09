@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Book } from '@/types';
 import BookCard from './BookCard.vue';
-import AddResourceCard from './AddResourceCard.vue';
+// import AddResourceCard from './AddResourceCard.vue';
 
 defineProps<{
   books: Book[];
@@ -16,11 +16,11 @@ const emit = defineEmits<{
 
 <template>
   <div class="book-list">
-    <AddResourceCard 
+    <!-- <AddResourceCard 
       title="新增课件" 
       description="点击添加新课件" 
       @click="emit('openAddModal')" 
-    />
+    /> -->
     <BookCard 
       v-for="book in books" 
       :key="book.id" 
