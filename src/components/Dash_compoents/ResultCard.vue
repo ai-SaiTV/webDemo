@@ -72,7 +72,7 @@
             <div style="width: 100%; display: flex; justify-content: space-between;">
               <h3>教学资源推荐</h3>
               
-              <el-button @click = "collectAllmaterials">收藏全部</el-button>
+              <el-button @click = "collectAllmaterials" type="primary">收藏全部</el-button>
             </div>
             
             <el-button type="primary" link>查看更多</el-button>
@@ -98,7 +98,7 @@
                   <el-tag size="small">{{ resource.type.toUpperCase() }}</el-tag>
                   <div style="display: flex; justify-content: end;">
                     
-                    <el-button  @click = "() => ElMessage(' ⭐收藏成功')" type="primary" size = "small" style="margin-left: 4px;">收藏</el-button>
+                    <el-button  @click = "collectOnematerials(index,resource.type,resource.title,resource.url)" type="primary" size = "small" style="margin-left: 4px;">收藏</el-button>
                   </div>
                  
                 </div>
@@ -197,7 +197,7 @@
 <script setup>
 import { defineProps, ref, computed, onMounted, nextTick} from 'vue';
 import { parseMarkdown, parseMarkdownList_ex, parseMarkdownList_re } from '@/utils/markdownUtils.ts';
-import { sessionId, DataThisSession,showCollect } from './DashCompoents.ts';
+import { sessionId, DataThisSession,showCollect,Collectcontents,collectMap } from './DashCompoents.ts';
 import { storageService } from '@/services/storage/storageService';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -316,10 +316,47 @@ const submitRating = () => {
 };
 
 const collectAllmaterials = () => {
+  let newCollectsum = 0;
+  if(showCollect.value) {
+    ElMessage(' ❗所有资源已收藏');
+    return;
+  }
+  generatedContent.value.resources.forEach((resource,index)=>{
+    const resourceKey = `${resource.type}-${resource.title}-${resource.url}`;
+    if (!collectMap.value[resourceKey]) {
+      const newCollect = {
+        type: resource.type,
+        title: resource.title,
+        url: resource.url
+      };
+      Collectcontents.value.push(newCollect);
+      collectMap.value[resourceKey]=true;
+      newCollectsum++;
+    }
+  });
   showCollect.value = true;
-  ElMessage(' ⭐收藏成功');
-  console.log(showCollect.value);
+  if (newCollectsum > 0) {
+    ElMessage(`⭐成功收藏${newCollectsum}个资源`);
+  } else {
+    ElMessage(' ❗所有资源已收藏');
+  }
 };
+const collectOnematerials = (index,type,title,url) => {
+  const resourceKey = `${type}-${title}-${url}`;
+  if (collectMap.value[resourceKey]) {
+    ElMessage(' ❗资源已收藏');
+    return;
+  }
+  const newCollect = {
+    type: type,
+    title: title,
+    url: url
+  };
+  Collectcontents.value.push(newCollect);
+  collectMap.value[resourceKey]=true;
+  ElMessage(' ⭐收藏成功');
+  console.log('收藏的资源:', newCollect);
+}
 const markdownContent = ref(null);
 
 const exportPDF = async () => {
