@@ -23,7 +23,7 @@ import type { StorageData } from '@/types/storageData'
 //<<------------------------------------------------------------
 export const sessionId = ref<string>("-1");  // 会话ID
 export const DataThisSession = ref<StorageData | null>(null);  // 会话数据
-
+export const showCollect = ref(false);
 
 export const activeStep = ref(0);
 export const isGenerating = ref(false);
@@ -71,7 +71,12 @@ export const form = ref({
     focus: [],
     requirements: ''
 });
-
+export const Collectcontents = ref<Array<{
+    type: string;
+    title: string;
+    url: string;
+}>>([])   
+export const collectMap = ref<Record<string, boolean>>({}); // 用于存储每个资源的收藏状态
 export const steps = [
     { title: '教案生成', description: '一句话生成教案' },
     { title: '课堂设计', description: '根据教案和结合优秀教学案例生成课堂设计' },

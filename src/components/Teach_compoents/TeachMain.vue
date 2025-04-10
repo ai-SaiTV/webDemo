@@ -10,15 +10,12 @@ import VideoModal from './VideoModal.vue';
 import TextModal from './TextModal.vue';
 import AddResourceModal from './AddResourceModal.vue';
 import { Book, Video, Text, NewBook, NewVideo, NewText } from '@/types';
-import { DataThisSession } from '../Dash_compoents/DashCompoents';
+import { showCollect,Collectcontents } from '../Dash_compoents/DashCompoents';
 // Import assets
 import yszz from '@/assets/yszz.jpg';
 import lxebr from '@/assets/lxebr.jpg';
-import zh4vo from '@/assets/zh4vo.png';
-import zh5vo from '@/assets/zh5vo.png';
 import lxrbr_pdf from '@/assets/lxrbr.pdf';
-import Doc4 from '@/assets/Doc4.pdf';
-import Doc5 from '@/assets/Doc5.pdf';
+
 // import Vid from '@/assets/田忌赛马.mp4';
 // import Vid2 from '@/assets/两小儿辩日.mp4';
 import text1 from '@/assets/text1.docx';
@@ -28,20 +25,20 @@ import word2 from '@/assets/word2.png';
 import nullvideoimg from '@/assets/OIP-C.jpg';
 import childsun from '@/assets/两小儿辩日公开课.jpg';
 import yangson from '@/assets/杨氏之子公开课.jpg';
-import nulltextimg from '@/assets/nulltext.jpg';
+import nulltextimg from '@/assets/nulltext.jpg';            
 
-interface Resource {
-    type: string;
-    title: string;
-    url: string;
-}
+// interface Resource {
+//     type: string;
+//     title: string;
+//     url: string;
+// }
 
-interface Resources {
-    videos: Resource[];
-    coursewares: Resource[];
-    lessonPlans: Resource[];
-    images: Resource[];
-}
+// interface Resources {
+//     videos: Resource[];
+//     coursewares: Resource[];
+//     lessonPlans: Resource[];
+//     images: Resource[];
+// }
 
 const books = ref<Book[]>([
     {
@@ -64,28 +61,6 @@ const books = ref<Book[]>([
         description: '关于两小儿辩日的课件。',
         image: lxebr,
         pdf: lxrbr_pdf,
-        showDetails: false
-    },
-    {
-        id: 3,
-        title: '四年级上册教师用书',
-        author: '人民教育出版社',
-        isbn: '555-444-333',
-        owner: '王五',
-        description: '一本关于四年级语文上册的教师用书。',
-        image: zh4vo,
-        pdf: Doc4,
-        showDetails: false
-    },
-    {
-        id: 4,
-        title: '五年级上册教师用书',
-        author: '人民教育出版社',
-        isbn: '555-444-333',
-        owner: '赵六',
-        description: '一本关于五年级语文上册的教师用书。',
-        image: zh5vo,
-        pdf: Doc5,
         showDetails: false
     }
 ]);
@@ -157,69 +132,83 @@ const newText = ref<NewText>({
     image: null as File | null,
     words: null as File | string | null
 });
-const extractResources = (input: string): void => {
-    const lines = input.split('\n').filter(line => line.trim() !== '');
-    let videoId = videos.value.length + 1;
-    let bookId = books.value.length + 1;
-    let textId = texts.value.length + 1;
+const addResource = (type: string, title: string, url: string): boolean =>{
+  // 确保所有必要参数都有值
+  if (!type || !title || !url) {
+    console.error('添加资源失败：类型、标题和URL都必须提供');
+    return false;
+  }
 
-    lines.forEach(line => {
-        const typeMatch = line.match(/#(\S+?)#/);
-        const titleMatch = line.match(/\[(.*?)\]/);
-        const urlMatch = line.match(/\((.*?)\)/);
+  // 动态计算各类资源的ID
+  let videoId = videos.value.length + 1;
+  let bookId = books.value.length + 1;
+  let textId = texts.value.length + 1;
 
-        if (typeMatch && titleMatch && urlMatch) {
-            const resourceType = typeMatch[1];
-            const resourceTitle = titleMatch[1];
-            const resourceUrl = urlMatch[1];
+  switch (type) {
+    case '教学视频':
+      videos.value.push({
+        id: videoId,
+        title: title,
+        duration: '00:00', // 这里可以根据实际数据设置时长
+        description: title+'的描述', // 这里可以填写新视频的描述
+        image: null, // 这里可以设置默认图片路径
+        path: url,
+      });
+      break;
+    case '课件':
+      books.value.push({
+        id: bookId,
+        title: title,
+        author: '作者', // 这里可以根据实际数据设置作者
+        isbn: 'ISBN', // 这里可以根据实际数据设置ISBN
+        owner: '所有者', // 这里可以根据实际数据设置所有者
+        description: title+'的描述', // 这里可以填写新课件的描述
+        image: null, // 这里可以设置默认图片路径
+        pdf: url,
+        showDetails: false,
+      });
+      break;
+    case '教案':
+      texts.value.push({
+        id: textId,
+        title: title,
+        description: title+'的描述', // 这里可以填写新教案的描述
+        image: null, // 这里可以设置默认图片路径
+        words: url,
+      });
+      break;
+    case '图片':
+      // 处理图片链接
+      // 这里可以根据实际需求处理图片链接，将其保存到相应的数据结构中
+      console.log('添加图片资源:', title, url);
+      break;
+    default:
+      console.error(`未知的资源类型: ${type}`);
+      return false;
+  }
+  
+  return true;
+}
+// const extractResources = (input: string): void => {
+//     const lines = input.split('\n').filter(line => line.trim() !== '');
 
-            switch (resourceType) {
-                case '视频':
-                    videos.value.push({
-                        id: videoId++,
-                        title: resourceTitle,
-                        duration: '00:00', // 这里可以根据实际数据设置时长
-                        description: '新视频的描述', // 这里可以填写新视频的描述
-                        image: null, // 这里可以设置默认图片路径
-                        path: resourceUrl,
-                    });
-                    break;
-                case '课件':
-                    books.value.push({
-                        id: bookId++,
-                        title: resourceTitle,
-                        author: '未知作者', // 这里可以根据实际数据设置作者
-                        isbn: '未知ISBN', // 这里可以根据实际数据设置ISBN
-                        owner: '未知所有者', // 这里可以根据实际数据设置所有者
-                        description: '新课件的描述', // 这里可以填写新课件的描述
-                        image: null, // 这里可以设置默认图片路径
-                        pdf: resourceUrl,
-                        showDetails: false,
-                    });
-                    break;
-                case '教案':
-                    texts.value.push({
-                        id: textId++,
-                        title: resourceTitle,
-                        description: '新教案的描述', // 这里可以填写新教案的描述
-                        image: null, // 这里可以设置默认图片路径
-                        words: resourceUrl,
-                    });
-                    break;
-                case '图片':
-                    // 处理图片链接
-                    // 这里可以根据实际需求处理图片链接，将其保存到相应的数据结构中
-                    break;
-            }
+//     lines.forEach(line => {
+//         const typeMatch = line.match(/#(\S+?)#/);
+//         const titleMatch = line.match(/\[(.*?)\]/);
+//         const urlMatch = line.match(/\((.*?)\)/);
+
+//         addResource(typeMatch ? typeMatch[1] : '', titleMatch ? titleMatch[1] : '', urlMatch ? urlMatch[1] : '');
+//     });
+// };
+onMounted(() => {
+    console.log(showCollect.value);
+    Collectcontents.value.forEach((item) => {
+        addResource(item.type, item.title, item.url);
+        const index = Collectcontents.value.findIndex(item1 => item1.title === item.title);
+        if (index !== -1) {
+            Collectcontents.value.splice(index, 1);
         }
     });
-};
-onMounted(() => {
-    // Initialize data or perform any setup tasks here
-    // For example, you can fetch data from an API or set default values
-    if(DataThisSession.value) {
-        extractResources(DataThisSession.value.resources.courseware.Courseware[0].url);
-    }
 });
 const deleteBook = async (book: Book) => {
     try {
