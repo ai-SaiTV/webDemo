@@ -14,11 +14,8 @@ import { DataThisSession } from '../Dash_compoents/DashCompoents';
 // Import assets
 import yszz from '@/assets/yszz.jpg';
 import lxebr from '@/assets/lxebr.jpg';
-import zh4vo from '@/assets/zh4vo.png';
-import zh5vo from '@/assets/zh5vo.png';
 import lxrbr_pdf from '@/assets/lxrbr.pdf';
-import Doc4 from '@/assets/Doc4.pdf';
-import Doc5 from '@/assets/Doc5.pdf';
+
 // import Vid from '@/assets/田忌赛马.mp4';
 // import Vid2 from '@/assets/两小儿辩日.mp4';
 import text1 from '@/assets/text1.docx';
@@ -64,28 +61,6 @@ const books = ref<Book[]>([
         description: '关于两小儿辩日的课件。',
         image: lxebr,
         pdf: lxrbr_pdf,
-        showDetails: false
-    },
-    {
-        id: 3,
-        title: '四年级上册教师用书',
-        author: '人民教育出版社',
-        isbn: '555-444-333',
-        owner: '王五',
-        description: '一本关于四年级语文上册的教师用书。',
-        image: zh4vo,
-        pdf: Doc4,
-        showDetails: false
-    },
-    {
-        id: 4,
-        title: '五年级上册教师用书',
-        author: '人民教育出版社',
-        isbn: '555-444-333',
-        owner: '赵六',
-        description: '一本关于五年级语文上册的教师用书。',
-        image: zh5vo,
-        pdf: Doc5,
         showDetails: false
     }
 ]);
