@@ -10,7 +10,7 @@ import VideoModal from './VideoModal.vue';
 import TextModal from './TextModal.vue';
 import AddResourceModal from './AddResourceModal.vue';
 import { Book, Video, Text, NewBook, NewVideo, NewText } from '@/types';
-import { DataThisSession } from '../Dash_compoents/DashCompoents';
+import { DataThisSession,showCollect } from '../Dash_compoents/DashCompoents';
 // Import assets
 import yszz from '@/assets/yszz.jpg';
 import lxebr from '@/assets/lxebr.jpg';
@@ -190,9 +190,8 @@ const extractResources = (input: string): void => {
     });
 };
 onMounted(() => {
-    // Initialize data or perform any setup tasks here
-    // For example, you can fetch data from an API or set default values
-    if(DataThisSession.value) {
+    console.log(showCollect.value);
+    if(DataThisSession.value && showCollect.value) {
         extractResources(DataThisSession.value.resources.courseware.Courseware[0].url);
     }
 });

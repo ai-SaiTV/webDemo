@@ -23,7 +23,7 @@ import type { StorageData } from '@/types/storageData'
 //<<------------------------------------------------------------
 export const sessionId = ref<string>("-1");  // 会话ID
 export const DataThisSession = ref<StorageData | null>(null);  // 会话数据
-
+export const showCollect = ref(false);
 
 export const activeStep = ref(0);
 export const isGenerating = ref(false);

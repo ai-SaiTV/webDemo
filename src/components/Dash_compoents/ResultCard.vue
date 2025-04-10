@@ -72,7 +72,7 @@
             <div style="width: 100%; display: flex; justify-content: space-between;">
               <h3>教学资源推荐</h3>
               
-              <el-button @click = "() => ElMessage(' ⭐收藏成功')" type="primary">收藏全部</el-button>
+              <el-button @click = "collectAllmaterials">收藏全部</el-button>
             </div>
             
             <el-button type="primary" link>查看更多</el-button>
@@ -197,7 +197,7 @@
 <script setup>
 import { defineProps, ref, computed, onMounted, nextTick} from 'vue';
 import { parseMarkdown, parseMarkdownList_ex, parseMarkdownList_re } from '@/utils/markdownUtils.ts';
-import { sessionId, DataThisSession } from './DashCompoents.ts';
+import { sessionId, DataThisSession,showCollect } from './DashCompoents.ts';
 import { storageService } from '@/services/storage/storageService';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -315,7 +315,11 @@ const submitRating = () => {
   }
 };
 
-
+const collectAllmaterials = () => {
+  showCollect.value = true;
+  ElMessage(' ⭐收藏成功');
+  console.log(showCollect.value);
+};
 const markdownContent = ref(null);
 
 const exportPDF = async () => {
