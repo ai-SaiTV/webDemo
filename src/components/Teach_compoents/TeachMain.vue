@@ -155,7 +155,7 @@ const addResource = (type: string, title: string, url: string): boolean =>{
         path: url,
       });
       break;
-    case '课件':
+    case '教学课件':
       books.value.push({
         id: bookId,
         title: title,
@@ -168,7 +168,7 @@ const addResource = (type: string, title: string, url: string): boolean =>{
         showDetails: false,
       });
       break;
-    case '教案':
+    case '教学教案':
       texts.value.push({
         id: textId,
         title: title,
@@ -177,7 +177,7 @@ const addResource = (type: string, title: string, url: string): boolean =>{
         words: url,
       });
       break;
-    case '图片':
+    case '教学图片':
       // 处理图片链接
       // 这里可以根据实际需求处理图片链接，将其保存到相应的数据结构中
       console.log('添加图片资源:', title, url);
