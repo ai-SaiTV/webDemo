@@ -207,6 +207,7 @@ const turnStep = async (step: number) => {
 
     } else if (step === 2) {
         await nextTick(() => {})
+        Mindimgsrc.value = mmPic;
         if (DataThisSession.value?.resources?.tp_MindMap?.url) {
             // Mindimgsrc.value = parseMarkdownList_mm(DataThisSession.value.resources.tp_MindMap.url)[0].url
             // Mindimgsrc.value = DataThisSession.value.resources.tp_MindMap.url

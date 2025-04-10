@@ -11,7 +11,7 @@ export default defineConfig({
       include: '**/*.docx',
     }),
     visualizer({
-      open: true, // 打包完成后自动打开报告页面
+      open: false, // 打包完成后自动打开报告页面
       filename: 'bundle-report.html', // 生成的报告文件名
       gzipSize: true, // 显示 gzip 压缩后的大小
       brotliSize: true, // 显示 brotli 压缩后的大小

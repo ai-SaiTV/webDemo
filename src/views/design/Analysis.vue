@@ -257,7 +257,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from "@vue/runtime-core";
+import { ref, onMounted, watch, computed, nextTick } from "@vue/runtime-core";
 // import { ref, onMounted, watch, computed, nextTick } from "@vue/runtime-core";
 import * as echarts from "echarts";
 import * as XLSX from "xlsx";
@@ -266,6 +266,7 @@ import { analysisService } from "@/services/storage/analysisResService";
 import type { analysisRes } from "@/types/analysisRes";
 
 import { parseMarkdown } from '../../utils/markdownUtils';
+
 
 interface Student {
   id: string;
@@ -606,8 +607,15 @@ const processExcelData = (data: any[]) => {
 // 在系统初始化时读取并处理Excel文件
 onMounted(async () => {
   try {
+
     // 加载试卷一的数据
-    const response1 = await fetch(`/scores.xlsx`);
+    const basePath = import.meta.env.MODE === 'production' 
+      ? '' 
+      : './';
+    await nextTick();
+
+    ///千万不要改这个路径！！！！！！ @Nanyian
+    const response1 = await fetch(`./scores.xlsx`);
     if (!response1.ok) {
       throw new Error("Failed to fetch scores.xlsx");
     }
@@ -621,7 +629,7 @@ onMounted(async () => {
     processExcelData(jsonData1);
 
     // 加载试卷二的数据
-    const response2 = await fetch("/scores2.xlsx");
+    const response2 = await fetch(`./scores2.xlsx`);
     if (!response2.ok) {
       throw new Error("Failed to fetch scores2.xlsx");
     }
