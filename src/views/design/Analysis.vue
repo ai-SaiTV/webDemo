@@ -799,6 +799,33 @@ let isUpdatingStep = ref(false); // 状态锁
 const DataThisSession_als = ref<analysisRes | null>(null);  // 会话数据
 const sessionId = ref("");
 
+const static_input = ref(`
+    # 小学语文测试模拟输入示例
+
+    ## 试卷得分数据
+    [四年级语文期中测试]
+    1. 基础题-看拼音写词语 (10分) 得分：9
+    2. 选择题-词语辨析 (8分) 得分：6
+    3. 填空题-古诗默写 (12分) 得分：10
+    4. 阅读题-短文理解 (20分) 得分：14
+    5. 写作题-看图写话 (30分) 得分：22
+
+    ## 附加信息
+    - 班级规模：35人
+    - 观察到的主要错误模式：
+      - 65%错误集中在"近义词辨析"题型
+      - 40%学生在阅读题"概括段落大意"失分
+      - 高频混淆："的"、"地"、"得"的用法
+      - 写作常见问题：标点使用不规范、段落衔接生硬
+
+    ## 特殊需求
+    请重点分析：
+    1. 词语辨析能力提升方案
+    2. 阅读概括能力的培养
+    3. 写作基础技巧训练
+    4. 针对不同语文能力层级的分层建议
+`);
+
 
 // 生成AI分析
 const generateAIAnalysis = async () => {
@@ -841,7 +868,8 @@ const generateAIAnalysis = async () => {
   showAIAnalysis.value = true;
 
 
-  chatConfig.value.message = overallAnalysis;
+  // chatConfig.value.message = overallAnalysis;
+  chatConfig.value.message = static_input.value;
 
   const result = await handleSubmit_analysis(sessionId.value, 6);
 
