@@ -449,23 +449,23 @@ const classes = ref<Class[]>([
 // 学生反馈内容
 const studentFeedbacks = ref([
   {
-    studentName: "王明",
+    studentName: "高静怡",
     content: "老师讲课很清晰，但希望能在课堂上多一些互动环节，让我们更积极参与。",
   },
   {
-    studentName: "李昊",
+    studentName: "李昊达",
     content: "希望老师能提供更多课外练习题，帮助我们巩固课堂知识。",
   },
   {
-    studentName: "徐一",
+    studentName: "高子浩",
     content: "老师布置的作业量有点多，希望能适当减少，给我们更多时间复习。",
   },
   {
-    studentName: "轩七",
+    studentName: "唐子睿",
     content: "老师上课很有耐心，但希望能在讲解难题时再多一些实例分析。",
   },
   {
-    studentName: "钱行",
+    studentName: "钱行州",
     content: "希望老师能定期组织小组讨论，让我们在交流中学习。",
   },
   {
@@ -473,11 +473,11 @@ const studentFeedbacks = ref([
     content: "老师的教学方法很好，但希望能在考试前多安排一些复习课。",
   },
   {
-    studentName: "何飞",
+    studentName: "何思源",
     content: "希望老师能在课堂上多一些实际应用的案例，帮助我们理解抽象的概念。",
   },
   {
-    studentName: "路一",
+    studentName: "王路一",
     content: "老师的讲解速度有点快，希望能适当放慢，给我们更多时间消化知识点。",
   },
 ]);
