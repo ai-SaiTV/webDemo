@@ -3,13 +3,15 @@ import { onMounted, ref } from '@vue/runtime-core';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import ResourceHeader from './ResourceHeader.vue';
 import BookList from './BookList.vue';
-import VideoList from './VideoList.vue';
-import TextList from './TextList.vue';
 import BookModal from './BookModal.vue';
+import VideoList from './VideoList.vue';
 import VideoModal from './VideoModal.vue';
+import TextList from './TextList.vue';
 import TextModal from './TextModal.vue';
+import DesignList from './DesignList.vue';
+import DesignModal from './DesignModal.vue';
 import AddResourceModal from './AddResourceModal.vue';
-import { Book, Video, Text, NewBook, NewVideo, NewText } from '@/types';
+import { Book, Video, Text,Design,NewBook, NewVideo, NewText,NewDesign } from '@/types';
 import { showCollect,Collectcontents } from '../Dash_compoents/DashCompoents';
 // Import assets
 import yszz from '@/assets/yszz.jpg';
@@ -99,14 +101,33 @@ const texts = ref<Text[]>([
         words: text2,
     },
 ]);
+const designs = ref<Design[]>([
+    {
+        id: 1,
+        title: '课堂环节设计1',
+        description: '课堂环节设计1的描述',
+        words: lxrbr_pdf,
+        showDetails: false,
+    },
+    {
+        id: 2,
+        title: '课堂环节设计2',
+        description: '课堂环节设计2的描述',
+        words: lxrbr_pdf,
+        showDetails: false,
+    },
+]);
 const resourceType = ref('books');
 const selectedBook = ref<Book | null>(null);
 const selectedVideo = ref<Video | null>(null);
 const selectedText = ref<Text | null>(null);
+const selectedDesign = ref<Design | null>(null);
 const isBookModalVisible = ref(false);
 const isVideoModalVisible = ref(false);
 const isTextModalVisible = ref(false);
+const isDesignModalVisible = ref(false);
 const isAddModalVisible = ref(false);
+
 
 const newBook = ref<NewBook>({
     title: '',
@@ -132,6 +153,15 @@ const newText = ref<NewText>({
     image: null as File | null,
     words: null as File | string | null
 });
+
+// const newDesign = ref<NewDesign>({
+//     id: 0,
+//     title: '',
+//     description: '',
+//     words: null as string | undefined |null,
+//     showDetails: false,
+// });
+
 const addResource = (type: string, title: string, url: string): boolean =>{
   // 确保所有必要参数都有值
   if (!type || !title || !url) {
@@ -143,7 +173,7 @@ const addResource = (type: string, title: string, url: string): boolean =>{
   let videoId = videos.value.length + 1;
   let bookId = books.value.length + 1;
   let textId = texts.value.length + 1;
-
+  let designId = designs.value.length + 1;
   switch (type) {
     case '教学视频':
       videos.value.push({
@@ -176,6 +206,16 @@ const addResource = (type: string, title: string, url: string): boolean =>{
         image: null, // 这里可以设置默认图片路径
         words: url,
       });
+      break;
+    case '课堂环节设计':
+      designs.value.push({
+        id: designId,
+        title: title,
+        description: title+'的描述', // 这里可以填写新课堂环节设计的描述
+        words: url,
+        showDetails: false,
+      });
+      console.log('添加课堂环节设计资源:', title, url);
       break;
     case '教学图片':
       // 处理图片链接
@@ -251,6 +291,20 @@ const deleteText = async (text: Text) => {
         ElMessage.info('已取消删除');
     }
 };
+const deletedesign = async (design: Design) => {
+    try {
+        await ElMessageBox.confirm(`确定要删除设计《${design.title}》吗？`, '提示', {
+            type: 'warning',
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+        });
+        designs.value = designs.value.filter((d) => d.id !== design.id);
+        ElMessage.success('删除成功');
+    } catch {
+        ElMessage.info('已取消删除');
+    }
+};
+
 const handleResource = (resourceType: string, bookvalue?: any, videosvalue?: any, textsvalue?: any) => {
     switch (resourceType) {
         case 'books':
@@ -449,10 +503,10 @@ const handleTextError = () => {
                         @delete-text="deleteText" @open-add-text-modal="isAddTextModalVisible = true"
                         @open-add-modal="isAddModalVisible = true" />
                 </el-tab-pane>
-                <el-tab-pane label="课堂环节设计" name="design">
-                    <TextList :texts="design"
-                        @open-text-modal="(text: NewText) => { selectedText = text; isTextModalVisible = true; }"
-                        @delete-text="deleteText" @open-add-text-modal="isAddTextModalVisible = true"
+                <el-tab-pane label="课堂环节设计" name="designs">
+                    <DesignList :designs="designs"
+                        @open-design-modal="(design: NewDesign) => { selectedDesign = design; isDesignModalVisible = true; }"
+                        @delete-design="deletedesign" @open-add-design-modal="isAddDesignModalVisible = true"
                         @open-add-modal="isAddModalVisible = true" />
                 </el-tab-pane>
                 <el-tab-pane label="练习题" name="exercises">
@@ -471,6 +525,8 @@ const handleTextError = () => {
             @close="isVideoModalVisible = false" @error="handleVideoError" />
         <TextModal v-if="selectedText" :text="selectedText" :visible="isTextModalVisible"
             @close="isTextModalVisible = false" @error="handleTextError" />
+        <DesignModal v-if="selectedDesign" :design="selectedDesign" :visible="isDesignModalVisible"
+            @close="isDesignModalVisible = false" />
         <AddResourceModal :visible="isAddModalVisible" :type="handleResource(resourceType, 'book', 'video', 'text')"
             :model-value="handleResource(resourceType, newBook, newVideo, newText)"
             @update:model-value="updateResource(resourceType, $event)" @file-upload="handleFileUpload"

@@ -1,36 +1,35 @@
-
 :root {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
-    font-weight: 400;
-  
-    color-scheme: light dark;
-    color: rgba(0, 0, 0, 0.88);
-    background-color: #ffffff;
-  
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  body {
-    margin: 0;
-    min-width: 320px;
-    min-height: 100vh;
-  }
-  
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .el-menu {
-    border-right: none !important;
-  }
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
 
-  /* 教案专用样式 - 层次结构 & 高亮系统 */
+  color-scheme: light dark;
+  color: rgba(0, 0, 0, 0.88);
+  background-color: #ffffff;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.el-menu {
+  border-right: none !important;
+}
+
+/* 教案专用样式 - 层次结构 & 高亮系统 */
 .markdown-content {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: large;
@@ -63,11 +62,13 @@
 
 /* 荧光笔高亮系统 */
 .markdown-content strong {
-  color: #1c5be2; /* 重点文字颜色 */
+  color: #1c5be2;
+  /* 重点文字颜色 */
 }
 
 .markdown-content code:not(pre code) {
-  background-color: #f8f9fa; /* 浅灰代码背景 */
+  background-color: #f8f9fa;
+  /* 浅灰代码背景 */
   padding: 0.2em 0.4em;
   border-radius: 3px;
   border: 1px solid #eaecef;
@@ -107,65 +108,212 @@
 
 /* 自定义滚动条样式 */
 .markdown-content::-webkit-scrollbar {
-  width: 8px; /* 设置滚动条宽度 */
+  width: 8px;
+  /* 设置滚动条宽度 */
 }
 
 .markdown-content::-webkit-scrollbar-track {
-  background: transparent; /* 默认状态下滚动条轨道透明 */
+  background: transparent;
+  /* 默认状态下滚动条轨道透明 */
 }
 
 .markdown-content::-webkit-scrollbar-thumb {
-  background: transparent; /* 默认状态下滚动条滑块透明 */
+  background: transparent;
+  /* 默认状态下滚动条滑块透明 */
   border-radius: 4px;
 }
 
 /* 滚动时显示滚动条 */
 .markdown-content:hover::-webkit-scrollbar-thumb {
-  background: #d4d4d4; /* 滚动时显示滚动条滑块 */
+  background: #d4d4d4;
+  /* 滚动时显示滚动条滑块 */
 }
 
 .markdown-content:hover::-webkit-scrollbar-track {
-  background: #f1f1f1; /* 滚动时显示滚动条轨道 */
+  background: #f1f1f1;
+  /* 滚动时显示滚动条轨道 */
 }
 
 
 
 /* 自定义滚动条样式 */
 .markdown-content::-webkit-scrollbar {
-  width: 8px; /* 设置滚动条宽度 */
+  width: 8px;
+  /* 设置滚动条宽度 */
 }
 
 .markdown-content::-webkit-scrollbar-track {
-  background: transparent; /* 默认状态下滚动条轨道透明 */
+  background: transparent;
+  /* 默认状态下滚动条轨道透明 */
 }
 
 .markdown-content::-webkit-scrollbar-thumb {
-  background: transparent; /* 默认状态下滚动条滑块透明 */
+  background: transparent;
+  /* 默认状态下滚动条滑块透明 */
   border-radius: 4px;
 }
 
 /* 滚动时显示滚动条 */
 .markdown-content:hover::-webkit-scrollbar-thumb {
-  background: #d4d4d4; /* 滚动时显示滚动条滑块 */
+  background: #d4d4d4;
+  /* 滚动时显示滚动条滑块 */
 }
 
 .markdown-content:hover::-webkit-scrollbar-track {
-  background: #f1f1f1; /* 滚动时显示滚动条轨道 */
+  background: #f1f1f1;
+  /* 滚动时显示滚动条轨道 */
 }
 
+/* 教案专用样式 - 层次结构 & 高亮系统 */
+.markdown-content1 {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: large;
+  line-height: 1.6;
+  color: #333;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* 标题层级系统 */
+.markdown-content1 h1 {
+  font-size: 1.8rem;
+  margin: 1.5rem 0 1rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.3rem;
+}
+
+.markdown-content1 h2 {
+  font-size: 1.5rem;
+  margin: 1.2rem 0 0.8rem;
+  color: #34495e;
+}
+
+.markdown-content1 h3 {
+  font-size: 1.2rem;
+  margin: 1rem 0 0.5rem;
+  color: #2c3e50;
+}
+
+/* 荧光笔高亮系统 */
+.markdown-content1 strong {
+  color: #1c5be2;
+  /* 重点文字颜色 */
+}
+
+.markdown-content1 code:not(pre code) {
+  background-color: #f8f9fa;
+  /* 浅灰代码背景 */
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  border: 1px solid #eaecef;
+}
+
+.markdown-content1 blockquote {
+  background-color: #f8f9fa;
+  border-left: 4px solid #3498db;
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  color: #7f8c8d;
+}
+
+/* 表格增强样式 */
+.markdown-content1 table {
+  width: 100%;
+  margin: 1rem 0;
+  border-collapse: collapse;
+}
+
+.markdown-content1 th {
+  background-color: #f4f4f4;
+  color: #333;
+  padding: 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.markdown-content1 td {
+  padding: 0.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.markdown-content1 tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* 自定义滚动条样式 */
+.markdown-content1::-webkit-scrollbar {
+  width: 8px;
+  /* 设置滚动条宽度 */
+}
+
+.markdown-content1::-webkit-scrollbar-track {
+  background: transparent;
+  /* 默认状态下滚动条轨道透明 */
+}
+
+.markdown-content1::-webkit-scrollbar-thumb {
+  background: transparent;
+  /* 默认状态下滚动条滑块透明 */
+  border-radius: 4px;
+}
+
+/* 滚动时显示滚动条 */
+.markdown-content1:hover::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  /* 滚动时显示滚动条滑块 */
+}
+
+.markdown-content1:hover::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  /* 滚动时显示滚动条轨道 */
+}
+
+
+
+/* 自定义滚动条样式 */
+.markdown-content1::-webkit-scrollbar {
+  width: 8px;
+  /* 设置滚动条宽度 */
+}
+
+.markdown-content1::-webkit-scrollbar-track {
+  background: transparent;
+  /* 默认状态下滚动条轨道透明 */
+}
+
+.markdown-content1::-webkit-scrollbar-thumb {
+  background: transparent;
+  /* 默认状态下滚动条滑块透明 */
+  border-radius: 4px;
+}
+
+/* 滚动时显示滚动条 */
+.markdown-content1:hover::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  /* 滚动时显示滚动条滑块 */
+}
+
+.markdown-content1:hover::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  /* 滚动时显示滚动条轨道 */
+}
 
 
 
 /* 自定义高亮类（在Markdown中用HTML标签实现） */
 .highlight {
-  background-color: #fff3d4; /* 荧光黄底色 */
+  background-color: #fff3d4;
+  /* 荧光黄底色 */
   padding: 0.2rem 0.4rem;
   border-radius: 3px;
-  border-bottom: 1px solid #f1c40f; /* 下划线增强 */
+  border-bottom: 1px solid #f1c40f;
+  /* 下划线增强 */
 }
 
 .keyconcept {
-  background-color: #e8f5e9; /* 概念性内容绿色底色 */
+  background-color: #e8f5e9;
+  /* 概念性内容绿色底色 */
   border-left: 3px solid #2ecc71;
   padding: 0.5rem 1rem;
   margin: 0.5rem 0;
@@ -176,7 +324,7 @@
   .markdown-content {
     padding: 0.5rem;
   }
-  
+
   .markdown-content table {
     display: block;
     overflow-x: auto;
@@ -189,8 +337,9 @@
     font-size: 12pt;
     line-height: 1.4;
   }
-  
-  .highlight, .key-concept {
+
+  .highlight,
+  .key-concept {
     background-color: transparent;
     border-bottom: 1px solid #999;
   }
@@ -220,10 +369,9 @@
 }
 
 .delete-button {
-  background: linear-gradient(145deg, #ff3300de,#ff7878);
+  background: linear-gradient(145deg, #ff3300de, #ff7878);
 }
 
 .delete-button:hover {
   background: linear-gradient(145deg, #ff3a3063, #e6000037);
 }
-

@@ -8,8 +8,8 @@
             <div style="width: 100%; display: flex; justify-content: space-between;">
               <h3>教案</h3>
               <div>
-                <el-button  @click = "() => ElMessage(' ⭐收藏成功')" type="primary">收藏至资源库</el-button>
-                <el-button @click="exportPDF" type="success">下载教案</el-button>
+                <el-button  @click = "saveElementAsURL('教案','.markdown-content','教学课件')" type="primary">收藏至资源库</el-button>
+                <el-button @click="exportPDF('.markdown-content')" type="success">下载教案</el-button>
               </div>
               
             </div>
@@ -32,8 +32,8 @@
             <div style="width: 100%; display: flex; justify-content: space-between;">
               <h3>课堂环节设计</h3>
               <div>
-                <el-button @click = "() => ElMessage(' ⭐收藏成功')" type="primary">收藏至资源库</el-button>
-                <el-button @click="exportPDF" type="success">下载课堂环节设计</el-button>
+                <el-button @click = "saveElementAsURL('课堂环节','.markdown-content1','课堂环节设计')" type="primary">收藏至资源库</el-button>
+                <el-button @click="exportPDF('.markdown-content1')" type="success">下载课堂环节设计</el-button>
               </div>
             </div>
           </div>
@@ -47,7 +47,7 @@
             <!-- 环节设计内容 -->
             <div class="markdown-container">
               <!-- 渲染 Markdown 内容 -->
-              <div v-html="generatedContent.classDesign" class="markdown-content" style="width: 640px; max-height: 680px; overflow-y: auto;"></div>
+              <div v-html="generatedContent.classDesign" class="markdown-content1" style="width: 640px; max-height: 680px; overflow-y: auto;"></div>
             </div>
           </el-tab-pane>
           <el-tab-pane label="思维导图" name="image">
@@ -358,13 +358,56 @@ const collectOnematerials = (index,type,title,url) => {
   console.log('收藏的资源:', newCollect);
 }
 const markdownContent = ref(null);
+const saveElementAsURL = async (title, selector,type) => {
+  try {
+    await nextTick();
+    const element = document.querySelector(selector);
+    
+    if (!element) {
+      console.error(`未找到选择器: ${selector}`);
+      return;
+    }
+    element.style.overflow = 'visible';
+    element.style.height = 'auto';
+    const clone = element.cloneNode(true);
+    const container = document.createElement('div');
+    container.appendChild(clone);
 
-const exportPDF = async () => {
+    container.style.position = 'absolute';
+    container.style.left = '-9999px';
+    document.body.appendChild(container);
+
+    const canvas = await html2canvas(clone, {
+      useCORS: true,
+      scale: 1,
+      width: clone.scrollWidth,
+      height: clone.scrollHeight,
+      windowWidth: clone.scrollWidth,
+      windowHeight: clone.scrollHeight
+    });
+    
+    const dataURL = canvas.toDataURL(`image/png/${title}`); 
+    console.log('dataURL:', dataURL); 
+    Collectcontents.value.push({
+      type: type,
+      title: title,
+      url: dataURL
+    });
+
+    console.log(`成功保存元素: ${title}`);
+    console.log('当前内容:', Collectcontents.value);
+    ElMessage(' ⭐收藏成功');
+    document.body.removeChild(container);
+  } catch (error) {
+    console.error('保存失败:', error);
+  }
+};
+const exportPDF = async (selector) => {
   try {
     await nextTick();
     
     // const element = markdownContent.value;
-    const element = document.querySelector('.markdown-content'); 
+    const element = document.querySelector(selector); 
     
     // 重置元素样式
     element.style.overflow = 'visible';
