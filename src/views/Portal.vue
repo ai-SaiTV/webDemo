@@ -98,7 +98,7 @@ const handleCreateClass = () => {
 <template>
   <div class="portal-container">
     <div class="portal-header">
-      <h1>智慧备课平台</h1>
+      <h1>易课云智慧备课</h1>
       <p>选择或创建课程班级开始备课</p>
     </div>
 

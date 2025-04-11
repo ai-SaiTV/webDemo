@@ -36,7 +36,7 @@ export default {
     <nav class="navbar">
       <div class="logo">
         <img src="/A.png" alt="Logo" />
-        <span>智慧备课平台</span>
+        <span>易课云</span>
       </div>
       <div class="nav-links">
         <a href="#features">产品特性</a>
@@ -46,7 +46,7 @@ export default {
     </nav>
 
     <div class="hero-section">
-      <h1>智慧备课平台</h1>
+      <h1>易课云智慧备课</h1>
       <p class="subtitle">让备课更高效，让教学更智慧</p>
       <div class="cta-buttons">
         <el-button type="primary" size="large" @click="handleEnterSystem">开始使用</el-button>
