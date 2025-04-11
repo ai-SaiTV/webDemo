@@ -1,6 +1,6 @@
 <template>
   <div class="result-header">
-    <h2>生成结果展示</h2>
+    <h2>备课助手结果整合</h2>
     <el-button @click="handleBackToEdit">返回编辑</el-button>
   </div>
 </template>

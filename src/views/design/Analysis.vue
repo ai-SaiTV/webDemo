@@ -2,7 +2,7 @@
   <div class="analysis-container">
     <div class="plan-header">
       <h2> 学情分析 </h2>
-      <p class="subtitle">准确分析学生情况，智能生成教学建议😋</p>
+      <p class="subtitle">准确分析学生情况，智能生成教学建议</p>
     </div>
     <!--班级选择和上传区域-->
     <el-row :gutter="20" class="mb-4">
