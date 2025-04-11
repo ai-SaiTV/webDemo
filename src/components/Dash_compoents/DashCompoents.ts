@@ -42,8 +42,8 @@ export const optimizationSuggestion = ref('');
 
 export const progressStatus = ref("active");
 export const Mindimgsrc = ref(
-    'https://static.shutu.cn/shutu/jpeg/open3e/2025/02/12/8b749027703a3e2a62682ac20c04931c.jpeg'
-); // 这里需要提供实际的图片路径
+    ''
+); 
 
 export const translateY = ref(0);
 export const progress = ref(0);
@@ -187,7 +187,7 @@ export const handleKeydown = (event: KeyboardEvent) => {
     }
 };
 
-import { parseMarkdown } from '@/utils/markdownUtils';
+import { parseMarkdown, parseMarkdownList_mm } from '@/utils/markdownUtils';
 import mmPic from '@/assets/files/mmPic.jpeg';
 
 const turnStep = async (step: number) => {
@@ -209,7 +209,8 @@ const turnStep = async (step: number) => {
         await nextTick(() => {})
         // Mindimgsrc.value = mmPic;
         if (DataThisSession.value?.resources?.tp_MindMap?.url) {
-            Mindimgsrc.value = DataThisSession.value.resources.tp_MindMap.url
+            Mindimgsrc.value = parseMarkdownList_mm(DataThisSession.value.resources.tp_MindMap.url)[0].url || mmPic;
+            console.log('Mindimgsrc.value', Mindimgsrc.value);
             // Mindimgsrc.value = DataThisSession.value.resources.tp_MindMap.url
             // Mindimgsrc.value = mmPic;
         }

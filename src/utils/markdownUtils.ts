@@ -48,14 +48,14 @@ export function parseMarkdownList_ex(markdown: string): {  type: string, title: 
   return matches;
 }
 //思维导图解析
-export function parseMarkdownList_mm(markdown: string): {url: string}[]{
-  const regex = /<(.*?)>/g;
-  const matches: {url: string }[] = [];
+export function parseMarkdownList_mm(markdown: string): { url: string }[] {
+  const regex = /<([^>]+)>/g; // 匹配 < 和 > 之间的内容
+  const matches: { url: string }[] = [];
   let match;
 
   while ((match = regex.exec(markdown)) !== null) {
     matches.push({
-      url: match[0]
+      url: match[1] // 提取 URL
     });
   }
 
