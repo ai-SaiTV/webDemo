@@ -18,6 +18,7 @@ export interface Book {
     image: string | null;
     path: string | null | undefined;
   }
+  
   export interface Text {
     id: number;
     title: string;
@@ -25,6 +26,15 @@ export interface Book {
     image: string | null;
     words: string | null | undefined;
   }
+
+  export interface Design {
+    id: number;
+    title: string;
+    description: string | null;
+    words: string | null | undefined;
+    showDetails: boolean;
+  }
+
   export interface NewBook {
     title: string;
     author: string;
@@ -48,4 +58,12 @@ export interface Book {
     description: string;
     image: File | null;
     words: File | string | null;
+  }
+
+  export interface NewDesign {
+    id: number;
+    title: string;
+    description: string | null;
+    words: string | null | undefined;
+    showDetails: boolean;
   }
