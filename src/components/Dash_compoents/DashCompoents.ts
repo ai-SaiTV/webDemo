@@ -4,7 +4,7 @@ import { watch } from '@vue/runtime-core';
 
 
 
-// step 0 ： 教案大纲生成， step 1 ： 课堂设计， step 2 ： 导图生成， step 3 ： 教学资源推荐
+// step 0 ： 教案生成， step 1 ： 课堂设计， step 2 ： 导图生成， step 3 ： 教学资源推荐
 
 
 
