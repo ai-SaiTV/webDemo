@@ -198,7 +198,7 @@
 
 <script setup>
 import { defineProps, ref, computed, onMounted, nextTick} from 'vue';
-import { parseMarkdown, parseMarkdownList_ex, parseMarkdownList_re } from '@/utils/markdownUtils.ts';
+import { parseMarkdown, parseMarkdownList_ex, parseMarkdownList_mm, parseMarkdownList_re } from '@/utils/markdownUtils.ts';
 import { sessionId, DataThisSession,showCollect,Collectcontents,collectMap } from './DashCompoents.ts';
 import { storageService } from '@/services/storage/storageService';
 import html2canvas from 'html2canvas';
@@ -215,7 +215,7 @@ const generatedContent = ref({
   exercises: []
 });
 
-import mmPic from '@/assets/files/mmPic.jpeg';
+// import mmPic from '@/assets/files/mmPic.jpeg';
 import { ElMessage } from 'element-plus';
 
 
@@ -229,8 +229,8 @@ const initializeData = async () => {
     const classDesign = DataThisSession.value.resources.class_design?.text || '';
 
     // 获取思维导图
-    //const mindMap = DataThisSession.value.resources.tp_MindMap?.url || '';
-    const mindMap = mmPic;
+    const mindMap = DataThisSession.value.resources.tp_MindMap?.url || '';
+    // const mindMap = mmPic;
 
 
 
@@ -251,7 +251,7 @@ const initializeData = async () => {
       lessonPlan: parseMarkdown(teachingPlan).__html,
       classDesign: parseMarkdown(classDesign).__html,
       mindMap: {
-        preview: mindMap
+        preview: parseMarkdownList_mm(mindMap)[0].url || '',
       },
       resources: resources.map(resource => ({
         type: resource.type,  // 资源类型
