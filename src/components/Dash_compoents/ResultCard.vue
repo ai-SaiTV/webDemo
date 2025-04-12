@@ -143,8 +143,8 @@
             <!-- <p class="exercise-preview">{{ exercise.preview }}</p> -->
             <div class="exercise-footer" style="display: flex; justify-content: end;">
               <!-- <span>{{ exercise.count }}道题目</span> -->
-              <a :href="exercise.preview" download="file.pdf">
-                <el-button type="primary" link size="small">下载</el-button>
+              <a >
+                <el-button type="primary" link size="small" @click = "exerciseDownload(exercise)">下载</el-button>
               </a>
               <el-button @click = "practicesend(exercise)"  type="primary" size = "small" style="margin-left: 15px;">
                 {{exercise.finishsend?'已布置':'布置'}}
@@ -362,10 +362,35 @@ const collectOnematerials = (index,type,title,url) => {
 }
 const markdownContent = ref(null);
 const finishsend = ref(false);
+const exerciseDownload = (exercise) => {
+  const url = exercise.preview;
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${exercise.title}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  ElMessage(' 📥下载成功,已同步保存至数据库');
+  const resourceKey = `${exercise.title}-${url}`;
+  if (collectMap.value[resourceKey]) {
+    ElMessage(' ❗练习已收藏');
+    return;
+  }
+  const newCollect = {
+    type: '练习题',
+    title: exercise.title,
+    url: url
+  };
+  Collectcontents.value.push(newCollect);
+}
 const practicesend = (exercise) =>{
+  if(exercise.finishsend){
+    ElMessage(' ❗练习已布置');
+    return;
+  }
   ElMessage('📜布置成功');
   exercise.finishsend = true;
-  console.log('布置的练习:', exercise.finishsend);
+  console.log('布置的练习:', exercise.preview);
 }
 const saveElementAsURL = async (title, selector,type) => {
   try {

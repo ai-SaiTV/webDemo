@@ -35,6 +35,12 @@ export interface Book {
     showDetails: boolean;
   }
 
+  export interface Exercise {
+    id: number;
+    title: string;
+    description: string | null;
+    pdf: string | null | undefined;
+  }  
   export interface NewBook {
     title: string;
     author: string;
@@ -67,3 +73,9 @@ export interface Book {
     words: string | null | undefined;
     showDetails: boolean;
   }
+  export interface NewExercise {
+    id: number;
+    title: string;
+    description: string | null;
+    pdf: string | null | undefined;
+  }  

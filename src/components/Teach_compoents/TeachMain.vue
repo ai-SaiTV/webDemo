@@ -10,9 +10,11 @@ import TextList from './TextList.vue';
 import TextModal from './TextModal.vue';
 import DesignList from './DesignList.vue';
 import DesignModal from './DesignModal.vue';
+import ExerciseList from './ExerciseList.vue';
+import ExerciseModal from './ExerciseModal.vue';
 import AddResourceModal from './AddResourceModal.vue';
-import { Book, Video, Text,Design,NewBook, NewVideo, NewText,NewDesign } from '@/types';
-import { showCollect,Collectcontents } from '../Dash_compoents/DashCompoents';
+import { Book, Video, Text, Design, Exercise, NewBook, NewVideo, NewText, NewDesign, NewExercise } from '@/types';
+import { showCollect, Collectcontents } from '../Dash_compoents/DashCompoents';
 // Import assets
 import yszz from '@/assets/yszz.jpg';
 import lxebr from '@/assets/lxebr.jpg';
@@ -27,7 +29,7 @@ import word2 from '@/assets/word2.png';
 import nullvideoimg from '@/assets/OIP-C.jpg';
 import childsun from '@/assets/两小儿辩日公开课.jpg';
 import yangson from '@/assets/杨氏之子公开课.jpg';
-import nulltextimg from '@/assets/nulltext.jpg';            
+import nulltextimg from '@/assets/nulltext.jpg';
 
 // interface Resource {
 //     type: string;
@@ -117,15 +119,31 @@ const designs = ref<Design[]>([
         showDetails: false,
     },
 ]);
+const exercises = ref<Exercise[]>([
+    {
+        id: 1,
+        title: '田忌赛马练习题',
+        description: '一份关于田忌赛马的练习题',
+        pdf: 'https://lf6-appstore-sign.oceancloudapi.com/ocean-cloud-tos/aa941e7e-d88a-4751-afe2-8a5092dbe3fe.pdf?lk3s=edeb9e45&x-expires=1744517781&x-signature=AE1e4JEElnts5Je8QIbZMjY%2FiCU%3D',
+    },
+    {
+        id: 2,
+        title: '两小儿辩日',
+        description: '一份关于两小儿辩日的练习题',
+        pdf: 'https://lf3-appstore-sign.oceancloudapi.com/ocean-cloud-tos/a8febfa2-89e5-4e36-b839-45b2e46e2677.pdf?lk3s=edeb9e45&x-expires=1744517768&x-signature=71a8v0jUxMqn8qgej8FvgqETpwo%3D',
+    },
+]);
 const resourceType = ref('books');
 const selectedBook = ref<Book | null>(null);
 const selectedVideo = ref<Video | null>(null);
 const selectedText = ref<Text | null>(null);
 const selectedDesign = ref<Design | null>(null);
+const selectedExercise = ref<Exercise | null>(null);
 const isBookModalVisible = ref(false);
 const isVideoModalVisible = ref(false);
 const isTextModalVisible = ref(false);
 const isDesignModalVisible = ref(false);
+const isExerciseModalVisible = ref(false);
 const isAddModalVisible = ref(false);
 
 
@@ -162,72 +180,104 @@ const newText = ref<NewText>({
 //     showDetails: false,
 // });
 
-const addResource = (type: string, title: string, url: string): boolean =>{
-  // 确保所有必要参数都有值
-  if (!type || !title || !url) {
-    console.error('添加资源失败：类型、标题和URL都必须提供');
-    return false;
-  }
+const addResource = (type: string, title: string, url: string): boolean => {
+    // 确保所有必要参数都有值
+    if (!type || !title || !url) {
+        console.error('添加资源失败：类型、标题和URL都必须提供');
+        return false;
+    }
 
-  // 动态计算各类资源的ID
-  let videoId = videos.value.length + 1;
-  let bookId = books.value.length + 1;
-  let textId = texts.value.length + 1;
-  let designId = designs.value.length + 1;
-  switch (type) {
-    case '教学视频':
-      videos.value.push({
-        id: videoId,
-        title: title,
-        duration: '00:00', // 这里可以根据实际数据设置时长
-        description: title+'的描述', // 这里可以填写新视频的描述
-        image: null, // 这里可以设置默认图片路径
-        path: url,
-      });
-      break;
-    case '教学课件':
-      books.value.push({
-        id: bookId,
-        title: title,
-        author: '作者', // 这里可以根据实际数据设置作者
-        isbn: 'ISBN', // 这里可以根据实际数据设置ISBN
-        owner: '所有者', // 这里可以根据实际数据设置所有者
-        description: title+'的描述', // 这里可以填写新课件的描述
-        image: null, // 这里可以设置默认图片路径
-        pdf: url,
-        showDetails: false,
-      });
-      break;
-    case '教学教案':
-      texts.value.push({
-        id: textId,
-        title: title,
-        description: title+'的描述', // 这里可以填写新教案的描述
-        image: null, // 这里可以设置默认图片路径
-        words: url,
-      });
-      break;
-    case '课堂环节设计':
-      designs.value.push({
-        id: designId,
-        title: title,
-        description: title+'的描述', // 这里可以填写新课堂环节设计的描述
-        words: url,
-        showDetails: false,
-      });
-      console.log('添加课堂环节设计资源:', title, url);
-      break;
-    case '教学图片':
-      // 处理图片链接
-      // 这里可以根据实际需求处理图片链接，将其保存到相应的数据结构中
-      console.log('添加图片资源:', title, url);
-      break;
-    default:
-      console.error(`未知的资源类型: ${type}`);
-      return false;
-  }
-  
-  return true;
+    // 动态计算各类资源的ID
+    let videoId = videos.value.length + 1;
+    let bookId = books.value.length + 1;
+    let textId = texts.value.length + 1;
+    let designId = designs.value.length + 1;
+    let exercisesId = exercises.value.length + 1;
+    switch (type) {
+        case '教学视频':
+            videos.value.push({
+                id: videoId,
+                title: title,
+                duration: '00:00', // 这里可以根据实际数据设置时长
+                description: `一份关于${title}的教学资源`, // 这里可以填写新视频的描述
+                image: null, // 这里可以设置默认图片路径
+                path: url,
+            });
+            break;
+        case '教学课件':
+            books.value.push({
+                id: bookId,
+                title: title,
+                author: '作者', // 这里可以根据实际数据设置作者
+                isbn: 'ISBN', // 这里可以根据实际数据设置ISBN
+                owner: '所有者', // 这里可以根据实际数据设置所有者
+                description: `一份关于${title}的教学资源`, // 这里可以填写新课件的描述
+                image: null, // 这里可以设置默认图片路径
+                pdf: url,
+                showDetails: false,
+            });
+            break;
+        case '课件':
+            books.value.push({
+                id: bookId,
+                title: title,
+                author: '作者', // 这里可以根据实际数据设置作者
+                isbn: 'ISBN', // 这里可以根据实际数据设置ISBN
+                owner: '所有者', // 这里可以根据实际数据设置所有者
+                description: `一份关于${title}的教学资源`, // 这里可以填写新课件的描述
+                image: null, // 这里可以设置默认图片路径
+                pdf: url,
+                showDetails: false,
+            });
+            break;
+        case '教学教案':
+            texts.value.push({
+                id: textId,
+                title: title,
+                description: `一份关于${title}的教学资源`, // 这里可以填写新教案的描述
+                image: null, // 这里可以设置默认图片路径
+                words: url,
+            });
+            break;
+        case '教案':
+            texts.value.push({
+                id: textId,
+                title: title,
+                description: `一份关于${title}的教学资源`, // 这里可以填写新教案的描述
+                image: null, // 这里可以设置默认图片路径
+                words: url,
+            });
+            break;
+        case '课堂环节设计':
+            designs.value.push({
+                id: designId,
+                title: title,
+                description: `一份关于${title}的教学资源`, // 这里可以填写新课堂环节设计的描述
+                words: url,
+                showDetails: false,
+            });
+            console.log('添加课堂环节设计资源:', title, url);
+            break;
+        case '练习题':
+            exercises.value.push({
+                id: exercisesId,
+                title: title,
+                description: `一份关于${title}的教学资源`, // 这里可以填写新练习题的描述
+                pdf: url,
+            });
+            console.log('添加练习题资源:', title, url);
+            break;
+        case '教学图片':
+            // 处理图片链接
+            // 这里可以根据实际需求处理图片链接，将其保存到相应的数据结构中
+            console.log('添加图片资源:', title, url);
+            break;
+        default:
+            console.error(`未知的资源类型: ${type}`);
+            return false;
+    }
+
+    return true;
 }
 // const extractResources = (input: string): void => {
 //     const lines = input.split('\n').filter(line => line.trim() !== '');
@@ -299,6 +349,19 @@ const deletedesign = async (design: Design) => {
             cancelButtonText: '取消',
         });
         designs.value = designs.value.filter((d) => d.id !== design.id);
+        ElMessage.success('删除成功');
+    } catch {
+        ElMessage.info('已取消删除');
+    }
+};
+const deleteExercise = async (exercise: Exercise) => {
+    try {
+        await ElMessageBox.confirm(`确定要删除练习题《${exercise.title}》吗？`, '提示', {
+            type: 'warning',
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+        });
+        exercises.value = exercises.value.filter((e) => e.id !== exercise.id);
         ElMessage.success('删除成功');
     } catch {
         ElMessage.info('已取消删除');
@@ -510,9 +573,9 @@ const handleTextError = () => {
                         @open-add-modal="isAddModalVisible = true" />
                 </el-tab-pane>
                 <el-tab-pane label="练习题" name="exercises">
-                    <TextList :texts="exercises"
-                        @open-text-modal="(text: NewText) => { selectedText = text; isTextModalVisible = true; }"
-                        @delete-text="deleteText" @open-add-text-modal="isAddTextModalVisible = true"
+                    <ExerciseList :exercises="exercises"
+                        @open-exercise-modal="(exercise: NewExercise) => { selectedExercise = exercise; isExerciseModalVisible = true; }"
+                        @delete-exercise="deleteExercise" @open-add-exercise-modal="isAddExerciseModalVisible = true"
                         @open-add-modal="isAddModalVisible = true" />
                 </el-tab-pane>
             </el-tabs>
@@ -523,10 +586,15 @@ const handleTextError = () => {
 
         <VideoModal v-if="selectedVideo" :video="selectedVideo" :visible="isVideoModalVisible"
             @close="isVideoModalVisible = false" @error="handleVideoError" />
+
         <TextModal v-if="selectedText" :text="selectedText" :visible="isTextModalVisible"
             @close="isTextModalVisible = false" @error="handleTextError" />
+
         <DesignModal v-if="selectedDesign" :design="selectedDesign" :visible="isDesignModalVisible"
             @close="isDesignModalVisible = false" />
+
+        <ExerciseModal v-if="selectedExercise" :exercise="selectedExercise" :visible="isExerciseModalVisible"
+            @close="isExerciseModalVisible = false" />
         <AddResourceModal :visible="isAddModalVisible" :type="handleResource(resourceType, 'book', 'video', 'text')"
             :model-value="handleResource(resourceType, newBook, newVideo, newText)"
             @update:model-value="updateResource(resourceType, $event)" @file-upload="handleFileUpload"
