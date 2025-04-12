@@ -146,7 +146,9 @@
               <a :href="exercise.preview" download="file.pdf">
                 <el-button type="primary" link size="small">下载</el-button>
               </a>
-              <el-button @click = "() => ElMessage('📜布置成功')"  type="primary" size = "small" style="margin-left: 15px;">布置</el-button>
+              <el-button @click = "practicesend(exercise)"  type="primary" size = "small" style="margin-left: 15px;">
+                {{exercise.finishsend?'已布置':'布置'}}
+              </el-button>
 
             </div>
           </div>
@@ -260,6 +262,7 @@ const initializeData = async () => {
         title: exercise.title,
         difficulty: exercise.type,
         preview: exercise.url,
+        finishsend: false,
         count: 5
       }))
     };
@@ -358,6 +361,12 @@ const collectOnematerials = (index,type,title,url) => {
   console.log('收藏的资源:', newCollect);
 }
 const markdownContent = ref(null);
+const finishsend = ref(false);
+const practicesend = (exercise) =>{
+  ElMessage('📜布置成功');
+  exercise.finishsend = true;
+  console.log('布置的练习:', exercise.finishsend);
+}
 const saveElementAsURL = async (title, selector,type) => {
   try {
     await nextTick();
