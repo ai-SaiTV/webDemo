@@ -4,7 +4,7 @@ import path from 'path'
 import vitestring from 'vite-plugin-string';
 import { visualizer } from 'rollup-plugin-visualizer';
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/A03_DemoDeploy/' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/' : '/',
   plugins: [
     vue(),
     vitestring({
