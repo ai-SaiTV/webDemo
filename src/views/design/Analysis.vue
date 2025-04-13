@@ -846,7 +846,7 @@ const generateAIAnalysis = async () => {
   // 整体分析
   const totalStudents = tableData.value.length;
   const classAverageScore = questions.value.reduce((sum, q) => sum + q.averageScore, 0);
-  const overallAnalysis = `本次考试共有${totalStudents}名学生参加，平均得分为${classAverageScore.toFixed(2)}分。`;
+  const overallAnalysis = `本次测试共有${totalStudents}名学生参加，平均得分为${classAverageScore.toFixed(2)}分。`;
 
   // 关键发现：找出正确率最低的3道题目
   const keyPoints = questions.value
