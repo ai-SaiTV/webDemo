@@ -40,7 +40,7 @@ export default {
       </div>
       <div class="nav-links">
         <a href="#features">产品特性</a>
-        <a href="#about" @click="AboutUs">关于我们</a>
+        <!-- <a href="#about" @click="AboutUs">关于我们</a> -->
         <el-button type="primary" @click="handleEnterSystem">立即使用</el-button>
       </div>
     </nav>
