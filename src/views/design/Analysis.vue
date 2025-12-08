@@ -257,7 +257,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed, nextTick } from "@vue/runtime-core";
+import { ref, onMounted, watch, computed, nextTick } from "vue";
 // import { ref, onMounted, watch, computed, nextTick } from "@vue/runtime-core";
 import * as echarts from "echarts";
 import * as XLSX from "xlsx";

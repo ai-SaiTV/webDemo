@@ -43,7 +43,7 @@
       pdf.save('教学方案.pdf');
     } catch (error) {
       console.error('生成PDF失败:', error);
-      ElMessage.error('PDF生成失败，请重试');
+      // ElMessage.error('PDF生成失败，请重试');
     }
   };
   </script>

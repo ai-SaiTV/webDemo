@@ -1,4 +1,4 @@
-import { ref } from '@vue/runtime-core';
+import { ref } from 'vue';
 import { chatApi } from '@/services/api/chatApi';
 import type { ChatResponse, ApiError } from '@/types/api';
 

@@ -48,7 +48,7 @@
 
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from '@vue/runtime-core';
+import { onMounted, ref } from 'vue';
 import { parseMarkdown } from '@/utils/markdownUtils';
 import { ElCard } from 'element-plus';
 // const plan_Num = ref(12)
@@ -58,7 +58,7 @@ import { ElCard } from 'element-plus';
 
 defineProps({
   showResult:Boolean,
-})
+});
 
 
 const Generate_Prompt = ref(`

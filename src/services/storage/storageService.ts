@@ -1,8 +1,8 @@
-import { ref } from '@vue/runtime-core'
-import type { StorageData } from '@/types/storageData'
+import { ref } from 'vue';
+import type { StorageData } from '@/types/storageData';
 
 export class StorageService {
-  private data = ref<StorageData[]>([])
+  private data = ref<StorageData[]>([]);
   
   // 创建新会话
   async createSession(): Promise<string> {
@@ -27,63 +27,63 @@ export class StorageService {
         lastUpdate: Date.now(),
         version: '1.0'
       }
-    }
+    };
 
-    this.data.value.push(newSession)
-    await this.saveToFile()
-    return newSession.id
+    this.data.value.push(newSession);
+    await this.saveToFile();
+    return newSession.id;
   }
 
   // 更新消息
   async updateMessages(sessionId: string, message: { role: 'user' | 'assistant', content: string }) {
-    const session = this.data.value.find(s => s.id === sessionId)
+    const session = this.data.value.find(s => s.id === sessionId);
     if (session) {
       session.conversation.messages.push({
         ...message,
         timestamp: Date.now()
-      })
-      session.metadata.lastUpdate = Date.now()
-      await this.saveToFile()
+      });
+      session.metadata.lastUpdate = Date.now();
+      await this.saveToFile();
     }
   }
 
   // 更新教案资源
   async updateTeachingPlan(sessionId: string, data: { text: string, }) {
-    console.log('更新教案资源:', sessionId, data)
-    const session = this.data.value.find(s => s.id === sessionId)
+    console.log('更新教案资源:', sessionId, data);
+    const session = this.data.value.find(s => s.id === sessionId);
     if (session) {
       session.resources.teaching_plan = {
         text: data.text,
-      }
-      session.metadata.lastUpdate = Date.now()
-      await this.saveToFile()
+      };
+      session.metadata.lastUpdate = Date.now();
+      await this.saveToFile();
     }
   }
 
   // 更新课堂设计
   async updateClassDesign(sessionId: string, data: { text: string, }) {
-    console.log('更新课堂设计:', sessionId, data)
-    const session = this.data.value.find(s => s.id === sessionId)
+    console.log('更新课堂设计:', sessionId, data);
+    const session = this.data.value.find(s => s.id === sessionId);
     if (session) {
       session.resources.class_design = {
         text: data.text,
-      }
-      session.metadata.lastUpdate = Date.now()
-      await this.saveToFile()
+      };
+      session.metadata.lastUpdate = Date.now();
+      await this.saveToFile();
     }
   }
 
 
   // 更新思维导图资源
   async updateTeachingMindMap(sessionId: string, data: { url: string, }) {
-    console.log('更新思维导图资源:', sessionId, data)
-    const session = this.data.value.find(s => s.id === sessionId)
+    console.log('更新思维导图资源:', sessionId, data);
+    const session = this.data.value.find(s => s.id === sessionId);
     if (session) {
       session.resources.tp_MindMap = {
         url: data.url,
-      }
-      session.metadata.lastUpdate = Date.now()
-      await this.saveToFile()
+      };
+      session.metadata.lastUpdate = Date.now();
+      await this.saveToFile();
     }
   }
 
@@ -92,17 +92,17 @@ export class StorageService {
     Courseware?: { name: string, url: string }[],
     exercises?: { name: string, url: string }[]
   }) {
-    console.log('更新课件资源:', sessionId, data)
-    const session = this.data.value.find(s => s.id === sessionId)
+    console.log('更新课件资源:', sessionId, data);
+    const session = this.data.value.find(s => s.id === sessionId);
     if (session) {
       if (data.Courseware) {
-        session.resources.courseware.Courseware = data.Courseware
+        session.resources.courseware.Courseware = data.Courseware;
       }
       if (data.exercises) {
-        session.resources.courseware.exercises = data.exercises
+        session.resources.courseware.exercises = data.exercises;
       }
-      session.metadata.lastUpdate = Date.now()
-      await this.saveToFile()
+      session.metadata.lastUpdate = Date.now();
+      await this.saveToFile();
     }
   }
 
@@ -110,15 +110,15 @@ export class StorageService {
   // 更新编辑暂存区
   async updateEditZone(sessionId: string, data: { 
     type: 'teaching_plan' | 'class_design' | 'None', text: string }) {
-    console.log('更新编辑暂存区:', sessionId, data)
-    const session = this.data.value.find(s => s.id === sessionId)
+    console.log('更新编辑暂存区:', sessionId, data);
+    const session = this.data.value.find(s => s.id === sessionId);
     if (session) {
       session.editZone = {
         type: data.type,
         text: data.text,
-      }
-      session.metadata.lastUpdate = Date.now()
-      await this.saveToFile()
+      };
+      session.metadata.lastUpdate = Date.now();
+      await this.saveToFile();
     }
   }
 
@@ -154,19 +154,19 @@ export class StorageService {
   // 保存到文件
   private async saveToFile() {
     try {
-      localStorage.setItem('chat-storage', JSON.stringify(this.data.value))
+      localStorage.setItem('chat-storage', JSON.stringify(this.data.value));
     } catch (error) {
-      console.error('Save failed:', error)
+      console.error('Save failed:', error);
     }
   }
 
   // 加载数据
   async loadData() {
-    const saved = localStorage.getItem('chat-storage')
+    const saved = localStorage.getItem('chat-storage');
     if (saved) {
-      this.data.value = JSON.parse(saved)
+      this.data.value = JSON.parse(saved);
     }
   }
 }
 
-export const storageService = new StorageService()
+export const storageService = new StorageService();

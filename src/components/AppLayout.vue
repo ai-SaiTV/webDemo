@@ -1,27 +1,27 @@
 <script setup lang="ts">
-import { ref } from '@vue/runtime-core'
-import { Menu as IconMenu, Document, Collection, TrendCharts, Calendar } from '@element-plus/icons-vue'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue';
+import { Menu as IconMenu, Document, Collection, TrendCharts, Calendar } from '@element-plus/icons-vue';
+import { useRouter } from 'vue-router';
 
-const router = useRouter()
-const isCollapse = ref(false)
+const router = useRouter();
+const isCollapse = ref(false);
 
 const handleMenuSelect = (index: string) => {
   switch (index) {
     case '1':
-      router.push('/dashboard')
-      break
+      router.push('/dashboard');
+      break;
     case '2':
-      router.push('/materials')
-      break
+      router.push('/materials');
+      break;
     case '3':
-      router.push('/analysis')
-      break
+      router.push('/analysis');
+      break;
     case '4':
-      router.push('/course')
-      break
+      router.push('/course');
+      break;
   }
-}
+};
 
 const isAnimating = ref(false);
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from '@vue/runtime-core';
+import { ref } from 'vue';
 import { Video } from '@/types';
 import axios from 'axios';
 
@@ -20,8 +20,8 @@ const fetchAnalysis = () =>{
     params: {
       videoId: props.video.path,
     },
-  })
-}
+  });
+};
 const toggleVideo = () => {
   isVideoVisible.value = !isVideoVisible.value;
   if (isVideoVisible.value) {

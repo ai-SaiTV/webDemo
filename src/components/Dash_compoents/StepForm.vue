@@ -168,7 +168,7 @@
 </template>
 <script setup>
 
-import flash from '@/assets/icons/dashBoard/flash.png'
+import flash from '@/assets/icons/dashBoard/flash.png';
 
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import {
@@ -256,8 +256,8 @@ const imageStyle = computed(() => ({
 }));
 
 
-const checked1 = ref(false)
-const checked2 = ref(false)
+const checked1 = ref(false);
+const checked2 = ref(false);
 
 const fprompt_content = ref(`
 **班级基础数据提示词：**
@@ -294,7 +294,7 @@ const fprompt_content = ref(`
   ▸ 文化常识缺失（涉及12%失分）
 `);
 
-const input = ref(['tag1', 'tag2', 'tag3'])
+const input = ref(['tag1', 'tag2', 'tag3']);
 
 
 </script>

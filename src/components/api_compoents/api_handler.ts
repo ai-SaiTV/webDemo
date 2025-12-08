@@ -19,7 +19,7 @@
 //                             \::/    /                  \::/    /                \::/    /     
 //                              \/____/                    \/____/                  \/____/      
 
-import { ref,watch } from '@vue/runtime-core';
+import { ref,watch } from 'vue';
 import { storageService } from '@/services/storage/storageService';
 import { analysisRes } from '@/types/analysisRes';
 export const showResult = ref(false);
@@ -54,7 +54,7 @@ botId: [
     '7475365585602773055',   //6学情分析
     ],  
 message: ''
-})
+});
 
 const {sendMessage } = useChat();  // 从 useChat composable 中导入 error 和 sendMessage方法
 export const {                                               // 从 useChatPolling composable 中导入以下属性和方法
@@ -99,7 +99,7 @@ export const handleSubmit = async (sessionId: string, step: number) => {
             const currentStep = step; // 通过闭包捕获当前 step
             unwatch = watch(() => chatMessages.value, async (newMessages) => {
                 if (newMessages?.data) {
-                    console.log('newMessages:', newMessages)
+                    console.log('newMessages:', newMessages);
                     interface ChatMessage {
                         type?: string;
                         content_type?: string;
@@ -183,7 +183,7 @@ export const handleSubmitEdit = async (sessionId: string, step: number) => {
             const currentStep = step; // 通过闭包捕获当前 step
             unwatch = watch(() => chatMessages.value, async (newMessages) => {
                 if (newMessages?.data) {
-                    console.log('newMessages:', newMessages)
+                    console.log('newMessages:', newMessages);
                     interface ChatMessage {
                         type?: string;
                         content_type?: string;
@@ -256,7 +256,7 @@ export const handleSubmitParallel = async (sessionId: string, botIndices: number
                     chatConfig.value.message
                 );
 
-                let stopWatch = watch(() => chatInstance.chatMessages.value, async (newMessages) => {
+                const stopWatch = watch(() => chatInstance.chatMessages.value, async (newMessages) => {
                     if (newMessages?.data) {
                         console.log(`Step ${botIndex} result:`, newMessages);
                         const lastMessage = newMessages.data.find((msg: Message) => 

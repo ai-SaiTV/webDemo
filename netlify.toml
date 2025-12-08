@@ -1,0 +1,5 @@
+[build]
+  publish = "dist"
+  node_version = "18"
+
+  command = "npm run lint && npm run build"

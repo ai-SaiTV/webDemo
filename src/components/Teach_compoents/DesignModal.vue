@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from '@vue/runtime-core';
+import { ref } from 'vue';
 import { Design } from '@/types';
 
 const props = defineProps<{

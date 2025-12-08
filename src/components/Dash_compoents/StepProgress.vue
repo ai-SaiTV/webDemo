@@ -16,7 +16,7 @@ import {
   isProcessing, isEditing,
   progressStatus, gradientColor, progress
 
-} from "@/components/Dash_compoents/DashCompoents.ts"
+} from "@/components/Dash_compoents/DashCompoents.ts";
 
 </script>
 

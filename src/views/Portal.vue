@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from '@vue/runtime-core'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { Collection, User, UserFilled, Calendar } from '@element-plus/icons-vue';
 import 'element-plus/es/components/icon/style/css';
 
@@ -15,8 +15,8 @@ interface CourseClass {
   bookname: string
 }
 
-const router = useRouter()
-const dialogVisible = ref(false)
+const router = useRouter();
+const dialogVisible = ref(false);
 const courseClasses = ref<CourseClass[]>([
   {
     id: '1',
@@ -59,7 +59,7 @@ const courseClasses = ref<CourseClass[]>([
     bookname: '人教版科学下册（24版）',
   }
 
-])
+]);
 
 const form = ref({
   name: '',
@@ -68,22 +68,22 @@ const form = ref({
   students: 0,
   teacher: '',
   bookname: '',
-})
+});
 
 const handleCardClick = (classId: string) => {
   router.push({
     path: '/dashboard',
     query: { classId }
-  })
-}
+  });
+};
 
 const handleCreateClass = () => {
   courseClasses.value.push({
     id: String(courseClasses.value.length + 1),
     ...form.value,
     createdAt: new Date().toISOString().split('T')[0]
-  })
-  dialogVisible.value = false
+  });
+  dialogVisible.value = false;
   form.value = {
     name: '',
     grade: '',
@@ -91,8 +91,8 @@ const handleCreateClass = () => {
     students: 0,
     teacher: '',
     bookname:'',
-  }
-}
+  };
+};
 </script>
 
 <template>

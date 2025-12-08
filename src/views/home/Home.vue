@@ -1,5 +1,5 @@
 <script>
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
 import AWaves from '@/components/AWaves.vue';
 export default {
   components: {
@@ -7,16 +7,16 @@ export default {
   },
 
   setup() {
-    const router = useRouter()
+    const router = useRouter();
 
     const AboutUs = () => {
       window.open('https://github.com/ai-SaiTV', '_blank');
     };
     const handleEnterSystem = () => {
-      router.push('/portal')
+      router.push('/portal');
     };
     const turninlogin = () => {
-      router.push('/login')
+      router.push('/login');
     };
 
     return {

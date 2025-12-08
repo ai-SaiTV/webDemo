@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { ref } from '@vue/runtime-core';
+import { ref } from 'vue';
 import StepProgress from './StepProgress.vue';
 
 

@@ -306,15 +306,15 @@ const previewMindMap = () => {
 };
 
 
-const isRatingOpen = ref(false)
-const ratingValue = ref(0)
+const isRatingOpen = ref(false);
+const ratingValue = ref(0);
 
 const submitRating = () => {
   if (ratingValue.value > 0) {
-    console.log('提交评价:', ratingValue.value)
-    isRatingOpen.value = false
+    console.log('提交评价:', ratingValue.value);
+    isRatingOpen.value = false;
   } else {
-    alert('请对教学资源准确率进行评价')
+    alert('请对教学资源准确率进行评价');
   }
 };
 
@@ -359,14 +359,14 @@ const collectOnematerials = (index,type,title,url) => {
   collectMap.value[resourceKey]=true;
   ElMessage(' ⭐收藏成功');
   console.log('收藏的资源:', newCollect);
-}
+};
 const markdownContent = ref(null);
 const finishsend = ref(false);
 const practicesend = (exercise) =>{
   ElMessage('📜布置成功');
   exercise.finishsend = true;
   console.log('布置的练习:', exercise.finishsend);
-}
+};
 const saveElementAsURL = async (title, selector,type) => {
   try {
     await nextTick();

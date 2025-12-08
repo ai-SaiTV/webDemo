@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from '@vue/runtime-core';
+import { ref } from 'vue';
 import { Text } from '@/types';
 import mammoth from 'mammoth';
 

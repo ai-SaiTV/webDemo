@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from '@vue/runtime-core';
+import { ref, onMounted } from 'vue';
 import { Document, TrendCharts, Collection } from '@element-plus/icons-vue';
 import RadiatingLines from './RadiatingLines.vue';
 import ContentFrame from './ContentFrame.vue';

@@ -1,8 +1,8 @@
-import { ref } from '@vue/runtime-core'
-import type { analysisRes } from '@/types/analysisRes'
+import { ref } from 'vue';
+import type { analysisRes } from '@/types/analysisRes';
 
 export class analysisResService {
-  private data = ref<analysisRes[]>([])
+  private data = ref<analysisRes[]>([]);
   
   // 创建新会话
   async createSession(): Promise<string> {
@@ -13,32 +13,32 @@ export class analysisResService {
       timestamp: Date.now(),      
       conversation: { messages: [] },
       analysis: ''  
-    }
+    };
 
-    this.data.value.push(newSession)
-    await this.saveToFile()
-    return newSession.id
+    this.data.value.push(newSession);
+    await this.saveToFile();
+    return newSession.id;
   }
 
   // 更新消息
   async updateMessages(sessionId: string, message: { role: 'user' | 'assistant', content: string }) {
-    const session = this.data.value.find(s => s.id === sessionId)
+    const session = this.data.value.find(s => s.id === sessionId);
     if (session) {
       session.conversation.messages.push({
         ...message,
         timestamp: Date.now()
-      })
-      await this.saveToFile()
+      });
+      await this.saveToFile();
     }
   }
 
   // 更新学情分析结果
   async updateAnalysisRes(sessionId: string, data: { text: string, }) {
-    console.log('更新学情分析结果:', sessionId, data)
-    const session = this.data.value.find(s => s.id === sessionId)
+    console.log('更新学情分析结果:', sessionId, data);
+    const session = this.data.value.find(s => s.id === sessionId);
     if (session) {
-      session.analysis = data.text
-      await this.saveToFile()
+      session.analysis = data.text;
+      await this.saveToFile();
     }
   }
 
@@ -69,19 +69,19 @@ export class analysisResService {
   // 保存到文件
   private async saveToFile() {
     try {
-      localStorage.setItem('analysis-storage', JSON.stringify(this.data.value))
+      localStorage.setItem('analysis-storage', JSON.stringify(this.data.value));
     } catch (error) {
-      console.error('Save failed:', error)
+      console.error('Save failed:', error);
     }
   }
 
   // 加载数据
   async loadData() {
-    const saved = localStorage.getItem('analysis-storage')
+    const saved = localStorage.getItem('analysis-storage');
     if (saved) {
-      this.data.value = JSON.parse(saved)
+      this.data.value = JSON.parse(saved);
     }
   }
 }
 
-export const analysisService = new analysisResService()
+export const analysisService = new analysisResService();

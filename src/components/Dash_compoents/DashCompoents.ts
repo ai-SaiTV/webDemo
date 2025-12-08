@@ -1,6 +1,6 @@
-import { ref, nextTick } from '@vue/runtime-core';
-import { computed } from '@vue/runtime-core';
-import { watch } from '@vue/runtime-core';
+import { ref, nextTick } from 'vue';
+import { computed } from 'vue';
+import { watch } from 'vue';
 
 
 
@@ -16,7 +16,7 @@ import {
 } from '@/components/api_compoents/api_handler';
 
 import { storageService } from '@/services/storage/storageService';
-import type { StorageData } from '@/types/storageData'
+import type { StorageData } from '@/types/storageData';
 // import { tr } from 'element-plus/es/locales.mjs';
 
 
@@ -75,7 +75,7 @@ export const Collectcontents = ref<Array<{
     type: string;
     title: string;
     url: string;
-}>>([])   
+}>>([]);   
 export const collectMap = ref<Record<string, boolean>>({}); // 用于存储每个资源的收藏状态
 export const steps = [
     { title: '教案生成', description: '一句话生成教案' },
@@ -141,7 +141,7 @@ export const nextStep = async () => {
         if (newPolling) {
             progress.value = 0;
             progressStatus.value = "active";
-            let startTime: number = Date.now();
+            const startTime: number = Date.now();
             const duration: number = 20000;
             const targetProgress: number = 97;
 
@@ -192,21 +192,21 @@ import mmPic from '@/assets/files/mmPic.jpeg';
 
 const turnStep = async (step: number) => {
     if (step === 0) {         //教学大纲Res -->> 课堂设计Pre
-        await nextTick(() => {})
+        await nextTick(() => {});
         if (DataThisSession.value?.resources?.teaching_plan?.text) {
 
-            form1.value.requirements = parseMarkdown(DataThisSession.value.resources.teaching_plan.text).__html
+            form1.value.requirements = parseMarkdown(DataThisSession.value.resources.teaching_plan.text).__html;
         }
-        return '0'
+        return '0';
     } else if (step === 1) {      //课堂设计Res -->> 导图生成Pre
-        await nextTick(() => {})
+        await nextTick(() => {});
         if (DataThisSession.value?.resources?.class_design?.text) {
-            form1.value.requirements = parseMarkdown(DataThisSession.value.resources.class_design.text).__html
+            form1.value.requirements = parseMarkdown(DataThisSession.value.resources.class_design.text).__html;
         }
         return '1';
 
     } else if (step === 2) {
-        await nextTick(() => {})
+        await nextTick(() => {});
         // Mindimgsrc.value = mmPic;
         if (DataThisSession.value?.resources?.tp_MindMap?.url) {
             Mindimgsrc.value = parseMarkdownList_mm(DataThisSession.value.resources.tp_MindMap.url)[0].url || mmPic;
@@ -283,7 +283,7 @@ export const EditSubmit = async () => {
             if (newPolling) {
                 progress.value = 0;
                 progressStatus.value = "active";
-                let startTime = Date.now();
+                const startTime = Date.now();
                 const duration = 20000;
                 const targetProgress = 97;
 
@@ -331,7 +331,7 @@ export const EditSubmit = async () => {
 
 const NextEdit = async () => {
     await nextTick();  
-    EditZoneContent.value = parseMarkdown(DataThisSession.value?.editZone.text || "").__html
+    EditZoneContent.value = parseMarkdown(DataThisSession.value?.editZone.text || "").__html;
     isEditingFinish.value = true;
     console.log('EditZoneContent.value: ', EditZoneContent.value);
 };
@@ -362,7 +362,7 @@ export const generateResource = async () => {
         console.log('开始生成资源:', sessionId.value);
         progress.value = 0;
         progressStatus.value = "active";
-        let startTime = Date.now();
+        const startTime = Date.now();
         const duration = 20000;
         const targetProgress = 97;
 

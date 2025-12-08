@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from '@vue/runtime-core';
+import { onMounted, ref } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import ResourceHeader from './ResourceHeader.vue';
 import BookList from './BookList.vue';
@@ -228,7 +228,7 @@ const addResource = (type: string, title: string, url: string): boolean =>{
   }
   
   return true;
-}
+};
 // const extractResources = (input: string): void => {
 //     const lines = input.split('\n').filter(line => line.trim() !== '');
 

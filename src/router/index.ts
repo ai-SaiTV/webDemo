@@ -1,12 +1,12 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/home/Home.vue'
-import Portal from '../views/Portal.vue'
-import Dashboard from '../views/design/Dashboard.vue'
-import Analysis from '../views/design/Analysis.vue'
-import CourseManagement from '../views/design/CourseManagement.vue'
-import AppLayout from '../components/AppLayout.vue'
-import TeachingMaterials from '../views/design/TeachingMaterials.vue'
-import Login from '@/views/login/login.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import Home from '../views/home/Home.vue';
+import Portal from '../views/Portal.vue';
+import Dashboard from '../views/design/Dashboard.vue';
+import Analysis from '../views/design/Analysis.vue';
+import CourseManagement from '../views/design/CourseManagement.vue';
+import AppLayout from '../components/AppLayout.vue';
+import TeachingMaterials from '../views/design/TeachingMaterials.vue';
+import Login from '@/views/login/login.vue';
 const router = createRouter({
   history: createWebHistory('/A03_DemoDeploy/'),
   routes: [
@@ -45,6 +45,6 @@ const router = createRouter({
       ]
     }
   ]
-})
+});
 
-export default router
+export default router;

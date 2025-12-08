@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from '@vue/runtime-core';
+import { computed } from 'vue';
 import { NewBook, NewText, NewVideo } from '@/types';
 
 const props = defineProps<{

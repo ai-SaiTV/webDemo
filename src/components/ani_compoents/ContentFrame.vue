@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {  reactive, onMounted, watch } from '@vue/runtime-core';
+import {  reactive, onMounted, watch } from 'vue';
 import FeatureContent from './FeatureContent.vue';
 import FeatureImage from './FeatureImage.vue';
 import AnimatedParticle from './AnimatedParticle.vue';
