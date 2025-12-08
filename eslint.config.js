@@ -18,6 +18,7 @@ export default defineConfig([
       // 1. 处理未使用变量和any类型的TypeScript规则
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
       '@typescript-eslint/no-empty-object-type': 'off',
       // 2. 处理Vue特定规则
       'vue/no-mutating-props': 'off',
